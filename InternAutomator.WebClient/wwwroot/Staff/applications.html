@@ -10,6 +10,9 @@
 
     <h3 class="mb-4">Staj Başvuruları</h3>
 
+    <!-- İşlem sonucu bildirimi (onaylandı, reddedildi...) -->
+    <div id="noticeBox" class="alert" role="status" hidden></div>
+
     <!-- Yükleniyor / boş liste / hata mesajları -->
     <div id="statusBox" class="alert" hidden></div>
 
@@ -33,7 +36,8 @@
     </div>
 
     <!-- Karar penceresi -->
-    <div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="decisionTitle" aria-hidden="true">
+    <div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="decisionTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <form class="modal-content" id="decisionForm">
                 <div class="modal-header">
@@ -58,7 +62,7 @@
     </div>
 
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/applications.js"></script>
+    <script src="/js/api.js?v=3"></script>
+    <script src="/js/applications.js?v=3"></script>
 </body>
 </html>

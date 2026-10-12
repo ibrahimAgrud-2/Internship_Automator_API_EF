@@ -1,7 +1,10 @@
 ﻿
 using EF_InternApplicationAutomator.DataAccess.Application;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared;
 using Shared.Application;
+using Shared.Intern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +21,14 @@ namespace EF_InternApplicationAutomator.Business.Application
 
          ApplicationDataAccess _ApplicationDataAccess;
         PersonBL _person;
-
-        public ApplicationBL(ApplicationDataAccess applicationDataAccess,PersonBL person)
+        Intern.InternBL _Intern;
+        Shared.Common.EmailService _emailService;
+        public ApplicationBL(ApplicationDataAccess applicationDataAccess,PersonBL person, Intern.InternBL intern,Shared.Common.EmailService emailService)
         {
             _ApplicationDataAccess = applicationDataAccess;
             _person = person;
+            _Intern = intern;
+            _emailService = emailService;
         }
 
         public List<ApplicationListDTO> GetAllApplications()
@@ -38,8 +44,51 @@ namespace EF_InternApplicationAutomator.Business.Application
         public int UpdateStatus(ApplicationStatusUpdateDTO applicationStatus)
         {
 
-
             return _ApplicationDataAccess.UpdateStatus(applicationStatus.ApplicationID, applicationStatus);
+        }
+        public string[] ApplicationAccepted(ApplicationStatusUpdateDTO applicationStatus)
+        {
+            if (applicationStatus.status == (byte)enStatus.Accepted)
+            {
+                ApplicationResponseDTO app = Find(applicationStatus.ApplicationID);
+                PersonResponseSDTO person = _person.Find(app.PersonID);
+                if (person == null||UpdateStatus(applicationStatus)==-1)
+                {
+                    return null;
+                }
+                string password = Shared.Common.CommonTools.GenerateRandomPassword(8);
+                if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now, 0))!=-1)
+                {
+                    if(SendEmail(person.PersonID))
+                    {
+                        return [password, person.Email];
+                    }
+                    else
+                    {
+                        app.Status = 0;
+                         UpdateStatus(applicationStatus);
+                    }
+                   
+                }
+                else
+                {
+                   return  null;
+                }
+            }
+            return null;
+        }
+        public bool SendEmail(int personID)
+        {
+            bool sent= _emailService.SendEmail("test@gmail.com", "Onaylandi", "Staj başvurusnu onaylandi."); ;
+            if(!sent)
+            {
+                InternResponseDTO intern = _Intern.FindByPersonID(personID);
+             
+                _Intern.DeleteIntern(intern.InternID);
+
+                return false;
+            }
+            return true;
         }
 
         public int AddApplication(ApplicationCreateSecure newApplicationDTO)

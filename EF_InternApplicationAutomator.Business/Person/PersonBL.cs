@@ -9,12 +9,15 @@ namespace EF_InternApplicationAutomator.Business
 
     public class PersonBL
     {
+
+        public int personID { get; set; }
         PersonDataAccess _PersonDataAccess;
 
         //PersonBL ile DAL'ı bağlıyor.
         public PersonBL(PersonDataAccess personDataAccess)
         {
             _PersonDataAccess = personDataAccess;
+
         }
 
         public List<PersonResponseSDTO> GetAllPeople()

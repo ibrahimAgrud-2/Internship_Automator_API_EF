@@ -10,31 +10,39 @@ const STATUS_NEW = 0;
 const STATUS_REJECTED = 2;
 const STATUS_APPROVED = 3;
 
-// Buton eylemi -> API'ya gönderilecek durum ve modal metinleri (tek yerde)
+// Buton eylemi -> hangi durum, hangi API fonksiyonu, hangi mesajlar (tek yerde)
 const ACTIONS = {
     approve: {
         status: STATUS_APPROVED,
         title: "Başvuruyu onayla",
         result: "onaylanacak",
         buttonText: "Onayla",
-        buttonClass: "btn-success"
+        buttonClass: "btn-success",
+        send: acceptApplication,   // API stajyeri oluşturur ve e-posta gönderir
+        successMessage: "Başvuru onaylandı. Stajyere giriş bilgileri e-posta ile gönderildi.",
+        // API e-posta ya da stajyer oluşturma hatasında her şeyi geri alıp 500 döner
+        serverErrorMessage: "Onay tamamlanamadı. İşlem geri alındı, lütfen tekrar deneyin."
     },
     reject: {
         status: STATUS_REJECTED,
         title: "Başvuruyu reddet",
         result: "reddedilecek",
         buttonText: "Reddet",
-        buttonClass: "btn-danger"
+        buttonClass: "btn-danger",
+        send: updateApplicationStatus,
+        successMessage: "Başvuru reddedildi.",
+        serverErrorMessage: null   // genel sunucu hatası mesajı gösterilir
     }
 };
 
 // ---------- Sayfa elemanları ----------
+const noticeBox = document.getElementById("noticeBox");
 const statusBox = document.getElementById("statusBox");
 const tableWrapper = document.getElementById("tableWrapper");
 const tableBody = document.getElementById("applicationsBody");
 
-const decisionModal = new bootstrap.Modal(document.getElementById("decisionModal"));
 const decisionModalElement = document.getElementById("decisionModal");
+const decisionModal = new bootstrap.Modal(decisionModalElement);
 const decisionForm = document.getElementById("decisionForm");
 const decisionTitle = document.getElementById("decisionTitle");
 const decisionSummary = document.getElementById("decisionSummary");
@@ -45,6 +53,7 @@ const decisionSubmit = document.getElementById("decisionSubmit");
 // ---------- Durum ----------
 let applicationsById = new Map();   // listedeki başvurular (id -> başvuru)
 let pendingDecision = null;         // modalda açık olan karar: { action, applicationID }
+let noticeTimer = null;
 
 // ---------- Ortak yardımcılar ----------
 function getErrorMessages(error) {
@@ -63,6 +72,18 @@ function fillMessageBox(box, messages) {
     });
 
     box.hidden = false;
+}
+
+// ---------- Sayfa üstündeki bildirim (birkaç saniye sonra kaybolur) ----------
+function showNotice(type, text) {
+    noticeBox.className = `alert alert-${type}`;
+    noticeBox.textContent = text;
+    noticeBox.hidden = false;
+
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => {
+        noticeBox.hidden = true;
+    }, 6000);
 }
 
 // ---------- Liste üstündeki mesaj kutusu ----------
@@ -258,23 +279,25 @@ async function submitDecision(event) {
         return;
     }
 
+    const { action, applicationID } = pendingDecision;
+
     hideDecisionError();
     setDecisionBusy(true);
 
     try {
-        await updateApplicationStatus(
-            pendingDecision.applicationID,
-            pendingDecision.action.status,
-            notes
-        );
+        await action.send(applicationID, action.status, notes);
 
         decisionModal.hide();
+        showNotice("success", action.successMessage);
         await loadApplications();   // ekranda her zaman sunucudaki gerçek hal görünsün
     } catch (error) {
-        showDecisionError(getErrorMessages(error));
+        const useCustomMessage =
+            error instanceof ApiError && error.status >= 500 && action.serverErrorMessage;
 
-        // API isteği reddettiyse (örn. zaten karara bağlanmış) liste de eskimiş olabilir
-        if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+        showDecisionError(useCustomMessage ? [action.serverErrorMessage] : getErrorMessages(error));
+
+        // İstek sunucuya ulaşıp başarısız olduysa liste eskimiş olabilir (geri alma yapılmış olabilir)
+        if (error instanceof ApiError && error.status > 0) {
             loadApplications();
         }
     } finally {

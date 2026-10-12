@@ -85,7 +85,6 @@ async function getAllApplications() {
 }
 
 
-// Update status
 async function sendJson(method, path, body) {
     let response;
 
@@ -103,7 +102,9 @@ async function sendJson(method, path, body) {
         throw new ApiError(response.status, await readErrorMessages(response));
     }
 
-    return response.status === 204 ? null : await response.json();
+    // Gövde boş olabilir (örn. Ok() veya 204), boşsa null dön
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
 }
 
 function apiPut(path, body) {
@@ -113,4 +114,9 @@ function apiPut(path, body) {
 // Başvurunun durumunu (onay/ret) ve değerlendirme notunu günceller
 function updateApplicationStatus(applicationID, status, notes) {
     return apiPut("Application/Update/AppStatus", { applicationID, status, notes });
+}
+
+// Başvuruyu onaylar; API stajyer hesabını da oluşturur ve giriş bilgilerini döner
+function acceptApplication(applicationID, status, notes) {
+    return apiPut("Application/Update/AppStatus/accepted", { applicationID, status, notes });
 }

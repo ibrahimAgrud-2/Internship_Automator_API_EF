@@ -100,6 +100,31 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         }
 
 
+            [HttpPut("Update/AppStatus/accepted")]
+            [ProducesResponseType(StatusCodes.Status200OK)]
+            [ProducesResponseType(StatusCodes.Status400BadRequest)]
+            [ProducesResponseType(StatusCodes.Status404NotFound)]
+            public ActionResult<string> Accepted(ApplicationStatusUpdateDTO updatedApplication)
+            {
+                if (updatedApplication == null || updatedApplication.ApplicationID < 1)
+                {
+                    return BadRequest("Invalid Application data");
+                }
+
+                string[] InsertedPassword = _application.ApplicationAccepted(updatedApplication);
+                if (InsertedPassword.Count()!=0)
+                {
+                   return Ok();
+                }
+                else
+                {
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+                
+            }
+
+
         [HttpDelete("{id}", Name = "DeleteApplication")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -138,7 +163,5 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             return false;
 
         }
-   
-        
     }
 }

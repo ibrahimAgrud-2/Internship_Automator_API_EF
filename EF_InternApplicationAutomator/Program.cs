@@ -1,6 +1,7 @@
 using EF_InternApplicationAutomator.DataAccess;
 using EF_InternApplicationAutomator.DataAccess.User;
 using Microsoft.EntityFrameworkCore;
+using Shared.Common;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +46,11 @@ builder.Services.AddScoped<EF_InternApplicationAutomator.Business.Tasks.TasksBL>
 
 builder.Services.AddScoped<EF_InternApplicationAutomator.DataAccess.OngoingProjects.OngoingProjectDataAccess>();
 builder.Services.AddScoped<EF_InternApplicationAutomator.Business.OngoingProjects.OngoingProjectsBL>();
+
+var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>()!;
+builder.Services.AddSingleton(emailSettings);
+builder.Services.AddScoped<EmailService>();
+
 
 var app = builder.Build();
 

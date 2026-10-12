@@ -136,7 +136,7 @@ wwwroot\bootstrap\scss\_utilities.scss
 wwwroot\bootstrap\scss\_variables-dark.scss
 wwwroot\bootstrap\scss\_variables.scss
 wwwroot\index.html
-wwwroot\js\applications.js
 wwwroot\js\apply.js
-wwwroot\Staff\applications.html
 wwwroot\js\api.js
+wwwroot\js\applications.js
+wwwroot\Staff\applications.html

@@ -42,6 +42,18 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
                 intern.CreatedDate, intern.Status);
         }
 
+        public InternResponseDTO FindByPersonID(int personID)
+        {
+            InternEntity intern = (InternEntity)_Context.Interns.Where(i => i.PersonID == personID);
+            if (intern == null)
+            {
+                return null;
+            }
+
+            return new InternResponseDTO(intern.InternID, intern.PersonID,
+                intern.StartDate, intern.EndDate,
+                intern.CreatedDate, intern.Status);
+        }
         public int AddIntern(InternCreateDTO intern)
         {
             InternEntity internEntity = new InternEntity(0, intern.PersonID,

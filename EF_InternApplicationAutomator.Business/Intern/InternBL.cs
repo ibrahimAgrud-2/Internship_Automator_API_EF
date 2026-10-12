@@ -21,6 +21,10 @@ namespace EF_InternApplicationAutomator.Business.Intern
         {
             return _InternDataAccess.Find(internID);
         }
+        public InternResponseDTO FindByPersonID(int personID)
+        {
+            return _InternDataAccess.FindByPersonID(personID);
+        }
 
         public int UpdateIntern(int internID, InternCreateDTO internCreateDTO)
         {
