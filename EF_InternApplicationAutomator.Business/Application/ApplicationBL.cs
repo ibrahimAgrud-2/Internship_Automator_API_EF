@@ -13,9 +13,10 @@ namespace EF_InternApplicationAutomator.Business.Application
     public class ApplicationBL
     {
 
+        public enum enStatus { newApp=0,Cancelled=1,Declined=2,Accepted=3};
 
 
-        ApplicationDataAccess _ApplicationDataAccess;
+         ApplicationDataAccess _ApplicationDataAccess;
         PersonBL _person;
 
         public ApplicationBL(ApplicationDataAccess applicationDataAccess,PersonBL person)
@@ -60,10 +61,10 @@ namespace EF_InternApplicationAutomator.Business.Application
             {
                 personID = personCreateSDTO.PersonID;
             }
-
+          
             //mapping
             //TODO: sistemde aktif user kimse onun ID'sini alsın
-            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,2,null,DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear, 1, newApplicationDTO.Notes, newApplicationDTO.LinkedinURL, newApplicationDTO.GithubURL);
+            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,2,null,DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear,(byte)enStatus.newApp, newApplicationDTO.Notes, newApplicationDTO.LinkedinURL, newApplicationDTO.GithubURL);
 
 
 
