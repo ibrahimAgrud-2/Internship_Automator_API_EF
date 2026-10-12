@@ -112,5 +112,5 @@ function apiPut(path, body) {
 
 // Başvurunun durumunu (onay/ret) ve değerlendirme notunu günceller
 function updateApplicationStatus(applicationID, status, notes) {
-    return apiPut("Application/update/status", { applicationID, status, notes });
+    return apiPut("Application/Update/AppStatus", { applicationID, status, notes });
 }

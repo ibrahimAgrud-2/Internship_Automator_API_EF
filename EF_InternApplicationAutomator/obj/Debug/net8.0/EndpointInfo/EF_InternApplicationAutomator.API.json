@@ -215,7 +215,7 @@
         }
       }
     },
-    "/api/Application/Update/Status": {
+    "/api/Application/Update/AppStatus": {
       "put": {
         "tags": [
           "Application"

@@ -78,7 +78,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         }
 
 
-        [HttpPut("Update/Status")]
+        [HttpPut("Update/AppStatus")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

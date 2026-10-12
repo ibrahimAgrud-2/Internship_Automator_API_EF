@@ -1,5 +1,7 @@
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\appsettings.json
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\libman.json
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\InternAutomator.WebClient.staticwebassets.runtime.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\InternAutomator.WebClient.staticwebassets.endpoints.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\InternAutomator.WebClient.exe
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\InternAutomator.WebClient.deps.json
@@ -27,5 +29,3 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClien
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\obj\Debug\net8.0\InternAutomator.WebClient.pdb
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\obj\Debug\net8.0\InternAutomator.WebClient.genruntimeconfig.cache
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\obj\Debug\net8.0\ref\InternAutomator.WebClient.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\InternAutomator.WebClient.staticwebassets.runtime.json
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\bin\Debug\net8.0\libman.json

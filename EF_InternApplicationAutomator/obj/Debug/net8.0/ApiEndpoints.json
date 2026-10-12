@@ -183,7 +183,7 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
     "Method": "UpdateStatus",
-    "RelativePath": "api/Application/Update/Status",
+    "RelativePath": "api/Application/Update/AppStatus",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,

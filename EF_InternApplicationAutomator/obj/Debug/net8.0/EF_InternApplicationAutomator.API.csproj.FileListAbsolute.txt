@@ -251,10 +251,10 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\EF_Inter.914EAE80.Up2Date
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\EF_InternApplicationAutomator.API.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\refint\EF_InternApplicationAutomator.API.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\EF_InternApplicationAutomator.API.pdb
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\EF_InternApplicationAutomator.API.genruntimeconfig.cache
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\ref\EF_InternApplicationAutomator.API.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
