@@ -297,7 +297,7 @@ async function submitDecision(event) {
         showDecisionError(useCustomMessage ? [action.serverErrorMessage] : getErrorMessages(error));
 
         // İstek sunucuya ulaşıp başarısız olduysa liste eskimiş olabilir (geri alma yapılmış olabilir)
-        if (error instanceof ApiError && error.status > 0) {
+        if (error instanceo f ApiError && error.status > 0) {
             loadApplications();
         }
     } finally {
