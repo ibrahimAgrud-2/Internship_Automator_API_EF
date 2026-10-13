@@ -1,7 +1,8 @@
-﻿// ---------- Sabitler ----------
-// Durum numarası -> ekranda gösterilecek metin ve rozet rengi
-// Giriş yoksa personel login sayfasına yönlendirir
+﻿// Giriş yoksa personel login sayfasına yönlendirir
 const session = renderStaffShell("applications");
+
+// ---------- Sabitler ----------
+// Durum numarası -> ekranda gösterilecek metin ve rozet rengi
 const STATUS = {
     0: { text: "Yeni", badge: "bg-primary" },
     1: { text: "İptal", badge: "bg-secondary" },
@@ -55,61 +56,8 @@ const decisionSubmit = document.getElementById("decisionSubmit");
 // ---------- Durum ----------
 let applicationsById = new Map();   // listedeki başvurular (id -> başvuru)
 let pendingDecision = null;         // modalda açık olan karar: { action, applicationID }
-let noticeTimer = null;
-
-// ---------- Ortak yardımcılar ----------
-function getErrorMessages(error) {
-    return error instanceof ApiError
-        ? error.messages
-        : ["Beklenmeyen bir hata oluştu."];
-}
-
-function fillMessageBox(box, messages) {
-    box.replaceChildren();
-
-    messages.forEach(text => {
-        const line = document.createElement("div");
-        line.textContent = text;
-        box.appendChild(line);
-    });
-
-    box.hidden = false;
-}
-
-// ---------- Sayfa üstündeki bildirim (birkaç saniye sonra kaybolur) ----------
-function showNotice(type, text) {
-    noticeBox.className = `alert alert-${type}`;
-    noticeBox.textContent = text;
-    noticeBox.hidden = false;
-
-    clearTimeout(noticeTimer);
-    noticeTimer = setTimeout(() => {
-        noticeBox.hidden = true;
-    }, 6000);
-}
-
-// ---------- Liste üstündeki mesaj kutusu ----------
-function showStatus(type, messages) {
-    statusBox.className = `alert alert-${type}`;
-    fillMessageBox(statusBox, messages);
-}
-
-function hideStatus() {
-    statusBox.hidden = true;
-}
 
 // ---------- Hücre oluşturucular (veri her zaman textContent ile yazılır) ----------
-function createCell(text) {
-    const td = document.createElement("td");
-    td.textContent = text ?? "";
-    return td;
-}
-
-function formatDate(isoDate) {
-    if (!isoDate) return "";
-    return new Date(isoDate).toLocaleDateString("tr-TR");
-}
-
 function getFullName(application) {
     const person = application.personInfo ?? {};
     return `${person.firstName ?? ""} ${person.lastName ?? ""}`.trim();
@@ -212,7 +160,7 @@ function renderApplications(applications) {
 // ---------- Listeyi yükleme ----------
 async function loadApplications() {
     tableWrapper.hidden = true;
-    showStatus("info", ["Başvurular yükleniyor..."]);
+    showMessage(statusBox, "info", "Başvurular yükleniyor...");
 
     try {
         const applications = await getAllApplications();
@@ -220,7 +168,7 @@ async function loadApplications() {
         applicationsById = new Map(applications.map(a => [a.applicationID, a]));
 
         if (applications.length === 0) {
-            showStatus("secondary", ["Henüz başvuru yok."]);
+            showMessage(statusBox, "secondary", "Henüz başvuru yok.");
             return;
         }
 
@@ -230,22 +178,14 @@ async function loadApplications() {
         );
 
         renderApplications(sorted);
-        hideStatus();
+        hideMessage(statusBox);
         tableWrapper.hidden = false;
     } catch (error) {
-        showStatus("danger", getErrorMessages(error));
+        showError(statusBox, error);
     }
 }
 
 // ---------- Karar penceresi (modal) ----------
-function showDecisionError(messages) {
-    fillMessageBox(decisionError, messages);
-}
-
-function hideDecisionError() {
-    decisionError.hidden = true;
-}
-
 function setDecisionBusy(isBusy) {
     decisionSubmit.disabled = isBusy;
     decisionNotes.disabled = isBusy;
@@ -262,7 +202,7 @@ function openDecisionModal(actionKey, applicationID) {
     decisionSummary.textContent =
         `${getFullName(application)} adlı adayın başvurusu ${action.result}. Lütfen bir not girin.`;
     decisionNotes.value = "";
-    hideDecisionError();
+    hideMessage(decisionError);
     setDecisionBusy(false);
 
     decisionSubmit.className = `btn ${action.buttonClass}`;
@@ -277,26 +217,30 @@ async function submitDecision(event) {
 
     const notes = decisionNotes.value.trim();
     if (!notes) {
-        showDecisionError(["Not alanı zorunludur."]);
+        showMessage(decisionError, "danger", "Not alanı zorunludur.");
         return;
     }
 
     const { action, applicationID } = pendingDecision;
 
-    hideDecisionError();
+    hideMessage(decisionError);
     setDecisionBusy(true);
 
     try {
         await action.send(applicationID, action.status, notes);
 
         decisionModal.hide();
-        showNotice("success", action.successMessage);
+        showNotice(noticeBox, "success", action.successMessage);
         await loadApplications();   // ekranda her zaman sunucudaki gerçek hal görünsün
     } catch (error) {
         const useCustomMessage =
             error instanceof ApiError && error.status >= 500 && action.serverErrorMessage;
 
-        showDecisionError(useCustomMessage ? [action.serverErrorMessage] : getErrorMessages(error));
+        showMessage(
+            decisionError,
+            "danger",
+            useCustomMessage ? action.serverErrorMessage : getErrorMessages(error)
+        );
 
         // İstek sunucuya ulaşıp başarısız olduysa liste eskimiş olabilir (geri alma yapılmış olabilir)
         if (error instanceof ApiError && error.status > 0) {

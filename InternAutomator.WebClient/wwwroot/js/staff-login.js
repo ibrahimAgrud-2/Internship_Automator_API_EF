@@ -9,25 +9,9 @@ if (getSession()?.role === ROLE_STAFF) {
     window.location.replace("/Staff/applications.html");
 }
 
-function showError(messages) {
-    messageBox.replaceChildren();
-
-    const alertDiv = document.createElement("div");
-    alertDiv.className = "alert alert-danger";
-
-    // textContent: sunucudan gelen metin HTML olarak yorumlanmasın
-    messages.forEach(text => {
-        const line = document.createElement("div");
-        line.textContent = text;
-        alertDiv.appendChild(line);
-    });
-
-    messageBox.appendChild(alertDiv);
-}
-
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    messageBox.replaceChildren();
+    hideMessage(messageBox);
     submitButton.disabled = true;   // çift tıklamayı engelle
 
     try {
@@ -46,7 +30,7 @@ form.addEventListener("submit", async (event) => {
         window.location.replace("/Staff/applications.html");
     } catch (error) {
         passwordInput.value = "";
-        showError(error instanceof ApiError ? error.messages : ["Beklenmeyen bir hata oluştu."]);
+        showError(messageBox, error);
         submitButton.disabled = false;
     }
 });

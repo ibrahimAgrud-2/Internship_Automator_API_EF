@@ -3,28 +3,7 @@
 const statusBox = document.getElementById("statusBox");
 const projectList = document.getElementById("projectList");
 
-// ---------- Mesaj kutusu ----------
-function showStatus(type, messages) {
-    statusBox.className = `alert alert-${type}`;
-    statusBox.replaceChildren();
-
-    messages.forEach(text => {
-        const line = document.createElement("div");
-        line.textContent = text;
-        statusBox.appendChild(line);
-    });
-
-    statusBox.hidden = false;
-}
-
-function hideStatus() {
-    statusBox.hidden = true;
-}
-
 // ---------- Kart oluşturucular (veri her zaman textContent ile yazılır) ----------
-function formatDate(isoDate) {
-    return isoDate ? new Date(isoDate).toLocaleDateString("tr-TR") : "-";
-}
 
 // "C#, EF Core, ASP.NET" -> ayrı ayrı etiketler
 function createTechnologyBadges(technologies) {
@@ -69,8 +48,8 @@ function createProjectCard(project) {
     body.append(
         title,
         createTechnologyBadges(project.technologies),
-        createInfoLine("Atanma tarihi", formatDate(project.startDate)),
-        createInfoLine("Teslim tarihi", formatDate(project.dueDate))
+        createInfoLine("Atanma tarihi", formatDate(project.startDate, "-")),
+        createInfoLine("Teslim tarihi", formatDate(project.dueDate, "-"))
     );
 
     card.appendChild(body);
@@ -81,23 +60,20 @@ function createProjectCard(project) {
 // ---------- Sayfa akışı ----------
 async function loadProjects() {
     projectList.replaceChildren();
-    showStatus("info", ["Projeler yükleniyor..."]);
+    showMessage(statusBox, "info", "Projeler yükleniyor...");
 
     try {
         const projects = await getInternProjects(session.internID);
 
         if (projects.length === 0) {
-            showStatus("secondary", ["Henüz size atanmış bir proje yok."]);
+            showMessage(statusBox, "secondary", "Henüz size atanmış bir proje yok.");
             return;
         }
 
-        hideStatus();
+        hideMessage(statusBox);
         projects.forEach(project => projectList.appendChild(createProjectCard(project)));
     } catch (error) {
-        const messages = error instanceof ApiError
-            ? error.messages
-            : ["Beklenmeyen bir hata oluştu."];
-        showStatus("danger", messages);
+        showError(statusBox, error);
     }
 }
 
