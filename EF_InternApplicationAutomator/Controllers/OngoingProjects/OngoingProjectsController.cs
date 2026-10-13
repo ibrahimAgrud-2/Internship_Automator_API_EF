@@ -15,17 +15,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             _OngoingProjects = ongoingProjects;
         }
 
-        [HttpGet("All")]
+        [HttpGet("InternProjects")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<OngoingProjectResponseDTO>> GetAllOngoingProjects()
+        public ActionResult<IEnumerable<OngoingInternProjectResponse>> GetInternOngoingProjects(int internID)
         {
-            List<OngoingProjectResponseDTO> projects = _OngoingProjects.GetAllOngoingProjects();
-            if (projects.Count == 0)
-            {
-                return NotFound("No Data Available in the Table");
-            }
-
+            List<OngoingInternProjectResponse> projects = _OngoingProjects.GetInternOngoingProjects(internID);
             return Ok(projects);
         }
 

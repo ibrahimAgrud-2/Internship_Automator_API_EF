@@ -725,35 +725,6 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
-    "Method": "GetAllOngoingProjects",
-    "RelativePath": "api/OngoingProjects/All",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.OngoingProjects.OngoingProjectResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ]
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
     "Method": "IsOngoingProjectExists",
     "RelativePath": "api/OngoingProjects/exists/{ongoingProjectID}",
     "HttpMethod": "GET",
@@ -769,6 +740,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
+    "Method": "GetInternOngoingProjects",
+    "RelativePath": "api/OngoingProjects/InternProjects",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "internID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.OngoingProjects.OngoingInternProjectResponse, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

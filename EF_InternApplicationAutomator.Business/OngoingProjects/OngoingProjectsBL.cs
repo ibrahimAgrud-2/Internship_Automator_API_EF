@@ -12,9 +12,9 @@ namespace EF_InternApplicationAutomator.Business.OngoingProjects
             _OngoingProjectDataAccess = ongoingProjectDataAccess;
         }
 
-        public List<OngoingProjectResponseDTO> GetAllOngoingProjects()
+        public List<OngoingInternProjectResponse> GetInternOngoingProjects(int internID)
         {
-            return _OngoingProjectDataAccess.GetAllOngoingProjects();
+            return _OngoingProjectDataAccess.GetInternOngoingProjects(internID);
         }
 
         public OngoingProjectResponseDTO? Find(int ongoingProjectID)

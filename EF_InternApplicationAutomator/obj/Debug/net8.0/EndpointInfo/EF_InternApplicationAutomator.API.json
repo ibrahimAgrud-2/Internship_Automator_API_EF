@@ -1015,10 +1015,20 @@
         }
       }
     },
-    "/api/OngoingProjects/All": {
+    "/api/OngoingProjects/InternProjects": {
       "get": {
         "tags": [
           "OngoingProjects"
+        ],
+        "parameters": [
+          {
+            "name": "internID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1028,7 +1038,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OngoingProjectResponseDTO"
+                    "$ref": "#/components/schemas/OngoingInternProjectResponse"
                   }
                 }
               },
@@ -1036,7 +1046,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OngoingProjectResponseDTO"
+                    "$ref": "#/components/schemas/OngoingInternProjectResponse"
                   }
                 }
               },
@@ -1044,28 +1054,8 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OngoingProjectResponseDTO"
+                    "$ref": "#/components/schemas/OngoingInternProjectResponse"
                   }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -3345,6 +3335,44 @@
           "status": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OngoingInternProjectResponse": {
+        "required": [
+          "dueDate",
+          "ongoingProjectID",
+          "projectID",
+          "projectTitle",
+          "startDate",
+          "technologies"
+        ],
+        "type": "object",
+        "properties": {
+          "ongoingProjectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectTitle": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "technologies": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "projectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
