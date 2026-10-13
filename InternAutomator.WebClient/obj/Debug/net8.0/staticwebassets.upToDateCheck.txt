@@ -135,7 +135,8 @@ wwwroot\bootstrap\scss\_type.scss
 wwwroot\bootstrap\scss\_utilities.scss
 wwwroot\bootstrap\scss\_variables-dark.scss
 wwwroot\bootstrap\scss\_variables.scss
-wwwroot\Intern\home.html
+wwwroot\css\shell.css
+wwwroot\index.html
 wwwroot\Intern\login.html
 wwwroot\js\api.js
 wwwroot\js\applications.js
@@ -143,5 +144,6 @@ wwwroot\js\apply.js
 wwwroot\js\auth.js
 wwwroot\js\intern-login.js
 wwwroot\Staff\applications.html
-wwwroot\index.html
+wwwroot\Intern\home.html
 wwwroot\js\intern-home.js
+wwwroot\js\shell.js

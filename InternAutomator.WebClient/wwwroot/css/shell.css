@@ -1,0 +1,44 @@
+﻿/* Stajyer iskeleti: üst çubuk + sol menü + içerik */
+.shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.shell-body {
+    position: relative;
+    display: flex;
+    flex: 1;
+}
+
+.shell-sidebar {
+    width: 240px;
+    flex: 0 0 240px;
+    transition: margin-left 0.2s ease;
+}
+
+.shell-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 1.5rem;
+}
+
+/* Menü kapalıyken sola kayıp gizlenir */
+body.sidebar-collapsed .shell-sidebar {
+    margin-left: -240px;
+}
+
+/* Dar ekranlarda menü içeriğin üstüne biner */
+@media (max-width: 767.98px) {
+    .shell-sidebar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+    }
+
+    body:not(.sidebar-collapsed) .shell-sidebar {
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
+    }
+}

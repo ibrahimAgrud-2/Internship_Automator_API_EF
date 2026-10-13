@@ -5,24 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stajyer Ana Sayfa</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/shell.css?v=5" />
 </head>
-<body>
+<body class="shell">
 
-    <nav class="navbar bg-light border-bottom px-3">
-        <span class="navbar-brand mb-0 h1">Staj Otomasyonu</span>
-        <div>
-            <span id="userName" class="me-3"></span>
-            <button id="logoutButton" type="button" class="btn btn-outline-secondary btn-sm">Çıkış</button>
-        </div>
-    </nav>
+    <header id="shellHeader"></header>
 
-    <main class="container py-4">
-        <h4>Hoş geldin, <span id="welcomeName"></span></h4>
-        <p class="text-muted mb-0">Staj başlangıcı: <span id="startDate"></span></p>
-        <p class="text-muted">Staj bitişi: <span id="endDate"></span></p>
-    </main>
+    <div class="shell-body">
+        <nav id="shellSidebar"></nav>
+
+        <main class="shell-content">
+            <h4 class="mb-4">Hoş geldin, <span id="welcomeName"></span></h4>
+
+            <div class="row g-3">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-muted small">Staj başlangıcı</div>
+                            <div id="startDate" class="fs-5"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-muted small">Staj bitişi</div>
+                            <div id="endDate" class="fs-5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script src="/js/auth.js?v=4"></script>
-    <script src="/js/intern-home.js?v=4"></script>
+    <script src="/js/shell.js?v=5"></script>
+    <script src="/js/intern-home.js?v=5"></script>
 </body>
 </html>
