@@ -26,14 +26,14 @@ namespace Shared.Intern
         [Required]
         public byte Status { get; set; }
 
-        public InterLoginResponseDTO(string name, string lastName, int internID,DateTime startDate, DateTime? endDate)
+        public InterLoginResponseDTO(string name, string lastName, int internID,DateTime startDate, DateTime? endDate,byte status)
         {
             this.InternID = internID;
             this.StartDate = startDate;
             this.EndDate = EndDate;
             this.FirstName = name;
             this.LastName = lastName;
-          
+            this.Status = status;
         }
 
     }

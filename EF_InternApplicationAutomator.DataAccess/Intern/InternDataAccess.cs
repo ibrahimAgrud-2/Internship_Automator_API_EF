@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Application;
 using Shared.Intern;
+using System.Security.Policy;
 
 namespace EF_InternApplicationAutomator.DataAccess.Intern
 {
@@ -29,13 +30,17 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
 
             return internDTOs;
         }
-        public InterLoginResponseDTO? InternInfoLoginSucceed(string email)
+        public InterLoginResponseDTO? FindByPasswordAndEmail(string email,string password)
         {
 
-            InternEntity internEntity= _Context.Interns.FirstOrDefault(i=>i.Person.Email==email);
-            if(internEntity!=null)
+            InternEntity internEntity= _Context.Interns.AsNoTracking().Where(i => i.Person.Email == email && i.PasswordHash == Shared.Common.CommonTools.ComputeHash(password)).Include(i => i.Person).FirstOrDefault();
+            if (internEntity!=null)
             {
-                return new InterLoginResponseDTO(internEntity.Person.FirstName,internEntity.Person.LastName,internEntity.InternID,internEntity.StartDate,internEntity.EndDate);
+                if(internEntity.Person==null)
+                {
+                    return null;
+                }
+                return new InterLoginResponseDTO(internEntity.Person.FirstName,internEntity.Person.LastName,internEntity.InternID,internEntity.StartDate,internEntity.EndDate,internEntity.Status);
             }
             return null;
         }
@@ -64,6 +69,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
                 intern.StartDate, intern.EndDate,
                 intern.CreatedDate, intern.Status);
         }
+      
         public int AddIntern(InternCreateDTO intern)
         {
             InternEntity internEntity = new InternEntity(0, intern.PersonID,

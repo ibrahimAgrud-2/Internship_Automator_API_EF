@@ -14,7 +14,11 @@ namespace Shared.Intern
 
         [Required]
         [MaxLength(100)]
-        public string Email { get; set; }    
+        public string Email { get; set; }
+
+
+        [Required]
+        [MaxLength(100)]
         public string Password { get; set; }
 
         public InternLoginDTO(string email,string password)

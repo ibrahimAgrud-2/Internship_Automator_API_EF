@@ -40,6 +40,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             EndDate = endDate;
             CreatedDate = createdDate;
             Status = status;
+           
         }
     }
 }

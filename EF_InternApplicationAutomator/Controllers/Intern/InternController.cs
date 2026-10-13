@@ -1,4 +1,4 @@
-using EF_InternApplicationAutomator.Business.Intern;
+﻿using EF_InternApplicationAutomator.Business.Intern;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Intern;
 
@@ -9,6 +9,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
     public class InternController : ControllerBase
     {
         private readonly InternBL _Intern;
+
+       
 
         public InternController(InternBL intern)
         {
@@ -126,6 +128,32 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             }
 
             return _Intern.IsInternExists(internID);
+        }
+
+
+        [HttpPost("InternLogin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<InterLoginResponseDTO> InternLogin(InternLoginDTO internLogin)
+        {
+            if (string.IsNullOrEmpty(internLogin.Email)|| string.IsNullOrEmpty(internLogin.Password))
+            {
+                return BadRequest($"E-posta ve şifre zorunludur.");
+            }
+
+            InterLoginResponseDTO intern = _Intern.FindByPasswordAndEmail(internLogin.Email,internLogin.Password);
+            if(intern==null)
+            {
+                return NotFound("E-posta veya şifre hatalı");
+            }
+            else if(intern.Status == (byte)Business.Intern.InternBL.enStatus.separated)
+            {
+               return StatusCode(500, new { message = "Stajyer hesabınız aktif değil " });
+            }
+
+            return Ok(intern);
         }
     }
 }
