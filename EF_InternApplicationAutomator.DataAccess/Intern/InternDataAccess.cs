@@ -1,6 +1,7 @@
 using EF_InternApplicationAutomator.DataAccess.Intern;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Shared.Application;
 using Shared.Intern;
 
 namespace EF_InternApplicationAutomator.DataAccess.Intern
@@ -28,7 +29,16 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
 
             return internDTOs;
         }
+        public InterLoginResponseDTO? InternInfoLoginSucceed(string email)
+        {
 
+            InternEntity internEntity= _Context.Interns.FirstOrDefault(i=>i.Person.Email==email);
+            if(internEntity!=null)
+            {
+                return new InterLoginResponseDTO(internEntity.Person.FirstName,internEntity.Person.LastName,internEntity.InternID,internEntity.StartDate,internEntity.EndDate);
+            }
+            return null;
+        }
         public InternResponseDTO Find(int internID)
         {
             InternEntity intern = _Context.Interns.Find(internID);

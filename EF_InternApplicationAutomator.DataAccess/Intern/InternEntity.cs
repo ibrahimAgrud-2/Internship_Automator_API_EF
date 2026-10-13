@@ -12,6 +12,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         [Required]
         public int PersonID { get; set; }
 
+        [ForeignKey(nameof(PersonID))]
+        public PersonEntity Person { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string PasswordHash { get; set; }
