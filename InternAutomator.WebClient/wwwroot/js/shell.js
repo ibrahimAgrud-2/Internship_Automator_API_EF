@@ -4,7 +4,7 @@ const INTERN_MENU = [
     { key: "home", text: "Ana sayfa", href: "/Intern/home.html" },
     { key: "announcements", text: "Duyurular", href: null },
     { key: "courses", text: "Kurslarım", href: null },
-    { key: "projects", text: "Projelerim", href: null },
+    { key: "projects", text: "Projelerim", href: "/Intern/projects.html" }, 
     { key: "messages", text: "Mesaj", href: null },
     { key: "faq", text: "SSS", href: null }
 ];

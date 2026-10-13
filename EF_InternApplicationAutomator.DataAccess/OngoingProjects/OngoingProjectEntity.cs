@@ -1,3 +1,4 @@
+using EF_InternApplicationAutomator.DataAccess.Project;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,6 +15,11 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
 
         [Required]
         public int ProjectID { get; set; }
+
+
+        [ForeignKey(nameof(ProjectID))]
+        public ProjectEntity Project { get; set; }
+
 
         [Required]
         public DateTime StartDate { get; set; }

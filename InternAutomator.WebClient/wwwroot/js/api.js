@@ -124,3 +124,12 @@ function acceptApplication(applicationID, status, notes) {
 function internLogin(email, password) {
     return apiPost("Intern/InternLogin", { email, password });
 }
+// ---- Stajyer projeleri ----
+async function getInternProjects(internID) {
+    const projects = await apiGet(
+        `OngoingProjects/InternProjects?internID=${encodeURIComponent(internID)}`
+    );
+
+    // API boş durumda dizi yerine metin döndürebiliyor; dizi değilse boş liste say
+    return Array.isArray(projects) ? projects : [];
+}

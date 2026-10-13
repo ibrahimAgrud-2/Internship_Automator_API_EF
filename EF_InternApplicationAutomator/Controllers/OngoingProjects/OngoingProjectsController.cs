@@ -19,9 +19,12 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<OngoingInternProjectResponse>> GetInternOngoingProjects(int internID)
         {
+            
             List<OngoingInternProjectResponse> projects = _OngoingProjects.GetInternOngoingProjects(internID);
             return Ok(projects);
         }
+
+
 
         [HttpGet("{id}", Name = "FindOngoingProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projelerim</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/shell.css?v=5" />
+</head>
+<body class="shell">
+
+    <header id="shellHeader"></header>
+
+    <div class="shell-body">
+        <nav id="shellSidebar"></nav>
+
+        <main class="shell-content">
+            <h4 class="mb-4">Projelerim</h4>
+
+            <!-- Yükleniyor / boş liste / hata mesajları -->
+            <div id="statusBox" class="alert" hidden></div>
+
+            <div id="projectList" class="row g-3"></div>
+        </main>
+    </div>
+
+    <script src="/js/auth.js?v=4"></script>
+    <script src="/js/api.js?v=6"></script>
+    <script src="/js/shell.js?v=6"></script>
+    <script src="/js/intern-projects.js?v=6"></script>
+</body>
+</html>
