@@ -150,7 +150,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             }
             else if(intern.Status == (byte)Business.Intern.InternBL.enStatus.separated)
             {
-               return StatusCode(500, new { message = "Stajyer hesabınız aktif değil " });
+               return StatusCode(403, new { message = "Stajyer hesabınız aktif değil " });
             }
 
             return Ok(intern);

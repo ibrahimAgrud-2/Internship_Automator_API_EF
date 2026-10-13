@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stajyer Ana Sayfa</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+</head>
+<body>
+
+    <nav class="navbar bg-light border-bottom px-3">
+        <span class="navbar-brand mb-0 h1">Staj Otomasyonu</span>
+        <div>
+            <span id="userName" class="me-3"></span>
+            <button id="logoutButton" type="button" class="btn btn-outline-secondary btn-sm">Çıkış</button>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <h4>Hoş geldin, <span id="welcomeName"></span></h4>
+        <p class="text-muted mb-0">Staj başlangıcı: <span id="startDate"></span></p>
+        <p class="text-muted">Staj bitişi: <span id="endDate"></span></p>
+    </main>
+
+    <script src="/js/auth.js?v=4"></script>
+    <script src="/js/intern-home.js?v=4"></script>
+</body>
+</html>

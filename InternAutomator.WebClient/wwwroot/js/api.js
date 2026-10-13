@@ -18,11 +18,10 @@ async function readErrorMessages(response) {
 
     try {
         const data = JSON.parse(text);
-        // ASP.NET model doğrulama hatası: { errors: { Alan: ["mesaj"] } }
         if (data && data.errors) return Object.values(data.errors).flat();
+        if (data && data.message) return [data.message];
         if (data && data.title) return [data.title];
     } catch {
-        // JSON değil, düz metin (BadRequest("...") durumu)
     }
 
     return [text || `İstek reddedildi (kod: ${response.status}).`];
@@ -119,4 +118,9 @@ function updateApplicationStatus(applicationID, status, notes) {
 // Başvuruyu onaylar; API stajyer hesabını da oluşturur ve giriş bilgilerini döner
 function acceptApplication(applicationID, status, notes) {
     return apiPut("Application/Update/AppStatus/accepted", { applicationID, status, notes });
+}
+
+// ---- Stajyer girişi ----
+function internLogin(email, password) {
+    return apiPost("Intern/InternLogin", { email, password });
 }

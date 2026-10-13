@@ -12,7 +12,7 @@ namespace EF_InternApplicationAutomator.Business.Intern
             _InternDataAccess = internDataAccess;
         }
 
-        public enum enStatus { newIntern=0,separated=2};
+        public enum enStatus { newIntern=0,separated=1};
         
 
         public List<InternResponseDTO> GetAllInterns()
