@@ -23,8 +23,8 @@ namespace Shared.Intern
 
         public InternLoginDTO(string email,string password)
         {
-            this.Email = email;
-            this.Password = password;
+            Email = email;
+            Password = password;
         }
     }
 }

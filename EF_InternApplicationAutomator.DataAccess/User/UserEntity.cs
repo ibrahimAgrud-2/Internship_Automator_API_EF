@@ -23,6 +23,9 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         public int PersonID { get; set; }
 
 
+        [ForeignKey(nameof(PersonID))]
+        public PersonEntity Person { get; set; }
+
         [Required]
         public int PermissionType { get; set; }
 

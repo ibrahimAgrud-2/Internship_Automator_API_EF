@@ -1,6 +1,8 @@
 ﻿using EF_InternApplicationAutomator.DataAccess;
+using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.User;
 using Shared;
+using Shared.Intern;
 using Shared.User;
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,10 @@ namespace EF_InternApplicationAutomator.Business.User
         {
             return _userDataAccess.Find(userID);
         }
-
+        public UserLoginResponseDTO? FindByPasswordAndUserName(string userName, string password)
+        {
+            return  _userDataAccess.FindByPasswordAndUserName(userName, password);
+        }
         public int UpdateUser(int userID, UserCreateDTO userCreateDTO)
         {
             return _userDataAccess.UpdateUser(userID, userCreateDTO);

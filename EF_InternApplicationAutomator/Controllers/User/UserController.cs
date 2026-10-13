@@ -1,13 +1,15 @@
 ﻿
-    using EF_InternApplicationAutomator.Business;
-    using EF_InternApplicationAutomator.Business.User;
-    using EF_InternApplicationAutomator.DataAccess;
-    using Microsoft.AspNetCore.Mvc;
-    using Shared;
-    using Shared.User;
-    using System;
+using EF_InternApplicationAutomator.Business;
+using EF_InternApplicationAutomator.Business.User;
+using EF_InternApplicationAutomator.DataAccess;
+using EF_InternApplicationAutomator.DataAccess.User;
+using Microsoft.AspNetCore.Mvc;
+using Shared;
+using Shared.Intern;
+using Shared.User;
+using System;
 
-    namespace EF_InternApplicationAutomator.API.Controllers.User
+namespace EF_InternApplicationAutomator.API.Controllers.User
     {
         [Route("api/User")]
         [ApiController]
@@ -148,6 +150,33 @@
             }
             return false;
               
+        }
+
+
+
+        [HttpPost("UserLogin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<UserLoginResponseDTO> UserLogin(UserLoginDTO loginDTO)
+        {
+            if (string.IsNullOrEmpty(loginDTO.UserName) || string.IsNullOrEmpty(loginDTO.Password))
+            {
+                return BadRequest($"Kullanıcı Adı ve şifre zorunludur.");
+            }
+
+            UserLoginResponseDTO User = _User.FindByPasswordAndUserName(loginDTO.UserName, loginDTO.Password);
+            if (User == null)
+            {
+                return NotFound("Kullanıcı Adı veya şifre hatalı");
+            }
+            else if (!User.IsActive)
+            {
+                return StatusCode(403, new { message = "Hesabınız aktif değil"});
+            }
+
+            return Ok(User);
         }
     }
 }

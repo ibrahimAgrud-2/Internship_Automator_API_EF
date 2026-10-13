@@ -140,6 +140,7 @@ wwwroot\index.html
 wwwroot\Intern\home.html
 wwwroot\Intern\login.html
 wwwroot\Intern\projects.html
+wwwroot\js\api.js
 wwwroot\js\applications.js
 wwwroot\js\apply.js
 wwwroot\js\auth.js
@@ -148,4 +149,3 @@ wwwroot\js\intern-login.js
 wwwroot\js\intern-projects.js
 wwwroot\js\shell.js
 wwwroot\Staff\applications.html
-wwwroot\js\api.js

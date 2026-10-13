@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EF_InternApplicationAutomator.DataAccess.Intern;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;
+using Shared.Intern;
 using Shared.User;
 
 
@@ -44,7 +46,21 @@ namespace EF_InternApplicationAutomator.DataAccess.User
                 return new UserResponseDTO(user.UserID, user.PersonID, user.UserName, user.PermissionType, user.CreatedDate, user.IsActive);
             }
         }
+        public UserLoginResponseDTO? FindByPasswordAndUserName(string userName, string password)
+        {
 
+            UserEntity userEntity = _Context.Users.AsNoTracking().Where(i => i.UserName==userName && i.PasswordHash == Shared.Common.CommonTools.ComputeHash(password)).Include(i => i.Person).FirstOrDefault();
+           
+            if (userEntity == null||userEntity.Person==null)
+            {
+
+                return null;
+            }
+           return new UserLoginResponseDTO(userEntity.UserID, userEntity.Person.FirstName, userEntity.Person.LastName, userEntity.PermissionType, userEntity.IsActive);
+     
+
+            
+        }
         public int UpdateUser(int userID, UserCreateDTO userDTO)
         {
             var user = _Context.Users.Find(userID);
@@ -92,5 +108,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         {
            return _Context.Users.Any(u => u.UserID == userID);
         }
+
+
     }
 }
