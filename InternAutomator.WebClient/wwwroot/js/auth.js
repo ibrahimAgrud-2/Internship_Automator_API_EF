@@ -2,7 +2,7 @@
 // NOT: Token olmadığı için bu bilgi sadece arayüz içindir, güvenlik sağlamaz.
 const SESSION_KEY = "iaa.session";
 const ROLE_INTERN = "intern";
-
+const ROLE_STAFF = "staff";
 function saveSession(session) {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
 }

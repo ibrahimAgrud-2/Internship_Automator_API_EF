@@ -1665,7 +1665,7 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.User.UserController",
-    "Method": "InternLogin",
+    "Method": "UserLogin",
     "RelativePath": "api/User/UserLogin",
     "HttpMethod": "POST",
     "IsController": true,

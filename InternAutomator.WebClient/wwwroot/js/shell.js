@@ -1,13 +1,28 @@
-﻿// Stajyer arayüzünün ortak iskeleti. Menü TEK yerde tanımlıdır.
+﻿// Ortak iskelet: üst çubuk + sol menü. Menüler TEK yerde tanımlıdır.
 // Bir sayfa hazır olunca ilgili satıra sadece adresini (href) yazman yeterli.
 const INTERN_MENU = [
     { key: "home", text: "Ana sayfa", href: "/Intern/home.html" },
     { key: "announcements", text: "Duyurular", href: null },
     { key: "courses", text: "Kurslarım", href: null },
-    { key: "projects", text: "Projelerim", href: "/Intern/projects.html" }, 
+    { key: "projects", text: "Projelerim", href: "/Intern/projects.html" },
     { key: "messages", text: "Mesaj", href: null },
     { key: "faq", text: "SSS", href: null }
 ];
+
+const STAFF_MENU = [
+    { key: "applications", text: "Başvurular", href: "/Staff/applications.html" },
+    { key: "interns", text: "Stajyerler", href: null },
+    { key: "projects", text: "Projeler", href: null },
+    { key: "announcements", text: "Duyurular", href: null },
+    { key: "courses", text: "Kurslar", href: null },
+    { key: "messages", text: "Mesajlar", href: null }
+];
+
+// Rol -> giriş sayfası ve menü
+const SHELL_CONFIG = {
+    [ROLE_INTERN]: { loginPage: "/Intern/login.html", menu: INTERN_MENU },
+    [ROLE_STAFF]: { loginPage: "/Staff/login.html", menu: STAFF_MENU }
+};
 
 function createMenuItem(item, activeKey) {
     const li = document.createElement("li");
@@ -39,7 +54,7 @@ function createMenuItem(item, activeKey) {
     return li;
 }
 
-function renderHeader(session) {
+function renderHeader(session, loginPage) {
     const header = document.getElementById("shellHeader");
     header.className = "navbar bg-light border-bottom px-3";
 
@@ -60,17 +75,17 @@ function renderHeader(session) {
 
     document.getElementById("shellLogout").addEventListener("click", () => {
         clearSession();
-        window.location.replace("/Intern/login.html");
+        window.location.replace(loginPage);
     });
 }
 
-function renderSidebar(activeKey) {
+function renderSidebar(menu, activeKey) {
     const sidebar = document.getElementById("shellSidebar");
     sidebar.className = "shell-sidebar border-end bg-white";
 
     const list = document.createElement("ul");
     list.className = "nav nav-pills flex-column p-3 gap-1";
-    INTERN_MENU.forEach(item => list.appendChild(createMenuItem(item, activeKey)));
+    menu.forEach(item => list.appendChild(createMenuItem(item, activeKey)));
 
     sidebar.replaceChildren(list);
 }
@@ -86,14 +101,25 @@ function initSidebarToggle() {
     });
 }
 
-// Her stajyer sayfası bunu çağırır. Giriş yoksa login'e yönlendirir ve null döner.
-function renderInternShell(activeKey) {
-    const session = requireLogin(ROLE_INTERN, "/Intern/login.html");
+// Role göre iskeleti çizer. Giriş yoksa (ya da rol uymuyorsa) login'e yönlendirir ve null döner.
+function renderShell(role, activeKey) {
+    const config = SHELL_CONFIG[role];
+
+    const session = requireLogin(role, config.loginPage);
     if (!session) return null;
 
-    renderHeader(session);
-    renderSidebar(activeKey);
+    renderHeader(session, config.loginPage);
+    renderSidebar(config.menu, activeKey);
     initSidebarToggle();
 
     return session;
+}
+
+// Sayfaların kullandığı kısa yollar
+function renderInternShell(activeKey) {
+    return renderShell(ROLE_INTERN, activeKey);
+}
+
+function renderStaffShell(activeKey) {
+    return renderShell(ROLE_STAFF, activeKey);
 }

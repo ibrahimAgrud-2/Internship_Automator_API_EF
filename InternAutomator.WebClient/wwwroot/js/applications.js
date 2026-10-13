@@ -1,5 +1,7 @@
 ﻿// ---------- Sabitler ----------
 // Durum numarası -> ekranda gösterilecek metin ve rozet rengi
+// Giriş yoksa personel login sayfasına yönlendirir
+const session = renderStaffShell("applications");
 const STATUS = {
     0: { text: "Yeni", badge: "bg-primary" },
     1: { text: "İptal", badge: "bg-secondary" },
@@ -297,7 +299,7 @@ async function submitDecision(event) {
         showDecisionError(useCustomMessage ? [action.serverErrorMessage] : getErrorMessages(error));
 
         // İstek sunucuya ulaşıp başarısız olduysa liste eskimiş olabilir (geri alma yapılmış olabilir)
-        if (error instanceo f ApiError && error.status > 0) {
+        if (error instanceof ApiError && error.status > 0) {
             loadApplications();
         }
     } finally {
@@ -320,4 +322,7 @@ decisionModalElement.addEventListener("hidden.bs.modal", () => {
     pendingDecision = null;
 });
 
-loadApplications();
+// Giriş yoksa renderStaffShell zaten yönlendirdi
+if (session) {
+    loadApplications();
+}

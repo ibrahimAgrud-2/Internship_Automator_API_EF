@@ -133,3 +133,9 @@ async function getInternProjects(internID) {
     // API boş durumda dizi yerine metin döndürebiliyor; dizi değilse boş liste say
     return Array.isArray(projects) ? projects : [];
 }
+
+
+// ---- Personel girişi ----
+function staffLogin(userName, password) {
+    return apiPost("User/UserLogin", { userName, password });
+}
