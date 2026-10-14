@@ -60,3 +60,21 @@ function createCell(text) {
     td.textContent = text ?? "";
     return td;
 }
+// "C#, EF Core, ASP.NET" -> ayrı ayrı etiketler
+function createTechnologyBadges(technologies) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "d-flex flex-wrap gap-1";
+
+    (technologies ?? "")
+        .split(",")
+        .map(text => text.trim())
+        .filter(Boolean)
+        .forEach(text => {
+            const badge = document.createElement("span");
+            badge.className = "badge text-bg-secondary";
+            badge.textContent = text;
+            wrapper.appendChild(badge);
+        });
+
+    return wrapper;
+}

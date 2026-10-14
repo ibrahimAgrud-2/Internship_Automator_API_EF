@@ -96,7 +96,14 @@ function createActionButton(text, style, action) {
     }
     return button;
 }
-
+// Detay sayfasına giden bağlantı (buton görünümlü)
+function createDetailsLink(internID) {
+    const link = document.createElement("a");
+    link.className = "btn btn-sm btn-outline-primary flex-fill";
+    link.href = `/Staff/intern.html?internID=${encodeURIComponent(internID)}`;
+    link.textContent = "Detaylar";
+    return link;
+}
 function getFullName(intern) {
     return `${intern.firstName} ${intern.lastName}`.trim();
 }
@@ -142,7 +149,7 @@ function createInternCard(intern) {
     // Alt: işlemler (içi dolu butonlar)
     const footer = document.createElement("div");
     footer.className = "d-flex gap-2 px-3 pb-3 pt-1";
-    footer.appendChild(createActionButton("Detaylar", "btn-outline-primary flex-fill"));   // şimdilik pasif
+    footer.appendChild(createDetailsLink(intern.internID));  // şimdilik pasif
     if (isActive) {
         footer.appendChild(createActionButton("Staj Bitir", "btn-outline-danger flex-fill", "separate"));
     }

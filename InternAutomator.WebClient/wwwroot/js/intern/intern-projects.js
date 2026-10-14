@@ -6,22 +6,10 @@ const projectList = document.getElementById("projectList");
 // ---------- Kart oluşturucular (veri her zaman textContent ile yazılır) ----------
 
 // "C#, EF Core, ASP.NET" -> ayrı ayrı etiketler
-function createTechnologyBadges(technologies) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "d-flex flex-wrap gap-1 mb-3";
-
-    (technologies ?? "")
-        .split(",")
-        .map(text => text.trim())
-        .filter(Boolean)
-        .forEach(text => {
-            const badge = document.createElement("span");
-            badge.className = "badge text-bg-secondary";
-            badge.textContent = text;
-            wrapper.appendChild(badge);
-        });
-
-    return wrapper;
+function createBadgesWithSpacing(technologies) {
+    const badges = createTechnologyBadges(technologies);
+    badges.classList.add("mb-3");
+    return badges;
 }
 
 function createInfoLine(label, value) {
@@ -47,7 +35,7 @@ function createProjectCard(project) {
 
     body.append(
         title,
-        createTechnologyBadges(project.technologies),
+        createBadgesWithSpacing(project.technologies),
         createInfoLine("Atanma tarihi", formatDate(project.startDate, "-")),
         createInfoLine("Teslim tarihi", formatDate(project.dueDate, "-"))
     );

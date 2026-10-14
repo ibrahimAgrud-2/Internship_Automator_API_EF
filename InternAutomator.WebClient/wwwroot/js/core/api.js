@@ -148,3 +148,10 @@ async function getAllInterns() {
 function separateIntern(internID) {
     return apiPut(`Intern/Separate/${encodeURIComponent(internID)}`);
 }
+// ---- Stajyer görevleri ----
+async function getInternTasks(internID) {
+    const tasks = await apiGet(`Tasks/AllInternTasks?internID=${encodeURIComponent(internID)}`);
+
+    // Dizi değilse boş liste say
+    return Array.isArray(tasks) ? tasks : [];
+}
