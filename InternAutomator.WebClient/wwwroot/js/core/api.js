@@ -144,3 +144,7 @@ function staffLogin(userName, password) {
 async function getAllInterns() {
     return apiGet("Intern/All");
 }
+
+function separateIntern(internID) {
+    return apiPut(`Intern/Separate/${encodeURIComponent(internID)}`);
+}

@@ -1,7 +1,22 @@
 ﻿const session = renderStaffShell("interns");
 
 const statusBox = document.getElementById("statusBox");
+const noticeBox = document.getElementById("noticeBox");
 const internList = document.getElementById("internList");
+
+// Staj bitirme penceresi
+const separateModalElement = document.getElementById("separateModal");
+const separateModal = new bootstrap.Modal(separateModalElement);
+const separateForm = document.getElementById("separateForm");
+const separateSummary = document.getElementById("separateSummary");
+const separateExpected = document.getElementById("separateExpected");
+const separateConfirm = document.getElementById("separateConfirm");
+const separateSubmit = document.getElementById("separateSubmit");
+const separateCancel = document.getElementById("separateCancel");
+const separateError = document.getElementById("separateError");
+
+let internsById = new Map();
+let pendingIntern = null;   // penceresi açık olan stajyer
 
 // API: status 1 = aktif, 0 = ayrıldı
 const INTERN_ACTIVE = 1;
@@ -12,7 +27,7 @@ const INTERN_STATUS = {
 
 // ---------- Kart oluşturucular (veri her zaman textContent ile yazılır) ----------
 
-// "ibrahim oruc" -> "İO"
+// "ibrahim oruc" -> "IO"
 function getInitials(firstName, lastName) {
     const first = (firstName ?? "").trim().charAt(0);
     const last = (lastName ?? "").trim().charAt(0);
@@ -43,15 +58,24 @@ function createInfoLine(text) {
     return line;
 }
 
-// Şimdilik pasif: işlemler bağlanınca disabled kalkıp click dinleyicisi eklenecek
-function createActionButton(text, style) {
+// action verilmezse buton şimdilik pasiftir ("Yakında")
+function createActionButton(text, style, action) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `btn btn-sm ${style}`;
     button.textContent = text;
-    button.disabled = true;
-    button.title = "Yakında";
+
+    if (action) {
+        button.dataset.action = action;
+    } else {
+        button.disabled = true;
+        button.title = "Yakında";
+    }
     return button;
+}
+
+function getFullName(intern) {
+    return `${intern.firstName} ${intern.lastName}`.trim();
 }
 
 function createInternCard(intern) {
@@ -70,7 +94,7 @@ function createInternCard(intern) {
 
     const name = document.createElement("h5");
     name.className = "mb-0";
-    name.textContent = `${intern.firstName} ${intern.lastName}`.trim();
+    name.textContent = getFullName(intern);
     nameLine.append(name, createStatusBadge(intern.status));
 
     const info = document.createElement("div");
@@ -93,7 +117,7 @@ function createInternCard(intern) {
         createActionButton("Görevler", "btn-outline-primary")
     );
     if (isActive) {
-        actions.appendChild(createActionButton("Staj Bitir", "btn-outline-danger"));
+        actions.appendChild(createActionButton("Staj Bitir", "btn-outline-danger", "separate"));
     }
 
     body.append(createAvatar(intern), info, actions);
@@ -109,6 +133,8 @@ async function loadInterns() {
     try {
         const interns = await getAllInterns();
 
+        internsById = new Map(interns.map(intern => [intern.internID, intern]));
+
         if (interns.length === 0) {
             showMessage(statusBox, "secondary", "Henüz stajyer yok.");
             return;
@@ -121,6 +147,89 @@ async function loadInterns() {
         showError(statusBox, error);
     }
 }
+
+// ---------- Staj bitirme penceresi ----------
+// Büyük/küçük harf ve fazla boşluk farkı önemsenmez
+function normalizeName(text) {
+    return (text ?? "").trim().replace(/\s+/g, " ").toLocaleLowerCase("tr-TR");
+}
+
+function isConfirmationValid() {
+    return pendingIntern !== null &&
+        normalizeName(separateConfirm.value) === normalizeName(getFullName(pendingIntern));
+}
+
+function updateSeparateSubmit() {
+    separateSubmit.disabled = !isConfirmationValid();
+}
+
+function setSeparateBusy(isBusy) {
+    separateConfirm.disabled = isBusy;
+    separateCancel.disabled = isBusy;
+    separateSubmit.disabled = isBusy || !isConfirmationValid();
+}
+
+function openSeparateModal(internID) {
+    const intern = internsById.get(internID);
+    if (!intern || intern.status !== INTERN_ACTIVE) return;
+
+    pendingIntern = intern;
+
+    separateSummary.textContent = `${getFullName(intern)} adlı stajyerin stajı bitirilecek.`;
+    separateExpected.textContent = getFullName(intern);
+    separateConfirm.value = "";
+    hideMessage(separateError);
+    setSeparateBusy(false);
+
+    separateModal.show();
+}
+
+async function submitSeparate(event) {
+    event.preventDefault();
+    if (!isConfirmationValid()) return;   // Enter ile gönderimi de engeller
+
+    const intern = pendingIntern;
+
+    hideMessage(separateError);
+    setSeparateBusy(true);
+
+    try {
+        await separateIntern(intern.internID);
+
+        separateModal.hide();
+        showNotice(noticeBox, "success", `${getFullName(intern)} adlı stajyerin stajı sona erdi.`);
+        await loadInterns();   // ekranda her zaman sunucudaki gerçek hal görünsün
+    } catch (error) {
+        showError(separateError, error);
+
+        // İstek sunucuya ulaştıysa liste eskimiş olabilir (örn. stajyer zaten ayrılmış)
+        if (error instanceof ApiError && error.status > 0) {
+            loadInterns();
+        }
+    } finally {
+        setSeparateBusy(false);
+    }
+}
+
+// ---------- Olay dinleyicileri ----------
+// Kartlar her yüklemede yeniden çizildiği için tek bir dinleyici listede durur
+internList.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const internID = Number(button.closest(".card").dataset.internId);
+
+    if (button.dataset.action === "separate") {
+        openSeparateModal(internID);
+    }
+});
+
+separateConfirm.addEventListener("input", updateSeparateSubmit);
+separateForm.addEventListener("submit", submitSeparate);
+
+separateModalElement.addEventListener("hidden.bs.modal", () => {
+    pendingIntern = null;
+});
 
 // Giriş yoksa renderStaffShell zaten yönlendirdi
 if (session) {

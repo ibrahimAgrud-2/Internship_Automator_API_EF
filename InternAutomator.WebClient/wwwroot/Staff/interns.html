@@ -17,6 +17,9 @@
         <main class="shell-content">
             <h4 class="mb-4">Stajyerler</h4>
 
+            <!-- İşlem sonucu bildirimi (staj bitirildi...) -->
+            <div id="noticeBox" class="alert" role="status" hidden></div>
+
             <!-- Yükleniyor / boş liste / hata mesajları -->
             <div id="statusBox" class="alert" hidden></div>
 
@@ -25,6 +28,40 @@
         </main>
     </div>
 
+    <!-- Staj bitirme onay penceresi -->
+    <div class="modal fade" id="separateModal" tabindex="-1" aria-labelledby="separateTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <form class="modal-content" id="separateForm" autocomplete="off">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="separateTitle">Stajı Bitir</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="separateSummary" class="fw-semibold"></p>
+                    <ul>
+                        <li>Stajyer <strong>ayrıldı</strong> durumuna geçer.</li>
+                        <li>Stajyere yeni proje veya görev atanamaz.</li>
+                        <li>Geçmiş proje ve görev kayıtları korunur.</li>
+                        <li><strong>Bu işlem geri alınamaz.</strong></li>
+                    </ul>
+
+                    <label for="separateConfirm" class="form-label">
+                        Onaylamak için stajyerin adını soyadını yazın:
+                        <strong id="separateExpected"></strong>
+                    </label>
+                    <input type="text" id="separateConfirm" class="form-control" />
+
+                    <div id="separateError" class="alert alert-danger mt-3" hidden></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="separateCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" id="separateSubmit" class="btn btn-danger" disabled>Stajı Bitir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/js/core/auth.js?v=10"></script>
     <script src="/js/core/api.js?v=10"></script>
     <script src="/js/core/ui.js?v=10"></script>

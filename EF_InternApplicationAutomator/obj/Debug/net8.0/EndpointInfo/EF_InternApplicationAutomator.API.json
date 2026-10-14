@@ -995,7 +995,7 @@
         }
       }
     },
-    "/api/Intern/Intern/Separate/{internID}": {
+    "/api/Intern/Separate/{internID}": {
       "put": {
         "tags": [
           "Intern"
