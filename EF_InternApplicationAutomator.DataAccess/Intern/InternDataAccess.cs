@@ -1,8 +1,10 @@
-using EF_InternApplicationAutomator.DataAccess.Intern;
+﻿using EF_InternApplicationAutomator.DataAccess.Intern;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Application;
 using Shared.Intern;
+using Shared.OngoingProjects;
+using System;
 using System.Security.Policy;
 
 namespace EF_InternApplicationAutomator.DataAccess.Intern
@@ -16,19 +18,13 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             _Context = context;
         }
 
-        public List<InternResponseDTO> GetAllIntern()
+        public List<InternDetailedResponseDTO> GetDetailedInternRecord()
         {
-            List<InternEntity> internList = _Context.Interns.ToList();
-            List<InternResponseDTO> internDTOs = new List<InternResponseDTO>();
-
-            foreach (var intern in internList)
-            {
-                internDTOs.Add(new InternResponseDTO(intern.InternID, intern.PersonID,
-                    intern.StartDate, intern.EndDate,
-                    intern.CreatedDate, intern.Status));
-            }
-
-            return internDTOs;
+            FormattableString formattableString = $@"
+                            SELECT *
+                            FROM vw_InternDetails";
+            return _Context.Database
+                .SqlQuery<InternDetailedResponseDTO>(formattableString).ToList(); 
         }
         public InterLoginResponseDTO? FindByPasswordAndEmail(string email,string password)
         {

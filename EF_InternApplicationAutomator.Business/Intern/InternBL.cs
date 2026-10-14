@@ -15,9 +15,9 @@ namespace EF_InternApplicationAutomator.Business.Intern
         public enum enStatus { newIntern=0,separated=1};
         
 
-        public List<InternResponseDTO> GetAllInterns()
+        public List<InternDetailedResponseDTO> GetDetailedInternRecord()
         {
-            return _InternDataAccess.GetAllIntern();
+            return _InternDataAccess.GetDetailedInternRecord();
         }
 
         public InternResponseDTO Find(int internID)

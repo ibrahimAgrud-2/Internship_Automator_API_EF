@@ -1,3 +1,4 @@
+using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.Project;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +13,9 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
 
         [Required]
         public int InternID { get; set; }
+
+        [ForeignKey(nameof(InternID))]
+        public InternEntity Intern { get; set; }
 
         [Required]
         public int ProjectID { get; set; }

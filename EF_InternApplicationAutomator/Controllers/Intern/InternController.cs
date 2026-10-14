@@ -19,15 +19,9 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
 
         [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<InternResponseDTO>> GetAllInterns()
+        public ActionResult<IEnumerable<InternDetailedResponseDTO>> GetAllInterns()
         {
-            List<InternResponseDTO> internList = _Intern.GetAllInterns();
-            if (internList.Count == 0)
-            {
-                return NotFound("No Data Available in the Table");
-            }
-
+            List<InternDetailedResponseDTO> internList = _Intern.GetDetailedInternRecord();
             return Ok(internList);
         }
 

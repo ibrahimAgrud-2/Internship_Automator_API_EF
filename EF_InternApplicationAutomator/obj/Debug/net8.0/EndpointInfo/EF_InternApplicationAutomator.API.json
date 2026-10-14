@@ -508,7 +508,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/InternResponseDTO"
+                    "$ref": "#/components/schemas/InternDetailedResponseDTO"
                   }
                 }
               },
@@ -516,7 +516,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/InternResponseDTO"
+                    "$ref": "#/components/schemas/InternDetailedResponseDTO"
                   }
                 }
               },
@@ -524,7 +524,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/InternResponseDTO"
+                    "$ref": "#/components/schemas/InternDetailedResponseDTO"
                   }
                 }
               }
@@ -3383,6 +3383,49 @@
             "format": "date-time"
           },
           "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InternDetailedResponseDTO": {
+        "type": "object",
+        "properties": {
+          "internID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeProjectCount": {
             "type": "integer",
             "format": "int32"
           }
