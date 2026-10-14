@@ -1,6 +1,8 @@
+using EF_InternApplicationAutomator.DataAccess.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Shared.Application;
 using Shared.OngoingProjects;
+using Shared.Tasks;
 
 namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
 {
@@ -13,7 +15,7 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
             _Context = context;
         }
 
-        public List<OngoingInternProjectResponse> GetInternOngoingProjects(int internID)
+        public List<OngoingInternProjectResponseDTO> GetInternOngoingProjects(int internID)
         {
 
             /*
@@ -24,8 +26,15 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
                 ))
                 .ToList();
              */
+            List<OngoingProjectEntity> ongoingProjectEntities = _Context.OngoingProjects.Include(t => t.Project).Where(t => t.InternID==internID).ToList();
+            List<OngoingInternProjectResponseDTO> taskDTOs = new List<OngoingInternProjectResponseDTO>();
 
-            return _Context.OngoingProjects.Where(p => p.InternID == internID).Select(op => new OngoingInternProjectResponse(op.OngoingProjectID, op.Project.Title, op.Project.Technologies, op.ProjectID, op.StartDate, op.DueDate)).ToList();
+            foreach (var op in ongoingProjectEntities)
+            {
+                taskDTOs.Add(new OngoingInternProjectResponseDTO (op.OngoingProjectID,op.Project.Title,op.Project.Technologies,op.ProjectID,op.StartDate,op.DueDate));
+            }
+
+            return taskDTOs;
         }
 
         public OngoingProjectResponseDTO? Find(int ongoingProjectID)

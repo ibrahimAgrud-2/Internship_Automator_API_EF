@@ -12,9 +12,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             _Context = context;
         }
 
-        public List<TaskResponseDTO> GetAllTasks()
+        public List<TaskResponseDTO> GetAllInternTasks(int internID)
         {
-            List<TaskEntity> tasks = _Context.Tasks.ToList();
+            List<TaskEntity> tasks = _Context.Tasks.Include(t => t.OngoingProject).Where(t => t.OngoingProject.InternID == internID).ToList();
             List<TaskResponseDTO> taskDTOs = new List<TaskResponseDTO>();
 
             foreach (var task in tasks)
@@ -25,74 +25,68 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             return taskDTOs;
         }
 
-        public TaskResponseDTO? Find(int taskID)
-        {
-            TaskEntity? task = _Context.Tasks.Find(taskID);
-            return task == null ? null : ToResponseDTO(task);
-        }
+        //public TaskResponseDTO? Find(int taskID)
+        //{
+        //    TaskEntity? task = _Context.Tasks.Find(taskID);
+        //    return task == null ? null : ToResponseDTO(task);
+        //}
 
-        public int AddTask(TaskCreateDTO task)
-        {
-            TaskEntity taskEntity = new TaskEntity(
-                0,
-                task.CreatedByUserID,
-                task.OngoingProjectID,
-                task.Title,
-                task.CreatedAt,
-                task.DueDate);
-            _Context.Tasks.Add(taskEntity);
+        //public int AddTask(TaskCreateDTO task)
+        //{
+        //    TaskEntity taskEntity = new TaskEntity(
+        //        0,
+        //        task.CreatedByUserID,
+        //        task.OngoingProjectID,
+        //        task.Title,
+        //        task.CreatedAt,
+        //        task.DueDate);
+        //    _Context.Tasks.Add(taskEntity);
 
-            if (_Context.SaveChanges() > 0)
-            {
-                return taskEntity.TaskID;
-            }
+        //    if (_Context.SaveChanges() > 0)
+        //    {
+        //        return taskEntity.TaskID;
+        //    }
 
-            return -1;
-        }
+        //    return -1;
+        //}
 
-        public int UpdateTask(int taskID, TaskCreateDTO taskDTO)
-        {
-            TaskEntity? task = _Context.Tasks.Find(taskID);
-            if (task == null || taskDTO == null)
-            {
-                return -1;
-            }
+        //public int UpdateTask(int taskID, TaskCreateDTO taskDTO)
+        //{
+        //    TaskEntity? task = _Context.Tasks.Find(taskID);
+        //    if (task == null || taskDTO == null)
+        //    {
+        //        return -1;
+        //    }
 
-            task.CreatedByUserID = taskDTO.CreatedByUserID;
-            task.OngoingProjectID = taskDTO.OngoingProjectID;
-            task.Title = taskDTO.Title;
-            task.CreatedAt = taskDTO.CreatedAt;
-            task.DueDate = taskDTO.DueDate;
+        //    task.CreatedByUserID = taskDTO.CreatedByUserID;
+        //    task.OngoingProjectID = taskDTO.OngoingProjectID;
+        //    task.Title = taskDTO.Title;
+        //    task.CreatedAt = taskDTO.CreatedAt;
+        //    task.DueDate = taskDTO.DueDate;
 
-            if (_Context.SaveChanges() > 0)
-            {
-                return taskID;
-            }
+        //    if (_Context.SaveChanges() > 0)
+        //    {
+        //        return taskID;
+        //    }
 
-            return -1;
-        }
+        //    return -1;
+        //}
 
-        public bool DeleteTask(int taskID)
-        {
-            return _Context.Tasks
-                .Where(task => task.TaskID == taskID)
-                .ExecuteDelete() > 0;
-        }
+        //public bool DeleteTask(int taskID)
+        //{
+        //    return _Context.Tasks
+        //        .Where(task => task.TaskID == taskID)
+        //        .ExecuteDelete() > 0;
+        //}
 
-        public bool IsTaskExists(int taskID)
-        {
-            return _Context.Tasks.Any(task => task.TaskID == taskID);
-        }
+        //public bool IsTaskExists(int taskID)
+        //{
+        //    return _Context.Tasks.Any(task => task.TaskID == taskID);
+        //}
 
         private static TaskResponseDTO ToResponseDTO(TaskEntity task)
         {
-            return new TaskResponseDTO(
-                task.TaskID,
-                task.CreatedByUserID,
-                task.OngoingProjectID,
-                task.Title,
-                task.CreatedAt,
-                task.DueDate);
+            return new TaskResponseDTO(task.TaskID,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,task.AssignedDate,task.DueDate,task.Completed,task.CompletedDate);
         }
     }
 }

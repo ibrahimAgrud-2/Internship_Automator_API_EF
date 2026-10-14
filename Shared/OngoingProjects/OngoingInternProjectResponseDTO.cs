@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shared.OngoingProjects
 {
-    public class OngoingInternProjectResponse
+    public class OngoingInternProjectResponseDTO
     {
         [Required]
         public int OngoingProjectID { get; set; }
@@ -27,7 +27,7 @@ namespace Shared.OngoingProjects
         [Required]
         public DateTime DueDate { get; set; }
 
-        public OngoingInternProjectResponse( int ongoingProjectID, string projectTitle,string technologies,    int projectID,      DateTime startDate,
+        public OngoingInternProjectResponseDTO( int ongoingProjectID, string projectTitle,string technologies,    int projectID,      DateTime startDate,
             DateTime dueDate)
         {
             this.OngoingProjectID = ongoingProjectID;
@@ -35,6 +35,7 @@ namespace Shared.OngoingProjects
             this.technologies = technologies;
             this.StartDate = startDate;
             this.DueDate = dueDate;
+            this.ProjectID = projectID;
         }
     }
 }

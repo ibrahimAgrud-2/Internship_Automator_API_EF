@@ -1,6 +1,9 @@
+using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
+using Shared.Tasks;
+using System.Threading.Tasks;
 
 namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
 {
@@ -9,20 +12,33 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
     public class OngoingProjectsController : ControllerBase
     {
         private readonly OngoingProjectsBL _OngoingProjects;
+        private readonly Business.Intern.InternBL _Intern;
 
-        public OngoingProjectsController(OngoingProjectsBL ongoingProjects)
+        public OngoingProjectsController(OngoingProjectsBL ongoingProjects, InternBL intern)
         {
             _OngoingProjects = ongoingProjects;
+            _Intern = intern;
         }
 
         [HttpGet("InternProjects")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<OngoingInternProjectResponse>> GetInternOngoingProjects(int internID)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<OngoingInternProjectResponseDTO>> GetAllInternProjects(int internID)
         {
-            
-            List<OngoingInternProjectResponse> projects = _OngoingProjects.GetInternOngoingProjects(internID);
-            return Ok(projects);
+            if (internID <= 0)
+            {
+                return BadRequest($"Intern ID {internID} Is Not Valid");
+            }
+            if (!_Intern.IsInternExists(internID))
+            {
+                return BadRequest("Such intern Does not exist. ");
+            }
+            List<OngoingInternProjectResponseDTO> tasks = _OngoingProjects.GetInternOngoingProjects(internID);
+
+            return Ok(tasks);
         }
+
 
 
 

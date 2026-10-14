@@ -791,7 +791,7 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
-    "Method": "GetInternOngoingProjects",
+    "Method": "GetAllInternProjects",
     "RelativePath": "api/OngoingProjects/InternProjects",
     "HttpMethod": "GET",
     "IsController": true,
@@ -805,13 +805,31 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.OngoingProjects.OngoingInternProjectResponse, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.OngoingProjects.OngoingInternProjectResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
           "text/json"
         ],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
       }
     ]
   },
@@ -1248,183 +1266,18 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "AddNewTask",
-    "RelativePath": "api/Tasks",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "newTask",
-        "Type": "Shared.Tasks.TaskCreateDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.Tasks.TaskResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 201
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      }
-    ]
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "Find",
-    "RelativePath": "api/Tasks/{id}",
+    "Method": "GetAllInternTasks",
+    "RelativePath": "api/Tasks/AllInternTasks",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "internID",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.Tasks.TaskResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "FindTask"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "UpdateTask",
-    "RelativePath": "api/Tasks/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "taskDTO",
-        "Type": "Shared.Tasks.TaskCreateDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.Tasks.TaskResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "UpdateTask"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "DeleteTask",
-    "RelativePath": "api/Tasks/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 204
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "DeleteTask"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "GetAllTasks",
-    "RelativePath": "api/Tasks/All",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.Tasks.TaskResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
@@ -1442,33 +1295,16 @@
           "application/json",
           "text/json"
         ],
-        "StatusCode": 404
-      }
-    ]
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "IsTaskExists",
-    "RelativePath": "api/Tasks/exists/{taskID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
+        "StatusCode": 400
+      },
       {
-        "Name": "taskID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Boolean",
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
         "MediaTypes": [
           "text/plain",
           "application/json",
           "text/json"
         ],
-        "StatusCode": 200
+        "StatusCode": 404
       }
     ]
   },
