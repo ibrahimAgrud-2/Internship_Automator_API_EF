@@ -153,12 +153,12 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         }
 
 
-        [HttpPut("Intern/Separate/{internID}")]
+        [HttpPut("Separate/{internID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<string> Accepted(int internID)
+        public ActionResult<string> SeparateIntern(int internID)
         {
             if (internID < 1)
             {
