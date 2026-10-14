@@ -415,7 +415,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Shared.Intern.InternResponseDTO",
+        "Type": "Shared.Intern.InternCardResponseDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",

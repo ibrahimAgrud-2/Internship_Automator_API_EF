@@ -20,7 +20,7 @@ namespace EF_InternApplicationAutomator.Business.Intern
             return _InternDataAccess.GetDetailedInternRecord();
         }
 
-        public InternResponseDTO Find(int internID)
+        public InternCardResponseDTO Find(int internID)
         {
             return _InternDataAccess.Find(internID);
         }

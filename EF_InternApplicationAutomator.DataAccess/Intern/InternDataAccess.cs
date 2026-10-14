@@ -1,4 +1,5 @@
 ﻿using EF_InternApplicationAutomator.DataAccess.Intern;
+using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Application;
@@ -12,10 +13,12 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
     public class InternDataAccess
     {
         private readonly IAADbContext _Context;
+        private readonly OngoingProjectDataAccess _OngoingProjectDataAccess;
 
-        public InternDataAccess(IAADbContext context)
+        public InternDataAccess(IAADbContext context, OngoingProjectDataAccess ongoingProjectDataAccess)
         {
             _Context = context;
+            _OngoingProjectDataAccess = ongoingProjectDataAccess;
         }
 
         public List<InternDetailedResponseDTO> GetDetailedInternRecord()
@@ -40,17 +43,15 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             }
             return null;
         }
-        public InternResponseDTO Find(int internID)
+        public InternCardResponseDTO Find(int internID)
         {
-            InternEntity intern = _Context.Interns.Find(internID);
+            InternEntity intern = _Context.Interns.Include(i => i.Person).FirstOrDefault(i=>i.InternID==internID);
             if (intern == null)
             {
                 return null;
             }
-
-            return new InternResponseDTO(intern.InternID, intern.PersonID,
-                intern.StartDate, intern.EndDate,
-                intern.CreatedDate, intern.Status);
+            
+            return new InternCardResponseDTO(intern.InternID,intern.Person.FirstName,intern.Person.LastName,intern.Person.Email,intern.Person.Phone,intern.StartDate,intern.EndDate,intern.Status);
         }
 
         public InternResponseDTO FindByPersonID(int personID)

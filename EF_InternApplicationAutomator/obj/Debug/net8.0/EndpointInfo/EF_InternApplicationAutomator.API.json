@@ -556,17 +556,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/InternResponseDTO"
+                  "$ref": "#/components/schemas/InternCardResponseDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InternResponseDTO"
+                  "$ref": "#/components/schemas/InternCardResponseDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InternResponseDTO"
+                  "$ref": "#/components/schemas/InternCardResponseDTO"
                 }
               }
             }
@@ -3117,6 +3117,45 @@
           "lastName": {
             "minLength": 1,
             "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InternCardResponseDTO": {
+        "type": "object",
+        "properties": {
+          "internID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
           },
           "startDate": {
             "type": "string",

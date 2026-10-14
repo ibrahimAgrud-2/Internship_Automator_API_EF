@@ -31,14 +31,14 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<InternResponseDTO> Find(int ID)
+        public ActionResult<InternCardResponseDTO> Find(int ID)
         {
             if (ID < 1)
             {
                 return BadRequest($"Not Accepted ID {ID}");
             }
 
-            InternResponseDTO intern = _Intern.Find(ID);
+            InternCardResponseDTO intern = _Intern.Find(ID);
             if (intern == null)
             {
                 return NotFound($"No Intern With ID {ID}");
