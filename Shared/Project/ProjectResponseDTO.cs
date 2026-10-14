@@ -1,4 +1,9 @@
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Shared.Project
 {
@@ -8,28 +13,21 @@ namespace Shared.Project
         public int ProjectID { get; set; }
 
         [Required]
-        public int CreatedByUserID { get; set; }
-
-        public string UserName { get; set; }
-
-        [Required]
         [MaxLength(100)]
         public string Title { get; set; }
 
         [Required]
         [MaxLength(100)]
         public string Description { get; set; }
-        
+
 
         [MaxLength(100)]
         public string? Technologies { get; set; }
 
-        public ProjectResponseDTO(int projectID, int createdByUserID, string userName, string title,string description, string? technologies)
+        public ProjectResponseDTO(int projectID, string title, string description, string? technologies)
         {
             ProjectID = projectID;
-            CreatedByUserID = createdByUserID;
             Title = title;
-            this.UserName = userName;
             Technologies = technologies;
             this.Description = description;
 

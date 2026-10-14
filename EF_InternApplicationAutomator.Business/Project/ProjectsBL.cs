@@ -12,12 +12,20 @@ namespace EF_InternApplicationAutomator.Business.Project
             _ProjectDataAccess = projectDataAccess;
         }
 
-        public List<ProjectResponseDTO> GetAllProjects()
+        public List<ProjectListResponseDTO> GetAllProjects()
         {
             return _ProjectDataAccess.GetAllProjects();
         }
 
- 
+        public ProjectResponseDTO Find(int projectID)
+        {
+            return null;
+        }
+
+        public int AddNewProject(ProjectCreateDTO newProject)
+        {
+            return _ProjectDataAccess.AddNewProject(newProject);
+        }
         public bool DeleteProject(int projectID)
         {
             return _ProjectDataAccess.DeleteProject(projectID);
