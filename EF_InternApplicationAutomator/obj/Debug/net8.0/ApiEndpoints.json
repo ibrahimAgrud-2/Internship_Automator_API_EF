@@ -1040,91 +1040,6 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
-    "Method": "AddNewProject",
-    "RelativePath": "api/Projects",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "newProject",
-        "Type": "Shared.Project.ProjectCreateDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.Project.ProjectResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 201
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      }
-    ]
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
-    "Method": "UpdateProject",
-    "RelativePath": "api/Projects/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "projectDTO",
-        "Type": "Shared.Project.ProjectCreateDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.Project.ProjectResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "UpdateProject"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
     "Method": "DeleteProject",
     "RelativePath": "api/Projects/{id}",
     "HttpMethod": "DELETE",
@@ -1166,51 +1081,6 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
-    "Method": "Find",
-    "RelativePath": "api/Projects/{ID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.Project.ProjectResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "FindProject"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
     "Method": "GetAllProjects",
     "RelativePath": "api/Projects/All",
     "HttpMethod": "GET",
@@ -1226,15 +1096,6 @@
           "text/json"
         ],
         "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
       }
     ]
   },
@@ -1254,13 +1115,13 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Int32",
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
         "MediaTypes": [
           "text/plain",
           "application/json",
           "text/json"
         ],
-        "StatusCode": 200
+        "StatusCode": 404
       }
     ]
   },

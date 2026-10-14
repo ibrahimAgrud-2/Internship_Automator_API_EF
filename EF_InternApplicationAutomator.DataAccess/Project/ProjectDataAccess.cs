@@ -14,14 +14,14 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
 
         public List<ProjectResponseDTO> GetAllProjects()
         {
-            List<ProjectEntity> projects = _Context.Projects.ToList();
+            List<ProjectEntity> projects = _Context.Projects.Include(p => p.User).ToList();
             List<ProjectResponseDTO> projectDTOs = new List<ProjectResponseDTO>();
 
             foreach (var project in projects)
             {
                 projectDTOs.Add(new ProjectResponseDTO(
                     project.ProjectID,
-                    project.CreatedByUserID,
+                    project.CreatedByUserID, project.User.UserName,
                     project.Title,project.Description,
                     project.Technologies));
             }
@@ -29,59 +29,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
             return projectDTOs;
         }
 
-        public ProjectResponseDTO? Find(int projectID)
-        {
-            ProjectEntity? project = _Context.Projects.Find(projectID);
-            if (project == null)
-            {
-                return null;
-            }
-
-
-            return new ProjectResponseDTO(
-                project.ProjectID,
-                project.CreatedByUserID,
-                project.Title,project.Description,
-                project.Technologies);
-        }
-
-        public int AddProject(ProjectCreateDTO project)
-        {
-            ProjectEntity projectEntity = new ProjectEntity(
-                0,
-                project.CreatedByUserID,
-                project.Title,project.Description,
-                project.Technologies);
-            _Context.Projects.Add(projectEntity);
-
-            if (_Context.SaveChanges() > 0)
-            {
-                return projectEntity.ProjectID;
-            }
-
-            return -1;
-        }
-
-        public int UpdateProject(int projectID, ProjectCreateDTO projectDTO)
-        {
-            ProjectEntity? project = _Context.Projects.Find(projectID);
-            if (project == null || projectDTO == null)
-            {
-                return -1;
-            }
-
-            project.CreatedByUserID = projectDTO.CreatedByUserID;
-            project.Title = projectDTO.Title;
-            project.Technologies = projectDTO.Technologies;
-
-            if (_Context.SaveChanges() > 0)
-            {
-                return projectID;
-            }
-
-            return -1;
-        }
-
+      
         public bool DeleteProject(int projectID)
         {
             return _Context.Projects

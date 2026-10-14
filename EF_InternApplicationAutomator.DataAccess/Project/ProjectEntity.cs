@@ -1,3 +1,5 @@
+using EF_InternApplicationAutomator.DataAccess.Intern;
+using EF_InternApplicationAutomator.DataAccess.User;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,6 +13,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
 
         [Required]
         public int CreatedByUserID { get; set; }
+
+        [ForeignKey(nameof(CreatedByUserID))]
+        public UserEntity User { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -30,6 +35,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
             Title = title;
             this.Description = description;
             Technologies = technologies;
+         
+          
         }
     }
 }
