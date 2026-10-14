@@ -22,7 +22,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
                 projectDTOs.Add(new ProjectResponseDTO(
                     project.ProjectID,
                     project.CreatedByUserID,
-                    project.Title,
+                    project.Title,project.Description,
                     project.Technologies));
             }
 
@@ -41,7 +41,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
             return new ProjectResponseDTO(
                 project.ProjectID,
                 project.CreatedByUserID,
-                project.Title,
+                project.Title,project.Description,
                 project.Technologies);
         }
 
@@ -50,7 +50,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
             ProjectEntity projectEntity = new ProjectEntity(
                 0,
                 project.CreatedByUserID,
-                project.Title,
+                project.Title,project.Description,
                 project.Technologies);
             _Context.Projects.Add(projectEntity);
 

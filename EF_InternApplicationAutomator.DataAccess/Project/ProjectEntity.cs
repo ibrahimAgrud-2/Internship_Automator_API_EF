@@ -16,14 +16,19 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
         [MaxLength(100)]
         public string Title { get; set; }
 
+        [Required]
+        [MaxLength(200)]
+        public string Description { get; set; }
+
         [MaxLength(100)]
         public string? Technologies { get; set; }
 
-        public ProjectEntity(int projectID, int createdByUserID, string title, string? technologies)
+        public ProjectEntity(int projectID, int createdByUserID, string title,string description ,string? technologies)
         {
             ProjectID = projectID;
             CreatedByUserID = createdByUserID;
             Title = title;
+            this.Description = description;
             Technologies = technologies;
         }
     }

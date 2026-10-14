@@ -2296,6 +2296,48 @@
         }
       }
     },
+    "/api/Projects/AssignedInternCount": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "projectID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Tasks/AllInternTasks": {
       "get": {
         "tags": [
@@ -3521,6 +3563,7 @@
       "ProjectCreateDTO": {
         "required": [
           "createdByUserID",
+          "description",
           "title"
         ],
         "type": "object",
@@ -3530,6 +3573,11 @@
             "format": "int32"
           },
           "title": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
             "maxLength": 100,
             "minLength": 1,
             "type": "string"
@@ -3545,6 +3593,7 @@
       "ProjectResponseDTO": {
         "required": [
           "createdByUserID",
+          "description",
           "projectID",
           "title"
         ],
@@ -3559,6 +3608,11 @@
             "format": "int32"
           },
           "title": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
             "maxLength": 100,
             "minLength": 1,
             "type": "string"

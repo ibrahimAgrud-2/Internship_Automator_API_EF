@@ -36,6 +36,11 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
 
             return taskDTOs;
         }
+
+        public int GetAssignedInternCountForProject(int projectID)
+        {
+            return _Context.OngoingProjects.Where(p=>p.ProjectID==projectID).Count();
+        }
         public int GetInternOngoingProjectsCount(int internID)
         {
             return _Context.OngoingProjects.Include(t => t.Project).Where(t => t.InternID == internID).Count();

@@ -45,5 +45,11 @@ namespace EF_InternApplicationAutomator.Business.OngoingProjects
         {
             return _OngoingProjectDataAccess.IsOngoingProjectExists(ongoingProjectID);
         }
+
+
+        public int GetAssignedInternCountForProject(int projectID)
+        {
+            return _OngoingProjectDataAccess.GetAssignedInternCountForProject(projectID);
+        }
     }
 }

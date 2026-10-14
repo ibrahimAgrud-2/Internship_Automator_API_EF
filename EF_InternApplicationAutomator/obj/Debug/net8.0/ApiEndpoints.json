@@ -1240,6 +1240,32 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
+    "Method": "AssignedInternCount",
+    "RelativePath": "api/Projects/AssignedInternCount",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "projectID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Int32",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
     "Method": "IsProjectExists",
     "RelativePath": "api/Projects/exists/{projectID}",
     "HttpMethod": "GET",

@@ -1,3 +1,4 @@
+using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Project;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Project;
@@ -9,10 +10,12 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
     public class ProjectsController : ControllerBase
     {
         private readonly ProjectsBL _Projects;
+        private readonly OngoingProjectsBL _OngoingProjects;
 
-        public ProjectsController(ProjectsBL projects)
+        public ProjectsController(ProjectsBL projects, OngoingProjectsBL ongoingProjects)
         {
             _Projects = projects;
+            _OngoingProjects = ongoingProjects;
         }
 
         [HttpGet("All")]
@@ -68,7 +71,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             var createdProject = new ProjectResponseDTO(
                 projectID,
                 newProject.CreatedByUserID,
-                newProject.Title,
+                newProject.Title,newProject.Description,
                 newProject.Technologies);
 
             return CreatedAtRoute("FindProject", new { ID = projectID }, createdProject);
@@ -95,7 +98,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
                 return Ok(new ProjectResponseDTO(
                     id,
                     projectDTO.CreatedByUserID,
-                    projectDTO.Title,
+                    projectDTO.Title,projectDTO.Description,
                     projectDTO.Technologies));
             }
 
@@ -130,6 +133,18 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
         public bool IsProjectExists(int projectID)
         {
             return projectID > 0 && _Projects.IsProjectExists(projectID);
+        }
+
+
+        [HttpGet("AssignedInternCount")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<int> AssignedInternCount(int projectID)
+        {
+            if(!_Projects.IsProjectExists(projectID))
+            {
+                return BadRequest($"Project with ID {projectID} does not exists");
+            }
+            return Ok(_OngoingProjects.GetAssignedInternCountForProject(projectID));
         }
     }
 }
