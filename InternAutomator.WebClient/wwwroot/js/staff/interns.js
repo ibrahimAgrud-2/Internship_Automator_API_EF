@@ -4,6 +4,11 @@ const statusBox = document.getElementById("statusBox");
 const noticeBox = document.getElementById("noticeBox");
 const internList = document.getElementById("internList");
 
+// Arama
+const searchInput = document.getElementById("searchInput");
+const searchClear = document.getElementById("searchClear");
+const resultCount = document.getElementById("resultCount");
+
 // Staj bitirme penceresi
 const separateModalElement = document.getElementById("separateModal");
 const separateModal = new bootstrap.Modal(separateModalElement);
@@ -160,6 +165,7 @@ function createInternCard(intern) {
 // ---------- Sayfa akışı ----------
 async function loadInterns() {
     internList.replaceChildren();
+    resultCount.textContent = "";
     showMessage(statusBox, "info", "Stajyerler yükleniyor...");
 
     try {
@@ -168,6 +174,7 @@ async function loadInterns() {
         internsById = new Map(interns.map(intern => [intern.internID, intern]));
 
         if (interns.length === 0) {
+            searchInput.disabled = true;
             showMessage(statusBox, "secondary", "Henüz stajyer yok.");
             return;
         }
@@ -175,8 +182,50 @@ async function loadInterns() {
         hideMessage(statusBox);
         // Sıralama API'dan geldiği gibi gösterilir
         interns.forEach(intern => internList.appendChild(createInternCard(intern)));
+
+        searchInput.disabled = false;
+        applySearch();   // liste yenilense de (örn. staj bitirme sonrası) arama korunur
     } catch (error) {
+        searchInput.disabled = true;
         showError(statusBox, error);
+    }
+}
+
+// ---------- Arama ----------
+// Küçük harfe çevirir, Türkçe karakterleri sadeleştirir (ı/İ -> i, ç -> c, ş -> s ...),
+// böylece "ibrahim", "Ibrahim" ve "İbrahim" aynı şeyi bulur
+function normalizeSearchText(text) {
+    return (text ?? "")
+        .toLocaleLowerCase("tr-TR")
+        .replace(/ı/g, "i")
+        .normalize("NFD")
+        .replace(/\p{M}/gu, "")
+        .trim()
+        .replace(/\s+/g, " ");
+}
+
+// Yazılan her kelime ad soyadın içinde geçmeli; sıra önemli değil ("oruc ibrahim" de bulur)
+function applySearch() {
+    const words = normalizeSearchText(searchInput.value).split(" ").filter(Boolean);
+    const total = internsById.size;
+    let visible = 0;
+
+    internList.querySelectorAll(".intern-card").forEach(card => {
+        const intern = internsById.get(Number(card.dataset.internId));
+        const fullName = intern ? normalizeSearchText(getFullName(intern)) : "";
+        const isMatch = words.every(word => fullName.includes(word));
+
+        card.hidden = !isMatch;
+        if (isMatch) visible++;
+    });
+
+    searchClear.disabled = searchInput.value === "";
+    resultCount.textContent = words.length > 0 ? `${visible} / ${total} stajyer` : `${total} stajyer`;
+
+    if (visible === 0 && total > 0) {
+        showMessage(statusBox, "secondary", "Aramanızla eşleşen stajyer bulunamadı.");
+    } else if (total > 0) {
+        hideMessage(statusBox);
     }
 }
 
@@ -254,6 +303,22 @@ internList.addEventListener("click", (event) => {
     if (button.dataset.action === "separate") {
         openSeparateModal(internID);
     }
+});
+
+
+searchInput.addEventListener("input", applySearch);
+
+searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        searchInput.value = "";
+        applySearch();
+    }
+});
+
+searchClear.addEventListener("click", () => {
+    searchInput.value = "";
+    applySearch();
+    searchInput.focus();
 });
 
 separateConfirm.addEventListener("input", updateSeparateSubmit);

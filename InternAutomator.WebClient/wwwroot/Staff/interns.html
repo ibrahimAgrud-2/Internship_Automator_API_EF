@@ -6,7 +6,7 @@
     <title>Stajyerler</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/shell.css?v=10" />
-    <link rel="stylesheet" href="/css/interns.css?v=10" />
+    <link rel="stylesheet" href="/css/interns.css?v=12" />
 </head>
 <body class="shell">
 
@@ -16,7 +16,20 @@
         <nav id="shellSidebar"></nav>
 
         <main class="shell-content">
-            <h4 class="mb-4">Stajyerler</h4>
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <h4 class="mb-0">Stajyerler</h4>
+
+                <!-- Ad-soyad arama: yazdıkça listeyi süzer -->
+                <div class="d-flex align-items-center gap-3">
+                    <span id="resultCount" class="small text-muted"></span>
+                    <div class="input-group intern-search">
+                        <input type="search" id="searchInput" class="form-control"
+                               placeholder="Ad Soyad ara..." aria-label="Stajyer ara"
+                               autocomplete="off" disabled />
+                        <button type="button" id="searchClear" class="btn btn-outline-secondary" disabled>Temizle</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- İşlem sonucu bildirimi (staj bitirildi...) -->
             <div id="noticeBox" class="alert" role="status" hidden></div>
@@ -66,6 +79,6 @@
     <script src="/js/core/api.js?v=10"></script>
     <script src="/js/core/ui.js?v=10"></script>
     <script src="/js/core/shell.js?v=10"></script>
-    <script src="/js/staff/interns.js?v=10"></script>
+    <script src="/js/staff/interns.js?v=12"></script>
 </body>
 </html>

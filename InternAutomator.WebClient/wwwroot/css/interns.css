@@ -1,4 +1,11 @@
 ﻿/* Stajyer kartları: sabit genişlikli, dikdörtgensi kartlar ızgarası */
+/* Arama kutusu */
+.intern-search {
+    width: 300px;
+    max-width: 100%;
+}
+
+
 .intern-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 280px));
