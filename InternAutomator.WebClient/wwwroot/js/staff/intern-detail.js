@@ -107,16 +107,58 @@ function renderSection({ result, statusBox, list, countBadge, emptyText, createI
     items.forEach(item => list.appendChild(createItem(item)));
 }
 
-// Daralt / Genişlet düğmesinin yazısını bölümün durumuna göre günceller
-function bindCollapseToggle(bodyId, toggleId) {
-    const body = document.getElementById(bodyId);
-    const toggle = document.getElementById(toggleId);
 
-    body.addEventListener("hide.bs.collapse", () => { toggle.textContent = "Genişlet"; });
-    body.addEventListener("show.bs.collapse", () => { toggle.textContent = "Daralt"; });
+// ---------- Stajyer özeti ----------
+function renderInternSummary(intern) {
+    const fullName = `${intern.firstName} ${intern.lastName}`.trim();
+
+    document.getElementById("internName").textContent = fullName;
+    document.title = `${fullName} - Stajyer Detayı`;
+
+    document.getElementById("internStatusBadge").replaceChildren(createInternStatusBadge(intern.status));
+
+    document.getElementById("internContact").textContent =
+        `${intern.email || "-"} · ${intern.phone || "-"}`;
+    document.getElementById("internDates").textContent =
+        `Başlangıç: ${formatDate(intern.startDate, "Belirlenmedi")} · ` +
+        `Bitiş: ${formatDate(intern.endDate, "Belirlenmedi")}`;
+}
+
+// Ayrılan stajyere ekleme yapılamaz. Asıl engel API'dadır; burası sadece kullanıcıyı yönlendirir.
+// Ekle işlemleri henüz yazılmadığı için butonlar şimdilik her durumda pasif kalır.
+function updateAddButtons(intern) {
+    const isActive = intern.status === INTERN_ACTIVE;
+    const title = isActive ? "Yakında" : "Ayrılan stajyere ekleme yapılamaz";
+
+    ["projectsAdd", "tasksAdd"].forEach(id => {
+        const button = document.getElementById(id);
+        button.disabled = true;   // işlem bağlanınca: button.disabled = !isActive
+        button.title = title;
+    });
 }
 
 // ---------- Sayfa akışı ----------
+function showPageError(message) {
+    detailSections.hidden = true;
+    showMessage(pageStatus, "danger", message);
+}
+
+async function loadIntern() {
+    try {
+        const intern = await getIntern(internID);
+        renderInternSummary(intern);
+        updateAddButtons(intern);
+        return intern;
+    } catch (error) {
+        if (error instanceof ApiError && error.status === 404) {
+            showPageError("Stajyer bulunamadı. Lütfen listeden bir stajyer seçin.");
+        } else {
+            showPageError(getErrorMessages(error).join(" "));
+        }
+        return null;
+    }
+}
+
 async function loadDetails() {
     const projectsStatus = document.getElementById("projectsStatus");
     const tasksStatus = document.getElementById("tasksStatus");
@@ -156,16 +198,19 @@ async function loadDetails() {
     });
 }
 
+async function loadPage() {
+    // Önce stajyerin var olduğundan emin ol; yoksa proje/görev istekleri hiç atılmaz
+    const intern = await loadIntern();
+    if (intern) {
+        await loadDetails();
+    }
+}
+
 // Giriş yoksa renderStaffShell zaten yönlendirdi
 if (session) {
-    bindCollapseToggle("projectsBody", "projectsToggle");
-    bindCollapseToggle("tasksBody", "tasksToggle");
-
     if (isValidInternID) {
-        document.getElementById("internInfo").textContent = `Stajyer No: ${internID}`;
-        loadDetails();
+        loadPage();
     } else {
-        detailSections.hidden = true;
-        showMessage(pageStatus, "danger", "Geçersiz stajyer numarası. Lütfen listeden bir stajyer seçin.");
+        showPageError("Geçersiz stajyer numarası. Lütfen listeden bir stajyer seçin.");
     }
 }

@@ -144,7 +144,10 @@ function staffLogin(userName, password) {
 async function getAllInterns() {
     return apiGet("Intern/All");
 }
-
+// Tek stajyerin bilgisi (detay sayfası başlığı için). Yoksa API 404 döner.
+function getIntern(internID) {
+    return apiGet(`Intern/${encodeURIComponent(internID)}`);
+}
 function separateIntern(internID) {
     return apiPut(`Intern/Separate/${encodeURIComponent(internID)}`);
 }

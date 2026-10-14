@@ -23,12 +23,7 @@ const separateError = document.getElementById("separateError");
 let internsById = new Map();
 let pendingIntern = null;   // penceresi açık olan stajyer
 
-// API: status 1 = aktif, 0 = ayrıldı
-const INTERN_ACTIVE = 1;
-const INTERN_STATUS = {
-    1: { text: "Aktif", badge: "text-bg-success" },
-    0: { text: "Ayrıldı", badge: "text-bg-secondary" }
-};
+
 
 // ---------- Kart oluşturucular (veri her zaman textContent ile yazılır) ----------
 
@@ -45,15 +40,6 @@ function createAvatar(intern) {
         "d-flex align-items-center justify-content-center fw-semibold";
     avatar.textContent = getInitials(intern.firstName, intern.lastName);
     return avatar;
-}
-
-function createStatusBadge(status) {
-    const info = INTERN_STATUS[status] ?? { text: "Bilinmiyor", badge: "text-bg-light border" };
-
-    const badge = document.createElement("span");
-    badge.className = `badge ${info.badge}`;
-    badge.textContent = info.text;
-    return badge;
 }
 
 // "Etiket: değer" satırı (sola yaslı)
@@ -130,7 +116,7 @@ function createInternCard(intern) {
     name.textContent = getFullName(intern);
 
     const titles = document.createElement("div");
-    titles.append(name, createStatusBadge(intern.status));
+    titles.append(name, createInternStatusBadge(intern.status));
 
     header.append(createAvatar(intern), titles);
 

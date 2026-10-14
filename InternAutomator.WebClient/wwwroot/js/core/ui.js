@@ -78,3 +78,19 @@ function createTechnologyBadges(technologies) {
 
     return wrapper;
 }
+
+// ---- Stajyer durumu (API: status 1 = aktif, 0 = ayrıldı) ----
+const INTERN_ACTIVE = 1;
+const INTERN_STATUS = {
+    1: { text: "Aktif", badge: "text-bg-success" },
+    0: { text: "Ayrıldı", badge: "text-bg-secondary" }
+};
+
+function createInternStatusBadge(status) {
+    const info = INTERN_STATUS[status] ?? { text: "Bilinmiyor", badge: "text-bg-light border" };
+
+    const badge = document.createElement("span");
+    badge.className = `badge ${info.badge}`;
+    badge.textContent = info.text;
+    return badge;
+}

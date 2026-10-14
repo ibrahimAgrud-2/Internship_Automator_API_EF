@@ -6,6 +6,7 @@
     <title>Stajyer Detayı</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/shell.css?v=11" />
+    <link rel="stylesheet" href="/css/intern-detail.css?v=12" />
 </head>
 <body class="shell">
 
@@ -15,72 +16,65 @@
         <nav id="shellSidebar"></nav>
 
         <main class="shell-content">
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <a href="/Staff/interns.html" class="btn btn-outline-secondary btn-sm">&larr; Stajyerler</a>
-                <h4 class="mb-0">Stajyer Detayı</h4>
-                <span id="internInfo" class="text-muted"></span>
+            <a href="/Staff/interns.html" class="btn btn-outline-secondary btn-sm mb-3">&larr; Stajyerler</a>
+
+            <!-- Stajyer özeti: yüklenince doldurulur -->
+            <div class="mb-4">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    <h4 id="internName" class="mb-0 text-break">Stajyer Detayı</h4>
+                    <span id="internStatusBadge"></span>
+                </div>
+                <div id="internContact" class="small text-muted text-break"></div>
+                <div id="internDates" class="small text-muted"></div>
             </div>
 
             <!-- Geçersiz adres vb. sayfa düzeyindeki mesajlar -->
             <div id="pageStatus" class="alert" hidden></div>
 
-            <div id="detailSections" class="row g-4 align-items-start">
+            <div id="detailSections" class="row g-4">
 
                 <!-- Sol: Projeler -->
                 <section class="col-lg-6">
-                    <div class="card">
+                    <div class="card h-100 detail-panel">
                         <div class="card-header d-flex align-items-center gap-2">
                             <h5 class="mb-0 me-auto">
                                 Projeler <span id="projectsCount" class="badge text-bg-secondary ms-1">0</span>
                             </h5>
-                            <button type="button" class="btn btn-sm btn-outline-primary" disabled title="Yakında">Ekle</button>
-                            <button type="button" id="projectsToggle" class="btn btn-sm btn-outline-secondary"
-                                    data-bs-toggle="collapse" data-bs-target="#projectsBody"
-                                    aria-expanded="true" aria-controls="projectsBody">
-                                Daralt
-                            </button>
+                            <button type="button" id="projectsAdd" class="btn btn-sm btn-outline-primary" disabled title="Yakında">Ekle</button>
                         </div>
-                        <div id="projectsBody" class="collapse show">
-                            <div class="card-body">
-                                <div id="projectsStatus" class="alert" hidden></div>
-                                <div id="projectsList" class="d-flex flex-column gap-3"></div>
-                            </div>
+                        <div class="card-body detail-panel-body">
+                            <div id="projectsStatus" class="alert" hidden></div>
+                            <div id="projectsList" class="d-flex flex-column gap-3"></div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Sağ: Görevler -->
                 <section class="col-lg-6">
-                    <div class="card">
+                    <div class="card h-100 detail-panel">
                         <div class="card-header d-flex align-items-center gap-2">
                             <h5 class="mb-0 me-auto">
                                 Görevler <span id="tasksCount" class="badge text-bg-secondary ms-1">0</span>
                             </h5>
-                            <button type="button" class="btn btn-sm btn-outline-primary" disabled title="Yakında">Ekle</button>
-                            <button type="button" id="tasksToggle" class="btn btn-sm btn-outline-secondary"
-                                    data-bs-toggle="collapse" data-bs-target="#tasksBody"
-                                    aria-expanded="true" aria-controls="tasksBody">
-                                Daralt
-                            </button>
+                            <button type="button" id="tasksAdd" class="btn btn-sm btn-outline-primary" disabled title="Yakında">Ekle</button>
                         </div>
-                        <div id="tasksBody" class="collapse show">
-                            <div class="card-body">
-                                <div id="tasksStatus" class="alert" hidden></div>
-                                <div id="tasksList" class="d-flex flex-column gap-3"></div>
-                            </div>
+                        <div class="card-body detail-panel-body">
+                            <div id="tasksStatus" class="alert" hidden></div>
+                            <div id="tasksList" class="d-flex flex-column gap-3"></div>
                         </div>
                     </div>
                 </section>
 
             </div>
+</div>
         </main>
     </div>
 
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=11"></script>
-    <script src="/js/core/api.js?v=11"></script>
-    <script src="/js/core/ui.js?v=11"></script>
-    <script src="/js/core/shell.js?v=11"></script>
-    <script src="/js/staff/intern-detail.js?v=11"></script>
+    <script src="/js/core/auth.js?v=12"></script>
+    <script src="/js/core/api.js?v=12"></script>
+    <script src="/js/core/ui.js?v=12"></script>
+    <script src="/js/core/shell.js?v=12"></script>
+    <script src="/js/staff/intern-detail.js?v=12"></script>
 </body>
 </html>

@@ -1,0 +1,10 @@
+﻿/* Detay sayfası: Projeler ve Görevler panelleri aynı yükseklikte durur */
+.detail-panel {
+    min-height: 320px;
+}
+
+/* Liste uzarsa panel sınırsız büyümez, kendi içinde kayar */
+.detail-panel-body {
+    max-height: 65vh;
+    overflow-y: auto;
+}
