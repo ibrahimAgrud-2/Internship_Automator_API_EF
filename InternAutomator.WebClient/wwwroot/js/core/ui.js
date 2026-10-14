@@ -94,3 +94,14 @@ function createInternStatusBadge(status) {
     badge.textContent = info.text;
     return badge;
 }
+// Arama için: küçük harfe çevirir, Türkçe karakterleri sadeleştirir (ı/İ -> i, ç -> c, ş -> s ...),
+// böylece "ibrahim", "Ibrahim" ve "İbrahim" aynı şeyi bulur
+function normalizeSearchText(text) {
+    return (text ?? "")
+        .toLocaleLowerCase("tr-TR")
+        .replace(/ı/g, "i")
+        .normalize("NFD")
+        .replace(/\p{M}/gu, "")
+        .trim()
+        .replace(/\s+/g, " ");
+}

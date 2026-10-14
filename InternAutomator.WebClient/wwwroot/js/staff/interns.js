@@ -177,18 +177,6 @@ async function loadInterns() {
     }
 }
 
-// ---------- Arama ----------
-// Küçük harfe çevirir, Türkçe karakterleri sadeleştirir (ı/İ -> i, ç -> c, ş -> s ...),
-// böylece "ibrahim", "Ibrahim" ve "İbrahim" aynı şeyi bulur
-function normalizeSearchText(text) {
-    return (text ?? "")
-        .toLocaleLowerCase("tr-TR")
-        .replace(/ı/g, "i")
-        .normalize("NFD")
-        .replace(/\p{M}/gu, "")
-        .trim()
-        .replace(/\s+/g, " ");
-}
 
 // Yazılan her kelime ad soyadın içinde geçmeli; sıra önemli değil ("oruc ibrahim" de bulur)
 function applySearch() {

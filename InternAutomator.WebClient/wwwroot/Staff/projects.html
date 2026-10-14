@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projeler</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/shell.css?v=13" />
+    <link rel="stylesheet" href="/css/interns.css?v=13" />
+    <link rel="stylesheet" href="/css/projects.css?v=13" />
+</head>
+<body class="shell">
+
+    <header id="shellHeader"></header>
+
+    <div class="shell-body">
+        <nav id="shellSidebar"></nav>
+
+        <main class="shell-content">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <h4 class="mb-0">Projeler</h4>
+
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <span id="resultCount" class="small text-muted"></span>
+                    <div class="input-group intern-search">
+                        <input type="search" id="searchInput" class="form-control"
+                               placeholder="Proje adı ara..." aria-label="Proje ara"
+                               autocomplete="off" disabled />
+                        <button type="button" id="searchClear" class="btn btn-outline-secondary" disabled>Temizle</button>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary" disabled title="Yakında">Proje Ekle</button>
+                </div>
+            </div>
+
+            <!-- Yükleniyor / boş liste / hata mesajları -->
+            <div id="statusBox" class="alert" hidden></div>
+
+            <div id="projectList" class="project-grid"></div>
+        </main>
+    </div>
+
+    <!-- Proje detay penceresi -->
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-break" id="projectModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="projectModalDescription" class="text-break" style="white-space: pre-line"></p>
+                    <div id="projectModalTechnologies" class="mb-3"></div>
+
+                    <div class="small"><span class="text-muted">Oluşturan: </span><span id="projectModalCreator"></span></div>
+                    <div class="small"><span class="text-muted">Atanan stajyer sayısı: </span><span id="projectModalCount"></span></div>
+
+                    <div id="projectModalError" class="alert alert-danger mt-3" hidden></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/core/auth.js?v=13"></script>
+    <script src="/js/core/api.js?v=13"></script>
+    <script src="/js/core/ui.js?v=13"></script>
+    <script src="/js/core/shell.js?v=13"></script>
+    <script src="/js/staff/projects.js?v=13"></script>
+</body>
+</html>

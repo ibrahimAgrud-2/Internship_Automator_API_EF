@@ -158,3 +158,16 @@ async function getInternTasks(internID) {
     // Dizi değilse boş liste say
     return Array.isArray(tasks) ? tasks : [];
 }
+
+
+// ---- Proje kataloğu ----
+// Boş tabloda da 200 ve [] döner
+async function getAllProjects() {
+    const projects = await apiGet("Projects/All");
+    return Array.isArray(projects) ? projects : [];
+}
+
+// Projenin kaç stajyere atandığı (liste cevabında yok; detay penceresi açılınca tek tek istenir)
+async function getProjectAssignedInternCount(projectID) {
+    return Number(await apiGet(`Projects/AssignedInternCount?projectID=${encodeURIComponent(projectID)}`));
+}
