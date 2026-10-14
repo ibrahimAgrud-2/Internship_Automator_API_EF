@@ -53,7 +53,11 @@ namespace EF_InternApplicationAutomator.Business.Intern
         }
 
 
-     
+        public bool SeparateIntern(int internID)
+        {
+            return _InternDataAccess.SeparateIntern(internID); 
+        }
+
 
     }
 }

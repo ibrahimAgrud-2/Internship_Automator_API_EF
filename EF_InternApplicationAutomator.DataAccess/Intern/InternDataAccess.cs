@@ -115,5 +115,18 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         {
             return _Context.Interns.Any(intern => intern.InternID == internID);
         }
+
+        public bool SeparateIntern(int internID)
+        {
+            var intern = _Context.Interns.Find(internID);
+            if (internID<=0||intern==null)
+            {
+                return false;
+            }
+            intern.Status = 0;
+            intern.EndDate = DateTime.Now.Date;
+
+            return _Context.SaveChanges() > 0;
+        }
     }
 }

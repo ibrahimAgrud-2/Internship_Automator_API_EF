@@ -1,6 +1,8 @@
 ﻿using EF_InternApplicationAutomator.Business.Intern;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Application;
 using Shared.Intern;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Intern
 {
@@ -149,5 +151,33 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
 
             return Ok(intern);
         }
+
+
+        [HttpPut("Intern/Separate/{internID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<string> Accepted(int internID)
+        {
+            if (internID < 1)
+            {
+                return BadRequest("Invalid Intern ID ");
+            }
+            if(!_Intern.IsInternExists(internID))
+            {
+                return NotFound("Intern Does Not Exists");
+            }
+            if(_Intern.SeparateIntern(internID))
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+          
+        }
+
     }
 }
