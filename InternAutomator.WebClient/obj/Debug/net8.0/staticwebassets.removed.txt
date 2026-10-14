@@ -1,9 +1,0 @@
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\api.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\auth.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\shell.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\applications.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\apply.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\intern-home.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\intern-login.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\intern-projects.js
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\InternAutomator.WebClient\wwwroot\js\staff-login.js

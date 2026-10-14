@@ -139,3 +139,8 @@ async function getInternProjects(internID) {
 function staffLogin(userName, password) {
     return apiPost("User/UserLogin", { userName, password });
 }
+
+// Boş tabloda da 200 ve [] döner; 404 gerçek bir hatadır (yol yanlış vb.)
+async function getAllInterns() {
+    return apiGet("Intern/All");
+}

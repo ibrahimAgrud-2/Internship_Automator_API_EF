@@ -42,3 +42,9 @@ body.sidebar-collapsed .shell-sidebar {
         box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
     }
 }
+/* Stajyer kartındaki baş harf dairesi */
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}

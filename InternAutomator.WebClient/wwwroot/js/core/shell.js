@@ -11,7 +11,7 @@ const INTERN_MENU = [
 
 const STAFF_MENU = [
     { key: "applications", text: "Başvurular", href: "/Staff/applications.html" },
-    { key: "interns", text: "Stajyerler", href: null },
+    { key: "interns", text: "Stajyerler", href: "/Staff/interns.html" },
     { key: "projects", text: "Projeler", href: null },
     { key: "announcements", text: "Duyurular", href: null },
     { key: "courses", text: "Kurslar", href: null },
