@@ -26,6 +26,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
                     project.Technologies));
             }
 
+          
+
             return projectDTOs;
         }
 
