@@ -51,11 +51,34 @@ function createStatusBadge(status) {
     return badge;
 }
 
-function createInfoLine(text) {
-    const line = document.createElement("div");
-    line.className = "small text-muted";
-    line.textContent = text;
-    return line;
+// "Etiket: değer" satırı (sola yaslı)
+function createInfoRow(label, value) {
+    const row = document.createElement("div");
+    row.className = "small text-break";
+
+    const labelElement = document.createElement("span");
+    labelElement.className = "text-muted";
+    labelElement.textContent = `${label}: `;
+
+    const valueElement = document.createElement("span");
+    valueElement.textContent = value;
+
+    row.append(labelElement, valueElement);
+    return row;
+}
+
+// Başlıklı bölüm: başlık + satırlar [[etiket, değer], ...]
+function createSection(title, rows) {
+    const section = document.createElement("div");
+    section.className = "mb-3";
+
+    const heading = document.createElement("div");
+    heading.className = "intern-section-title";
+    heading.textContent = title;
+
+    section.appendChild(heading);
+    rows.forEach(([label, value]) => section.appendChild(createInfoRow(label, value)));
+    return section;
 }
 
 // action verilmezse buton şimdilik pasiftir ("Yakında")
@@ -78,53 +101,55 @@ function getFullName(intern) {
     return `${intern.firstName} ${intern.lastName}`.trim();
 }
 
+
 function createInternCard(intern) {
     const isActive = intern.status === INTERN_ACTIVE;
 
     const card = document.createElement("div");
-    card.className = "card mb-3" + (isActive ? "" : " opacity-75");
+    card.className = "card intern-card" + (isActive ? "" : " intern-card-left opacity-75");
     card.dataset.internId = intern.internID;   // detay sayfası için hazır
 
-    const body = document.createElement("div");
-    body.className = "card-body d-flex align-items-center flex-wrap gap-3";
-
-    // Başlık: ad soyad + durum rozeti
-    const nameLine = document.createElement("div");
-    nameLine.className = "d-flex align-items-center gap-2";
+    // Üst: avatar + ad soyad + durum rozeti (sola yaslı)
+    const header = document.createElement("div");
+    header.className = "d-flex align-items-center gap-3 p-3 pb-2";
 
     const name = document.createElement("h5");
-    name.className = "mb-0";
+    name.className = "mb-1 text-break";
     name.textContent = getFullName(intern);
-    nameLine.append(name, createStatusBadge(intern.status));
 
-    const info = document.createElement("div");
-    info.className = "flex-grow-1";
-    info.append(
-        nameLine,
-        createInfoLine(`${intern.email || "-"} · ${intern.phone || "-"}`),
-        createInfoLine(
-            `Başlangıç: ${formatDate(intern.startDate, "Belirlenmedi")} · ` +
-            `Bitiş: ${formatDate(intern.endDate, "Belirlenmedi")}`
-        ),
-        createInfoLine(`${intern.activeProjectCount ?? 0} aktif proje`)
+    const titles = document.createElement("div");
+    titles.append(name, createStatusBadge(intern.status));
+
+    header.append(createAvatar(intern), titles);
+
+    // Orta: başlıklı bölümler
+    const body = document.createElement("div");
+    body.className = "px-3 flex-grow-1";
+    body.append(
+        createSection("Bilgiler", [
+            ["E-posta", intern.email || "-"],
+            ["Telefon", intern.phone || "-"]
+        ]),
+        createSection("Staj", [
+            ["Başlangıç", formatDate(intern.startDate, "Belirlenmedi")],
+            ["Bitiş", formatDate(intern.endDate, "Belirlenmedi")]
+        ]),
+        createSection("Projeler", [
+            ["Aktif proje sayısı", String(intern.activeProjectCount ?? 0)]
+        ])
     );
 
-    // İşlemler
-    const actions = document.createElement("div");
-    actions.className = "d-flex gap-2";
-    actions.append(
-        createActionButton("Projeler", "btn-outline-primary"),
-        createActionButton("Görevler", "btn-outline-primary")
-    );
+    // Alt: işlemler (içi dolu butonlar)
+    const footer = document.createElement("div");
+    footer.className = "d-flex gap-2 px-3 pb-3 pt-1";
+    footer.appendChild(createActionButton("Detaylar", "btn-outline-primary flex-fill"));   // şimdilik pasif
     if (isActive) {
-        actions.appendChild(createActionButton("Staj Bitir", "btn-outline-danger", "separate"));
+        footer.appendChild(createActionButton("Staj Bitir", "btn-outline-danger flex-fill", "separate"));
     }
 
-    body.append(createAvatar(intern), info, actions);
-    card.appendChild(body);
+    card.append(header, body, footer);
     return card;
 }
-
 // ---------- Sayfa akışı ----------
 async function loadInterns() {
     internList.replaceChildren();
