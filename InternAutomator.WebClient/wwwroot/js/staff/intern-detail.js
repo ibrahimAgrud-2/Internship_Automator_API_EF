@@ -80,12 +80,36 @@ function createTaskItem(task, projectTitles) {
         dates += ` · Tamamlanma: ${formatDate(task.completedDate, "-")}`;
     }
     box.appendChild(createInfoLine(dates));
+    box.appendChild(createInfoLine(dates));
 
+    // Tamamlanmamış görevde "Tamamla" butonu çıkar. Ayrılan stajyerde pasiftir (asıl engel API'dadır).
+    if (!task.completed) {
+        const footer = document.createElement("div");
+        footer.className = "mt-2 text-end";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-sm btn-outline-success";
+        button.dataset.action = "complete";
+        button.dataset.taskId = task.taskID;
+        button.textContent = "Tamamla";
+
+        if (currentIntern && currentIntern.status !== INTERN_ACTIVE) {
+            button.disabled = true;
+            button.title = "Ayrılan stajyerin görevi değiştirilemez";
+        }
+
+        footer.appendChild(button);
+        box.appendChild(footer);
+    }
+
+    return box;
     return box;
 }
 
 let internProjects = [];
 let currentIntern = null;
+let internTasks = [];
 // ---------- Bölüm çizimi ----------
 // result: Promise.allSettled sonucu. Her bölüm birbirinden bağımsız hata gösterir.
 function renderSection({ result, statusBox, list, countBadge, emptyText, createItem }) {
@@ -184,6 +208,7 @@ async function loadDetails() {
     internProjects = projectsResult.status === "fulfilled" ? projectsResult.value : [];
     updateAddButtons();
     internProjects = projectsResult.status === "fulfilled" ? projectsResult.value : [];
+    internTasks = tasksResult.status === "fulfilled" ? tasksResult.value : [];
     renderSection({
         result: projectsResult,
         statusBox: projectsStatus,

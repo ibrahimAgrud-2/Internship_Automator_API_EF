@@ -212,3 +212,7 @@ function assignProjectToIntern(internID, projectID, dueDate) {
 function addTask(task) {
     return apiPost("Tasks/Add", task);
 }
+// Görevi tamamlandı olarak işaretler. Başarıda API true döner.
+function completeTask(taskID) {
+    return apiPut(`Tasks/Complete/${encodeURIComponent(taskID)}`);
+}

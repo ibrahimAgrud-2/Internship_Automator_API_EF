@@ -112,6 +112,10 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return NotFound($"No Task With ID {id}");
             }
+            if(task.Completed)
+            {
+                return BadRequest("Görev zaten tamamlanmış.");
+            }
             if(_Tasks.CompleteTask(id))
             {
                 return Ok(true);
