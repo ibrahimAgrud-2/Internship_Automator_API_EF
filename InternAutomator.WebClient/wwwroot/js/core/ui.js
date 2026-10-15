@@ -105,3 +105,7 @@ function normalizeSearchText(text) {
         .trim()
         .replace(/\s+/g, " ");
 }
+
+// Alan uzunlukları: veritabanı sütunlarına göre ayarla. Asıl doğrulama API'dadır;
+// buradaki sınırlar sadece kullanıcıyı baştan uyarır.
+const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };

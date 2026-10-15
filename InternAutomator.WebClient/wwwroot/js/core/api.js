@@ -201,3 +201,8 @@ function deleteProject(projectID) {
 function updateProject(projectID, project) {
     return apiPut(`Projects/Update/${projectID}`, project);
 }
+// Stajyere mevcut bir projeyi atar. dueDate boş olabilir (null).
+// Başlangıç tarihini API atandığı gün olarak belirler.
+function assignProjectToIntern(internID, projectID, dueDate) {
+    return apiPost("OngoingProjects/Add", { internID, projectID, dueDate });
+}

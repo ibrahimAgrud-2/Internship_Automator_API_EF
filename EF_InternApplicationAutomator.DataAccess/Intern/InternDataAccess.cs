@@ -116,7 +116,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         {
             return _Context.Interns.Any(intern => intern.InternID == internID);
         }
-
+        public bool IsInternActive(int internID)
+        {
+            return _Context.Interns.Any(intern => intern.InternID == internID&&intern.Status==1);
+        }
         public bool SeparateIntern(int internID)
         {
             var intern = _Context.Interns.Find(internID);

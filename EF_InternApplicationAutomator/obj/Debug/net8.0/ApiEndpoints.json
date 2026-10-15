@@ -639,56 +639,6 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
-    "Method": "UpdateOngoingProject",
-    "RelativePath": "api/OngoingProjects/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "ongoingProjectDTO",
-        "Type": "Shared.OngoingProjects.OngoingProjectCreateDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Shared.OngoingProjects.OngoingProjectResponseDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "UpdateOngoingProject"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
     "Method": "DeleteOngoingProject",
     "RelativePath": "api/OngoingProjects/{id}",
     "HttpMethod": "DELETE",
@@ -737,7 +687,7 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "newOngoingProject",
+        "Name": "ongoingProjectDTO",
         "Type": "Shared.OngoingProjects.OngoingProjectCreateDTO",
         "IsRequired": true
       }
@@ -821,6 +771,60 @@
           "text/json"
         ],
         "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.OngoingProjects.OngoingProjectsController",
+    "Method": "UpdateOngoingProject",
+    "RelativePath": "api/OngoingProjects/Update/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "ongoingProjectDTO",
+        "Type": "Shared.OngoingProjects.OngoingProjectCreateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Shared.OngoingProjects.OngoingProjectResponseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",

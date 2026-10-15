@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stajyer Detayı</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=16" />
-    <link rel="stylesheet" href="/css/intern-detail.css?v=16" />
+    <link rel="stylesheet" href="/css/shell.css?v=17" />
+    <link rel="stylesheet" href="/css/intern-detail.css?v=17" />
 </head>
 <body class="shell">
 
@@ -27,7 +27,8 @@
                 <div id="internContact" class="small text-muted text-break"></div>
                 <div id="internDates" class="small text-muted"></div>
             </div>
-
+            <!-- İşlem sonucu bildirimi (proje atandı vb.) -->
+            <div id="noticeBox" class="alert" role="status" hidden></div>
             <!-- Geçersiz adres vb. sayfa düzeyindeki mesajlar -->
             <div id="pageStatus" class="alert" hidden></div>
 
@@ -40,7 +41,7 @@
                             <h5 class="mb-0 me-auto">
                                 Projeler <span id="projectsCount" class="badge text-bg-secondary ms-1">0</span>
                             </h5>
-                            <button type="button" id="projectsAdd" class="btn btn-sm btn-outline-primary" disabled title="Yakında">Ekle</button>
+                            <button type="button" id="projectsAdd" class="btn btn-sm btn-outline-primary" disabled>Ekle</button>
                         </div>
                         <div class="card-body detail-panel-body">
                             <div id="projectsStatus" class="alert" hidden></div>
@@ -66,15 +67,73 @@
                 </section>
 
             </div>
-</div>
-        </main>
     </div>
+    </main>
+    </div>
+    <!-- Proje ata penceresi: aynı pencerede "liste" ve "yeni proje" görünümleri vardır -->
+    <div class="modal fade" id="assignProjectModal" tabindex="-1" aria-labelledby="assignProjectTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title me-auto" id="assignProjectTitle">Proje Ata</h5>
+                    <button type="button" id="assignNewProject" class="btn btn-sm btn-outline-primary">Yeni Proje Ekle</button>
+                </div>
 
+                <div class="modal-body">
+                    <div id="assignError" class="alert" role="alert" hidden></div>
+
+                    <!-- Görünüm 1: mevcut projeler -->
+                    <div id="assignListView">
+                        <div id="assignStatus" class="alert" hidden></div>
+                        <div id="assignList" class="list-group assign-list"></div>
+                    </div>
+
+                    <!-- Görünüm 2: yeni proje formu -->
+                    <form id="assignCreateForm" autocomplete="off" novalidate hidden>
+                        <div class="mb-3">
+                            <label for="assignTitleInput" class="form-label">Proje adı <span class="text-danger">*</span></label>
+                            <input type="text" id="assignTitleInput" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="assignTechnologiesInput" class="form-label">Teknolojiler</label>
+                            <input type="text" id="assignTechnologiesInput" class="form-control" placeholder="C#, EF Core, ASP.NET" />
+                            <div class="form-text">Virgülle ayırın.</div>
+                        </div>
+                        <div>
+                            <label for="assignDescriptionInput" class="form-label">Açıklama</label>
+                            <textarea id="assignDescriptionInput" class="form-control" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- Liste görünümü (d-flex, hidden özelliğini ezdiği için dış kutu ayrı tutulur) -->
+                    <div id="assignListFooter" class="w-100">
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="assignDueDate" class="small text-muted mb-0">Teslim tarihi (isteğe bağlı)</label>
+                            <input type="date" id="assignDueDate" class="form-control form-control-sm w-auto" />
+                            <button type="button" id="assignCancel" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Vazgeç</button>
+                            <button type="button" id="assignConfirm" class="btn btn-primary" disabled>Projeyi Ata</button>
+                        </div>
+                    </div>
+                    <!-- Yeni proje görünümü -->
+                    <div id="assignCreateFooter" class="w-100" hidden>
+                        <div class="d-flex gap-2">
+                            <button type="button" id="assignBack" class="btn btn-secondary">Geri</button>
+                            <button type="submit" id="assignCreateSubmit" form="assignCreateForm" class="btn btn-primary ms-auto">Projeyi Ekle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=16"></script>
-    <script src="/js/core/api.js?v=16"></script>
-    <script src="/js/core/ui.js?v=16"></script>
-    <script src="/js/core/shell.js?v=16"></script>
-    <script src="/js/staff/intern-detail.js?v=16"></script>
+    <script src="/js/core/auth.js?v=17"></script>
+    <script src="/js/core/api.js?v=17"></script>
+    <script src="/js/core/ui.js?v=17"></script>
+    <script src="/js/core/shell.js?v=17"></script>
+    <script src="/js/staff/intern-detail.js?v=17"></script>
+    <script src="/js/staff/intern-assign-project.js?v=17"></script>
 </body>
 </html>

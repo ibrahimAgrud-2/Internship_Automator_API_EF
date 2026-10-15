@@ -1,5 +1,6 @@
 ﻿using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
+using EF_InternApplicationAutomator.Business.Project;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
 using Shared.Tasks;
@@ -15,10 +16,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         private readonly Business.Intern.InternBL _Intern;
         private readonly Business.Project.ProjectsBL _Project;
 
-        public OngoingProjectsController(OngoingProjectsBL ongoingProjects, InternBL intern)
+        public OngoingProjectsController(OngoingProjectsBL ongoingProjects, InternBL intern, ProjectsBL project)
         {
             _OngoingProjects = ongoingProjects;
             _Intern = intern;
+            _Project = project ;
         }
 
         [HttpGet("InternProjects")]
@@ -69,39 +71,44 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<OngoingProjectResponseDTO> AddNewOngoingProject(
-            OngoingProjectCreateDTO newOngoingProject)
+            OngoingProjectCreateDTO ongoingProjectDTO)
         {
-            if (newOngoingProject == null)
+            if (ongoingProjectDTO.DueDate < DateTime.Now.Date || ongoingProjectDTO == null)
             {
-                return BadRequest("Invalid Ongoing Project data.");
-            }
-            if(_Intern.IsInternExists(newOngoingProject.InternID))
-            {
-
+                return BadRequest("Girilen veri formatı yanlış");
             }
 
-            int ongoingProjectID = _OngoingProjects.AddOngoingProject(newOngoingProject);
-            if (ongoingProjectID < 1)
+            if (!_Intern.IsInternExists(ongoingProjectDTO.InternID) || !_Intern.IsInternActive(ongoingProjectDTO.InternID))
             {
-                return BadRequest("Could Not Add Ongoing Project");
+                return BadRequest($"Ayrıla veya olmayan Stajyere proje atanamaz");
             }
+            if (!_Project.IsProjectExists(ongoingProjectDTO.ProjectID))
+            {
+                return BadRequest($"Atamak istediğiniz proje kayıtlı değil. Önce projeyi kayıt edin");
+            }
+            if (_Intern.IsProjectAssignedToIntern(ongoingProjectDTO.ProjectID, ongoingProjectDTO.InternID))
+            {
+                return BadRequest($"Stajyer zaten bu proje üzerinde çalışıyor.");
+            }
+            int insertedID = _OngoingProjects.AddOngoingProject(ongoingProjectDTO);
 
-            var createdOngoingProject = new OngoingProjectResponseDTO(
-                ongoingProjectID,
-                newOngoingProject.InternID,
-                newOngoingProject.ProjectID,
-               DateTime.Now.Date,
-                newOngoingProject.DueDate);
-
-            return CreatedAtRoute(
-                "FindOngoingProject",
-                new { id = ongoingProjectID },
-                createdOngoingProject);
+            if(insertedID>0)
+            {
+                return CreatedAtRoute(
+                   "FindOngoingProject",
+                   new { id = insertedID }, new OngoingProjectResponseDTO(
+                                       insertedID,
+                       ongoingProjectDTO.InternID,
+                       ongoingProjectDTO.ProjectID,
+                       DateTime.Now.Date,
+                       ongoingProjectDTO.DueDate));
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-      
-        
-        [HttpPut("{id}", Name = "UpdateOngoingProject")]
+
+
+        [HttpPut("Update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -120,10 +127,6 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             if(!_Project.IsProjectExists(ongoingProjectDTO.ProjectID))
             {
                 return BadRequest($"Atamak istediğiniz proje kayıtlı değil. Önce projeyi kayıt edin");
-            }
-            if (_Intern.IsProjectAssignedToIntern(ongoingProjectDTO.ProjectID, ongoingProjectDTO.InternID))
-            {
-                return BadRequest($"Stajyer zaten bu proje üzerinde çalışıyor.");
             }
             if (_OngoingProjects.UpdateOngoingProject(id, ongoingProjectDTO) > 0)
             {

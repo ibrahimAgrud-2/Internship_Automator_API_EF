@@ -8,3 +8,17 @@
     max-height: 65vh;
     overflow-y: auto;
 }
+/* Proje ata penceresi: ince uzun satırlar, liste uzarsa kendi içinde kayar */
+.assign-list {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+    .assign-list .list-group-item {
+        cursor: pointer;
+    }
+
+.assign-row-technologies {
+    max-width: 50%;
+    justify-content: flex-end;
+}

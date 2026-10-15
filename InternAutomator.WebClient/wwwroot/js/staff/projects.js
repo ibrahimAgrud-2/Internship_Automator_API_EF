@@ -41,8 +41,7 @@ const deleteConfirm = document.getElementById("deleteProjectConfirm");
 const deleteCancel = document.getElementById("deleteProjectCancel");
 
 
-// Veritabanındaki sütun uzunluklarıyla aynı olmalı (şimdilik tahmin)
-const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };
+
 titleInput.maxLength = PROJECT_LIMITS.title;
 technologiesInput.maxLength = PROJECT_LIMITS.technologies;
 descriptionInput.maxLength = PROJECT_LIMITS.description;

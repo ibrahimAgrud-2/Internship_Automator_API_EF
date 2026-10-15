@@ -83,7 +83,8 @@ function createTaskItem(task, projectTitles) {
 
     return box;
 }
-
+// Stajyerin atanmış projeleri; "Proje Ata" penceresi bunları listeden eler
+let internProjects = [];
 // ---------- Bölüm çizimi ----------
 // result: Promise.allSettled sonucu. Her bölüm birbirinden bağımsız hata gösterir.
 function renderSection({ result, statusBox, list, countBadge, emptyText, createItem }) {
@@ -125,16 +126,18 @@ function renderInternSummary(intern) {
 }
 
 // Ayrılan stajyere ekleme yapılamaz. Asıl engel API'dadır; burası sadece kullanıcıyı yönlendirir.
-// Ekle işlemleri henüz yazılmadığı için butonlar şimdilik her durumda pasif kalır.
 function updateAddButtons(intern) {
     const isActive = intern.status === INTERN_ACTIVE;
-    const title = isActive ? "Yakında" : "Ayrılan stajyere ekleme yapılamaz";
+    const inactiveTitle = "Ayrılan stajyere ekleme yapılamaz";
 
-    ["projectsAdd", "tasksAdd"].forEach(id => {
-        const button = document.getElementById(id);
-        button.disabled = true;   // işlem bağlanınca: button.disabled = !isActive
-        button.title = title;
-    });
+    const projectsAdd = document.getElementById("projectsAdd");
+    projectsAdd.disabled = !isActive;
+    projectsAdd.title = isActive ? "" : inactiveTitle;
+
+    // Görev ekleme henüz yazılmadı; şimdilik her durumda pasif
+    const tasksAdd = document.getElementById("tasksAdd");
+    tasksAdd.disabled = true;
+    tasksAdd.title = isActive ? "Yakında" : inactiveTitle;
 }
 
 // ---------- Sayfa akışı ----------
@@ -171,7 +174,7 @@ async function loadDetails() {
         getInternProjects(internID),
         getInternTasks(internID)
     ]);
-
+    internProjects = projectsResult.status === "fulfilled" ? projectsResult.value : [];
     renderSection({
         result: projectsResult,
         statusBox: projectsStatus,
