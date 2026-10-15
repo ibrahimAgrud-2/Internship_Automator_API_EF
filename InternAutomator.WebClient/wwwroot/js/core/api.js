@@ -175,3 +175,23 @@ async function getProjectAssignedInternCount(projectID) {
 function createProject(project) {
     return apiPost("Projects", project);
 }
+
+// Gövdesiz DELETE isteği. Başarıda 204 döner; hata mesajları ApiError ile iletilir.
+async function apiDelete(path) {
+    let response;
+
+    try {
+        response = await fetch(`${API_BASE}/${path}`, { method: "DELETE" });
+    } catch {
+        throw new ApiError(0, ["Sunucuya ulaşılamadı. Lütfen tekrar deneyin."]);
+    }
+
+    if (!response.ok) {
+        throw new ApiError(response.status, await readErrorMessages(response));
+    }
+}
+
+// Projeyi siler. Atanmış proje kuralını API uygular; reddederse 400 ve mesaj döner.
+function deleteProject(projectID) {
+    return apiDelete(`Projects/Delete/${projectID}`);
+}

@@ -30,6 +30,15 @@ const createSubmit = document.getElementById("createProjectSubmit");
 const createCancel = document.getElementById("createProjectCancel");
 const createError = document.getElementById("createProjectError");
 
+// Silme penceresi
+const deleteModalElement = document.getElementById("deleteProjectModal");
+const deleteModal = new bootstrap.Modal(deleteModalElement);
+const deleteName = document.getElementById("deleteProjectName");
+const deleteError = document.getElementById("deleteProjectError");
+const deleteConfirm = document.getElementById("deleteProjectConfirm");
+const deleteCancel = document.getElementById("deleteProjectCancel");
+
+
 // Veritabanındaki sütun uzunluklarıyla aynı olmalı (şimdilik tahmin)
 const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };
 titleInput.maxLength = PROJECT_LIMITS.title;
@@ -79,7 +88,13 @@ function createProjectCard(project) {
     detailsButton.className = "btn btn-sm btn-outline-primary";
     detailsButton.dataset.action = "details";
     detailsButton.textContent = "Detaylar";
-    footer.appendChild(detailsButton);
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "btn btn-sm btn-outline-danger ms-2";
+    deleteButton.dataset.action = "delete";
+    deleteButton.textContent = "Sil";
+
+    footer.append(detailsButton, deleteButton);
 
     card.append(body, footer);
     return card;
@@ -225,14 +240,59 @@ async function submitCreate(event) {
         setCreateBusy(false);
     }
 }
+// ---------- Silme penceresi ----------
+let projectToDeleteID = null;
 
-// ---------- Olay dinleyicileri ----------
+function openDeleteModal(projectID) {
+    const project = projectsById.get(projectID);
+    if (!project) return;
+
+    projectToDeleteID = projectID;
+    deleteName.textContent = project.title;
+    hideMessage(deleteError);
+    deleteConfirm.disabled = false;
+    deleteCancel.disabled = false;
+
+    deleteModal.show();
+}
+
+async function confirmDelete() {
+    if (deleteConfirm.disabled || projectToDeleteID === null) return;   // çift tıklama koruması
+
+    const title = projectsById.get(projectToDeleteID)?.title ?? "";
+    hideMessage(deleteError);
+    deleteConfirm.disabled = true;
+    deleteCancel.disabled = true;
+
+    try {
+        await deleteProject(projectToDeleteID);
+
+        deleteModal.hide();
+        showNotice(noticeBox, "success", `"${title}" projesi silindi.`);
+        await loadProjects();
+    } catch (error) {
+        showError(deleteError, error);
+
+        // Proje zaten yoksa ekrandaki liste eskimiş demektir; arkada tazelenir
+        if (error instanceof ApiError && error.status === 404) {
+            loadProjects();
+        }
+    } finally {
+        deleteConfirm.disabled = false;
+        deleteCancel.disabled = false;
+    }
+}
 projectList.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-action=details]");
+    const button = event.target.closest("button[data-action]");
     if (!button) return;
 
-    openDetails(Number(button.closest(".project-card").dataset.projectId));
+    const projectID = Number(button.closest(".project-card").dataset.projectId);
+
+    if (button.dataset.action === "details") openDetails(projectID);
+    if (button.dataset.action === "delete") openDeleteModal(projectID);
 });
+
+deleteConfirm.addEventListener("click", confirmDelete);
 
 searchInput.addEventListener("input", applySearch);
 

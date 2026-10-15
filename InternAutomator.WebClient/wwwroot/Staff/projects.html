@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Projeler</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=13" />
-    <link rel="stylesheet" href="/css/interns.css?v=13" />
-    <link rel="stylesheet" href="/css/projects.css?v=13" />
+    <link rel="stylesheet" href="/css/shell.css?v=15" />
+    <link rel="stylesheet" href="/css/interns.css?v=15" />
+    <link rel="stylesheet" href="/css/projects.css?v=15" />
 </head>
 <body class="shell">
 
@@ -63,6 +63,29 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteProjectTitle">Projeyi Sil</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="deleteProjectError" class="alert" role="alert" hidden></div>
+                    <p class="mb-2">
+                        <strong id="deleteProjectName" class="text-break"></strong> projesi kalıcı olarak silinecek.
+                    </p>
+                    <p class="text-muted small mb-0">Bu işlem geri alınamaz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="deleteProjectCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="button" id="deleteProjectConfirm" class="btn btn-danger">Projeyi Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectTitle"
          aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
@@ -99,10 +122,10 @@
         </div>
     </div>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=13"></script>
-    <script src="/js/core/api.js?v=13"></script>
-    <script src="/js/core/ui.js?v=13"></script>
-    <script src="/js/core/shell.js?v=13"></script>
-    <script src="/js/staff/projects.js?v=13"></script>
+    <script src="/js/core/auth.js?v=15"></script>
+    <script src="/js/core/api.js?v=15"></script>
+    <script src="/js/core/ui.js?v=15"></script>
+    <script src="/js/core/shell.js?v=15"></script>
+    <script src="/js/staff/projects.js?v=15"></script>
 </body>
 </html>
