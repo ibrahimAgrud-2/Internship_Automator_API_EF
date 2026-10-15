@@ -68,6 +68,13 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             return false ;
         }
 
+        public bool IsTaskExists(int taskID)
+        {
+
+            return  _Context.Tasks.Any(t => t.TaskID == taskID);
+
+          
+        }
 
 
 
@@ -93,21 +100,31 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         //    return -1;
         //}
 
-        //public bool DeleteTask(int taskID)
-        //{
-        //    return _Context.Tasks
-        //        .Where(task => task.TaskID == taskID)
-        //        .ExecuteDelete() > 0;
-        //}
+
 
         //public bool IsTaskExists(int taskID)
         //{
         //    return _Context.Tasks.Any(task => task.TaskID == taskID);
         //}
 
+
+        //public bool DeleteTask(int taskID)
+        //{
+        //    return _Context.Tasks
+        //        .Where(task => task.TaskID == taskID)
+        //        .ExecuteDelete() > 0;
+        //}
         private static TaskResponseDTO ToResponseDTO(TaskEntity task)
         {
             return new TaskResponseDTO(task.TaskID,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,task.AssignedDate,task.DueDate,task.Completed,task.CompletedDate);
+        }
+        
+        
+        public bool DeleteTask(int taskID)
+        {
+            return _Context.Tasks
+                .Where(task => task.TaskID == taskID)
+                .ExecuteDelete() > 0;
         }
     }
 }

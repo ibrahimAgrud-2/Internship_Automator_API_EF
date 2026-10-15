@@ -124,6 +124,30 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
+        [HttpDelete("Delete/{ID}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult DeleteTask(int ID)
+        {
+            if (ID < 1)
+            {
+                return BadRequest($"Not Accepted ID {ID}");
+            }
+
+            if (!_Tasks.IsTaskExists(ID))
+            {
+                return NotFound($"No Taks With ID {ID}");
+            }
+            if (_Tasks.DeleteTask(ID))
+            {
+                return NoContent();
+            }
+
+            return NotFound("Delete Process terminated. No rows deleted!");
+        }
+
+
 
 
         //[HttpPut("{id}", Name = "UpdateTask")]
