@@ -27,7 +27,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             return Ok(projects);
         }
 
-       //TODO:şu anlik Find BL'de ve DAL'da implemente edilmedi. Sadece ADD sonrası URL oluşturmak için kullanılıyor.
+    
+        //TODO:şu anlik Find BL'de ve DAL'da implemente edilmedi. Sadece ADD sonrası URL oluşturmak için kullanılıyor.
         
         [HttpGet("{ID}", Name = "FindProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]

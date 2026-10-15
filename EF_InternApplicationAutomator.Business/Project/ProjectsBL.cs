@@ -17,9 +17,9 @@ namespace EF_InternApplicationAutomator.Business.Project
             return _ProjectDataAccess.GetAllProjects();
         }
 
-        public ProjectResponseDTO Find(int projectID)
+        public ProjectResponseDTO? Find(int projectID)
         {
-            return null;
+            return _ProjectDataAccess.Find(projectID);
         }
 
         public int AddNewProject(ProjectCreateDTO newProject)

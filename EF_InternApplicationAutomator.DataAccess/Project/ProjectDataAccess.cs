@@ -12,6 +12,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
             _Context = context;
         }
 
+
+
         public List<ProjectListResponseDTO> GetAllProjects()
         {
             List<ProjectEntity> projects = _Context.Projects.Include(p => p.User).ToList();
@@ -30,6 +32,15 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
 
             return projectDTOs;
         }
+    
+        public ProjectResponseDTO? Find(int projectID)
+        {
+            ProjectEntity pe= _Context.Projects.Find(projectID);
+
+            return (pe==null)?null:new ProjectResponseDTO(pe.ProjectID,pe.Title,pe.Description,pe.Technologies);
+        }
+        
+        
         public int AddNewProject(ProjectCreateDTO project)
         {
             ProjectEntity projectEntity = new ProjectEntity(
