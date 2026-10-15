@@ -81,29 +81,36 @@ function createTaskItem(task, projectTitles) {
     }
     box.appendChild(createInfoLine(dates));
     box.appendChild(createInfoLine(dates));
+    // İşlem butonları. Ayrılan stajyerde pasiftir (asıl engel API'dadır).
+    const footer = document.createElement("div");
+    footer.className = "mt-2 d-flex justify-content-end gap-2";
 
-    // Tamamlanmamış görevde "Tamamla" butonu çıkar. Ayrılan stajyerde pasiftir (asıl engel API'dadır).
-    if (!task.completed) {
-        const footer = document.createElement("div");
-        footer.className = "mt-2 text-end";
+    const canChange = !currentIntern || currentIntern.status === INTERN_ACTIVE;
 
+    function addTaskButton(action, className, text) {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = "btn btn-sm btn-outline-success";
-        button.dataset.action = "complete";
+        button.className = `btn btn-sm ${className}`;
+        button.dataset.action = action;
         button.dataset.taskId = task.taskID;
-        button.textContent = "Tamamla";
+        button.textContent = text;
 
-        if (currentIntern && currentIntern.status !== INTERN_ACTIVE) {
+        if (!canChange) {
             button.disabled = true;
             button.title = "Ayrılan stajyerin görevi değiştirilemez";
         }
 
         footer.appendChild(button);
-        box.appendChild(footer);
     }
 
-    return box;
+    // "Tamamla" sadece tamamlanmamış görevde çıkar
+    if (!task.completed) {
+        addTaskButton("complete", "btn-outline-success", "Tamamla");
+    }
+    addTaskButton("delete", "btn-outline-danger", "Sil");
+
+    box.appendChild(footer);
+
     return box;
 }
 

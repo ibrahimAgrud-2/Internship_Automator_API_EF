@@ -60,6 +60,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
                 return false;
             }
             taskEntity.Completed = true;
+            taskEntity.CompletedDate = DateTime.Now.Date;
             if (_Context.SaveChanges() > 0)
             {
                 return true;
@@ -78,42 +79,26 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
 
 
 
-        //public int UpdateTask(int taskID, TaskCreateDTO taskDTO)
-        //{
-        //    TaskEntity? task = _Context.Tasks.Find(taskID);
-        //    if (task == null || taskDTO == null)
-        //    {
-        //        return -1;
-        //    }
 
-        //    task.CreatedByUserID = taskDTO.CreatedByUserID;
-        //    task.OngoingProjectID = taskDTO.OngoingProjectID;
-        //    task.title = taskDTO.title;
-        //    task.CreatedAt = taskDTO.CreatedAt;
-        //    task.DueDate = taskDTO.DueDate;
+        public bool UpdateTask(int taskID, TaskUpdateDTO taskDTO)
+        {
+            TaskEntity? task = _Context.Tasks.Find(taskID);
+            if (task == null || taskDTO == null)
+            {
+                return false;
+            }
 
-        //    if (_Context.SaveChanges() > 0)
-        //    {
-        //        return taskID;
-        //    }
+            task.Title = taskDTO.Title;
+            task.Description = taskDTO.Description;
+            task.DueDate =taskDTO.DueDate;
 
-        //    return -1;
-        //}
+            return _Context.SaveChanges()>0;
+        }
 
 
 
-        //public bool IsTaskExists(int taskID)
-        //{
-        //    return _Context.Tasks.Any(task => task.TaskID == taskID);
-        //}
 
 
-        //public bool DeleteTask(int taskID)
-        //{
-        //    return _Context.Tasks
-        //        .Where(task => task.TaskID == taskID)
-        //        .ExecuteDelete() > 0;
-        //}
         private static TaskResponseDTO ToResponseDTO(TaskEntity task)
         {
             return new TaskResponseDTO(task.TaskID,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,task.AssignedDate,task.DueDate,task.Completed,task.CompletedDate);

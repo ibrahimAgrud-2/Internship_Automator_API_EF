@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EF_InternApplicationAutomator.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+022198a55234cd480c2536091d18636b8820dd96")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b24f181fbc4bd84dc9c7712be9439ab5c65c072")]
 [assembly: System.Reflection.AssemblyProductAttribute("EF_InternApplicationAutomator.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EF_InternApplicationAutomator.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

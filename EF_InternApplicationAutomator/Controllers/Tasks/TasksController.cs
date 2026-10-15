@@ -150,66 +150,29 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
 
 
 
-        //[HttpPut("{id}", Name = "UpdateTask")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult<TaskResponseDTO> UpdateTask(int id, TaskCreateDTO taskDTO)
-        //{
-        //    if (id < 1 || taskDTO == null)
-        //    {
-        //        return BadRequest("Invalid Task data.");
-        //    }
+        [HttpPut("Update/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> UpdateTask(int id, TaskUpdateDTO taskDTO)
+        {
+            if (id < 1 || taskDTO == null)
+            {
+                return BadRequest("Invalid Task data.");
+            }
 
-        //    if (!_Tasks.IsTaskExists(id))
-        //    {
-        //        return NotFound($"No Task With ID {id}");
-        //    }
+            if (!_Tasks.IsTaskExists(id))
+            {
+                return NotFound($"No Task With ID {id}");
+            }
 
-        //    if (_Tasks.UpdateTask(id, taskDTO) > 0)
-        //    {
-        //        return Ok(new TaskResponseDTO(
-        //            id,
-        //            taskDTO.CreatedByUserID,
-        //            taskDTO.OngoingProjectID,
-        //            taskDTO.title,
-        //            taskDTO.CreatedAt,
-        //            taskDTO.DueDate));
-        //    }
+            if (_Tasks.UpdateTask(id, taskDTO))
+            {
+                return Ok(true);
+            }
 
-        //    return BadRequest("Could Not Update Task");
-        //}
-
-        //[HttpDelete("{id}", Name = "DeleteTask")]
-        //[ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult DeleteTask(int id)
-        //{
-        //    if (id < 1)
-        //    {
-        //        return BadRequest($"Not Accepted ID {id}");
-        //    }
-
-        //    if (!_Tasks.IsTaskExists(id))
-        //    {
-        //        return NotFound($"No Task With ID {id}");
-        //    }
-
-        //    if (_Tasks.DeleteTask(id))
-        //    {
-        //        return NoContent();
-        //    }
-
-        //    return NotFound("Delete Process terminated. No rows deleted!");
-        //}
-
-        //[HttpGet("exists/{taskID}")]
-        //public bool IsTaskExists(int taskID)
-        //{
-        //    return taskID > 0 && _Tasks.IsTaskExists(taskID);
-        //}
-
+            return BadRequest("Could Not Update Task");
+        }
 
 
     }

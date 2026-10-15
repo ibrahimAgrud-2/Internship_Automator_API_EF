@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stajyer Detayı</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=20" />
-    <link rel="stylesheet" href="/css/intern-detail.css?v=20" />
+    <link rel="stylesheet" href="/css/shell.css?v=21" />
+    <link rel="stylesheet" href="/css/intern-detail.css?v=21" />
 </head>
 <body class="shell">
 
@@ -188,14 +188,37 @@
             </div>
         </div>
     </div>
+    <!-- Görevi sil onay penceresi -->
+    <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteTaskTitle">Görevi Sil</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="deleteTaskError" class="alert" role="alert" hidden></div>
+                    <p class="mb-2">
+                        <strong id="deleteTaskName" class="text-break"></strong> görevi kalıcı olarak silinecek.
+                    </p>
+                    <p class="text-muted small mb-0">Bu işlem geri alınamaz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="deleteTaskCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="button" id="deleteTaskConfirm" class="btn btn-danger">Görevi Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=20"></script>
-    <script src="/js/core/api.js?v=20"></script>
-    <script src="/js/core/ui.js?v=20"></script>
-    <script src="/js/core/shell.js?v=20"></script>
-    <script src="/js/staff/intern-detail.js?v=20"></script>
-    <script src="/js/staff/intern-assign-project.js?v=20"></script>
-    <script src="/js/staff/intern-add-task.js?v=20"></script>
-    <script src="/js/staff/intern-complete-task.js?v=20"></script>
+    <script src="/js/core/auth.js?v=21"></script>
+    <script src="/js/core/api.js?v=21"></script>
+    <script src="/js/core/ui.js?v=21"></script>
+    <script src="/js/core/shell.js?v=21"></script>
+    <script src="/js/staff/intern-detail.js?v=21"></script>
+    <script src="/js/staff/intern-assign-project.js?v=21"></script>
+    <script src="/js/staff/intern-add-task.js?v=21"></script>
+    <script src="/js/staff/intern-complete-task.js?v=21"></script>
+    <script src="/js/staff/intern-delete-task.js?v=21"></script>
 </body>
 </html>

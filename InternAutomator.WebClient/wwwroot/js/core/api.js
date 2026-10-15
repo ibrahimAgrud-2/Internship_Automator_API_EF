@@ -216,3 +216,10 @@ function addTask(task) {
 function completeTask(taskID) {
     return apiPut(`Tasks/Complete/${encodeURIComponent(taskID)}`);
 }
+
+
+
+// Görevi siler. Başarıda 204 döner; reddederse API'nin mesajı ApiError ile iletilir.
+function deleteTask(taskID) {
+    return apiDelete(`Tasks/Delete/${encodeURIComponent(taskID)}`);
+}
