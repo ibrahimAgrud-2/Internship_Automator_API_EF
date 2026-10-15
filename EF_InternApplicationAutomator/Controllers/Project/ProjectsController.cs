@@ -118,7 +118,10 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             {
                 return NotFound($"No Project With ID {ID}");
             }
-
+            if(_OngoingProjects.GetAssignedInternCountForProject(ID)>0)
+            {
+                return    BadRequest($"Proje stajyer tarafında yapıldığı için silinemez");
+            }
             if (_Projects.DeleteProject(ID))
             {
                 return NoContent();
