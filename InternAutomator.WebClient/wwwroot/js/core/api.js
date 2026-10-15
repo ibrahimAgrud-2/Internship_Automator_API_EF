@@ -206,3 +206,9 @@ function updateProject(projectID, project) {
 function assignProjectToIntern(internID, projectID, dueDate) {
     return apiPost("OngoingProjects/Add", { internID, projectID, dueDate });
 }
+
+
+// Stajyerin atanmış bir projesi için görev ekler. dueDate "yyyy-MM-ddTHH:mm:ss" biçimindedir.
+function addTask(task) {
+    return apiPost("Tasks/Add", task);
+}

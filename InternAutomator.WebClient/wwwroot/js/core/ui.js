@@ -109,3 +109,15 @@ function normalizeSearchText(text) {
 // Alan uzunlukları: veritabanı sütunlarına göre ayarla. Asıl doğrulama API'dadır;
 // buradaki sınırlar sadece kullanıcıyı baştan uyarır.
 const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };
+
+
+// Görev alanı uzunlukları: veritabanı sütunlarına göre ayarla (şimdilik tahmin).
+const TASK_LIMITS = { title: 100, description: 200 };
+
+// Bugünün tarihi "yyyy-MM-dd" olarak (tarayıcının yerel saatiyle; toISOString UTC verir, kullanılmaz)
+function getTodayText() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${now.getFullYear()}-${month}-${day}`;
+}

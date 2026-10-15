@@ -134,13 +134,6 @@ async function loadAssignableProjects() {
     }
 }
 
-// Bugünün tarihi "yyyy-MM-dd" olarak (tarayıcının yerel saatiyle; toISOString UTC verir, kullanılmaz)
-function getTodayText() {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    return `${now.getFullYear()}-${month}-${day}`;
-}
 
 function openAssignModal() {
     selectedProjectID = null;

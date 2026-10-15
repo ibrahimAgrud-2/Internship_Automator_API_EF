@@ -1,4 +1,5 @@
 ﻿using EF_InternApplicationAutomator.Business.Intern;
+using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
@@ -12,11 +13,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
     {
         private readonly TasksBL _Tasks;
         private readonly Business.Intern.InternBL _Intern;
+        private readonly Business.OngoingProjects.OngoingProjectsBL _OngoingProjects;
 
-        public TasksController(TasksBL tasks, InternBL intern)
+        public TasksController(TasksBL tasks, InternBL intern, OngoingProjectsBL ongoingProjects)
         {
             _Tasks = tasks;
             _Intern = intern;
+            _OngoingProjects = ongoingProjects;
         }
 
         [HttpGet("AllInternTasks")]
@@ -48,9 +51,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return BadRequest("Invalid Task data.");
             }
-            
+            if(!_OngoingProjects.IsOngoingProjectExists(newTask.OngoingProjectID))
+            {
+                return BadRequest("Bu devam projeye görev atanamaz.");
+            }
              int taskID = _Tasks.AddTask(newTask);
-         
             if (taskID < 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);

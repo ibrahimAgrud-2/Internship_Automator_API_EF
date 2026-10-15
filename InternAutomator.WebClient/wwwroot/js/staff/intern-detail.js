@@ -83,8 +83,9 @@ function createTaskItem(task, projectTitles) {
 
     return box;
 }
-// Stajyerin atanmış projeleri; "Proje Ata" penceresi bunları listeden eler
+
 let internProjects = [];
+let currentIntern = null;
 // ---------- Bölüm çizimi ----------
 // result: Promise.allSettled sonucu. Her bölüm birbirinden bağımsız hata gösterir.
 function renderSection({ result, statusBox, list, countBadge, emptyText, createItem }) {
@@ -126,20 +127,23 @@ function renderInternSummary(intern) {
 }
 
 // Ayrılan stajyere ekleme yapılamaz. Asıl engel API'dadır; burası sadece kullanıcıyı yönlendirir.
-function updateAddButtons(intern) {
-    const isActive = intern.status === INTERN_ACTIVE;
+// Ayrılan stajyere ekleme yapılamaz. Asıl engel API'dadır; burası sadece kullanıcıyı yönlendirir.
+// Görev, stajyerin atanmış bir projesine verildiği için proje yoksa görev eklenemez.
+function updateAddButtons() {
+    if (!currentIntern) return;
+
+    const isActive = currentIntern.status === INTERN_ACTIVE;
     const inactiveTitle = "Ayrılan stajyere ekleme yapılamaz";
 
     const projectsAdd = document.getElementById("projectsAdd");
     projectsAdd.disabled = !isActive;
     projectsAdd.title = isActive ? "" : inactiveTitle;
 
-    // Görev ekleme henüz yazılmadı; şimdilik her durumda pasif
     const tasksAdd = document.getElementById("tasksAdd");
-    tasksAdd.disabled = true;
-    tasksAdd.title = isActive ? "Yakında" : inactiveTitle;
+    const hasProjects = internProjects.length > 0;
+    tasksAdd.disabled = !isActive || !hasProjects;
+    tasksAdd.title = !isActive ? inactiveTitle : (hasProjects ? "" : "Görev vermek için önce stajyere proje atayın");
 }
-
 // ---------- Sayfa akışı ----------
 function showPageError(message) {
     detailSections.hidden = true;
@@ -149,8 +153,9 @@ function showPageError(message) {
 async function loadIntern() {
     try {
         const intern = await getIntern(internID);
+        currentIntern = intern;
         renderInternSummary(intern);
-        updateAddButtons(intern);
+        updateAddButtons();
         return intern;
     } catch (error) {
         if (error instanceof ApiError && error.status === 404) {
@@ -173,7 +178,11 @@ async function loadDetails() {
     const [projectsResult, tasksResult] = await Promise.allSettled([
         getInternProjects(internID),
         getInternTasks(internID)
+
+
     ]);
+    internProjects = projectsResult.status === "fulfilled" ? projectsResult.value : [];
+    updateAddButtons();
     internProjects = projectsResult.status === "fulfilled" ? projectsResult.value : [];
     renderSection({
         result: projectsResult,

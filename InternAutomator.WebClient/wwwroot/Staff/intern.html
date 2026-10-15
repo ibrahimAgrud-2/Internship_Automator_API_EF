@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stajyer Detayı</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=18" />
-    <link rel="stylesheet" href="/css/intern-detail.css?v=18" />
+    <link rel="stylesheet" href="/css/shell.css?v=19" />
+    <link rel="stylesheet" href="/css/intern-detail.css?v=19" />
 </head>
 <body class="shell">
 
@@ -57,7 +57,7 @@
                             <h5 class="mb-0 me-auto">
                                 Görevler <span id="tasksCount" class="badge text-bg-secondary ms-1">0</span>
                             </h5>
-                            <button type="button" id="tasksAdd" class="btn btn-sm btn-outline-primary" disabled title="Yakında">Ekle</button>
+                            <button type="button" id="tasksAdd" class="btn btn-sm btn-outline-primary" disabled>Ekle</button>
                         </div>
                         <div class="card-body detail-panel-body">
                             <div id="tasksStatus" class="alert" hidden></div>
@@ -128,12 +128,51 @@
             </div>
         </div>
     </div>
+    <!-- Görev ekle penceresi -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="addTaskForm" autocomplete="off" novalidate>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTaskTitle">Görev Ekle</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="addTaskError" class="alert" role="alert" hidden></div>
+
+                    <div class="mb-3">
+                        <label for="taskProjectSelect" class="form-label">Proje <span class="text-danger">*</span></label>
+                        <select id="taskProjectSelect" class="form-select"></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="taskTitleInput" class="form-label">Görev adı <span class="text-danger">*</span></label>
+                        <input type="text" id="taskTitleInput" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="taskDescriptionInput" class="form-label">Açıklama</label>
+                        <textarea id="taskDescriptionInput" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="taskDueDateInput" class="form-label">Teslim tarihi <span class="text-danger">*</span></label>
+                        <input type="date" id="taskDueDateInput" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="addTaskCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" id="addTaskSubmit" class="btn btn-primary">Görevi Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=18"></script>
-    <script src="/js/core/api.js?v=18"></script>
-    <script src="/js/core/ui.js?v=18"></script>
-    <script src="/js/core/shell.js?v=18"></script>
-    <script src="/js/staff/intern-detail.js?v=18"></script>
-    <script src="/js/staff/intern-assign-project.js?v=18"></script>
+    <script src="/js/core/auth.js?v=19"></script>
+    <script src="/js/core/api.js?v=19"></script>
+    <script src="/js/core/ui.js?v=19"></script>
+    <script src="/js/core/shell.js?v=19"></script>
+    <script src="/js/staff/intern-detail.js?v=19"></script>
+    <script src="/js/staff/intern-assign-project.js?v=19"></script>
+    <script src="/js/staff/intern-add-task.js?v=19"></script>
 </body>
 </html>
