@@ -37,7 +37,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         //        0,
         //        task.CreatedByUserID,
         //        task.OngoingProjectID,
-        //        task.Title,
+        //        task.title,
         //        task.CreatedAt,
         //        task.DueDate);
         //    _Context.Tasks.Add(taskEntity);
@@ -60,7 +60,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
 
         //    task.CreatedByUserID = taskDTO.CreatedByUserID;
         //    task.OngoingProjectID = taskDTO.OngoingProjectID;
-        //    task.Title = taskDTO.Title;
+        //    task.title = taskDTO.title;
         //    task.CreatedAt = taskDTO.CreatedAt;
         //    task.DueDate = taskDTO.DueDate;
 

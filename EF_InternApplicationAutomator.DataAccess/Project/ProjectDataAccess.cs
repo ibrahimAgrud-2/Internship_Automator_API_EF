@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Shared;
 using Shared.Project;
 
 namespace EF_InternApplicationAutomator.DataAccess.Project
@@ -58,6 +59,26 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
             return -1;
         }
 
+        public bool UpdateProject(int projectID, ProjectUpdateDTO projectData)
+        {
+            var project = _Context.Projects.Find(projectID);
+            if (project == null || projectData == null||projectID<1)
+            {
+                return false;
+            }
+
+            project.Title = projectData.title;
+            project.Description = projectData.description;
+            project.Technologies = projectData.technologies ;
+
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public bool DeleteProject(int projectID)
         {

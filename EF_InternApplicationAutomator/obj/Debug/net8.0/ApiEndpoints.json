@@ -1231,6 +1231,55 @@
     ]
   },
   {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Project.ProjectsController",
+    "Method": "UpdateProject",
+    "RelativePath": "api/Projects/Update/{ID}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "projectDTO",
+        "Type": "Shared.Project.ProjectUpdateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
+  },
+  {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
     "Method": "GetAllInternTasks",
     "RelativePath": "api/Tasks/AllInternTasks",

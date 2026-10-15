@@ -81,7 +81,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         //        taskID,
         //        newTask.CreatedByUserID,
         //        newTask.OngoingProjectID,
-        //        newTask.Title,
+        //        newTask.title,
         //        newTask.CreatedAt,
         //        newTask.DueDate);
 
@@ -110,7 +110,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         //            id,
         //            taskDTO.CreatedByUserID,
         //            taskDTO.OngoingProjectID,
-        //            taskDTO.Title,
+        //            taskDTO.title,
         //            taskDTO.CreatedAt,
         //            taskDTO.DueDate));
         //    }

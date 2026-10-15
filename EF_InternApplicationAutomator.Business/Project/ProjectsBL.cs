@@ -26,6 +26,12 @@ namespace EF_InternApplicationAutomator.Business.Project
         {
             return _ProjectDataAccess.AddNewProject(newProject);
         }
+
+        public bool UpdateProject(int projectID,ProjectUpdateDTO newProject)
+        {
+            return _ProjectDataAccess.UpdateProject(projectID, newProject);
+        }
+
         public bool DeleteProject(int projectID)
         {
             return _ProjectDataAccess.DeleteProject(projectID);

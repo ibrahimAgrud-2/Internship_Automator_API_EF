@@ -48,34 +48,30 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
 
             return Ok(project);
         }
-        
-        //[HttpPut("{ID}", Name = "UpdateProject")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult<ProjectListResponseDTO> UpdateProject(int ID, ProjectCreateDTO projectDTO)
-        //{
-        //    if (ID < 1 || projectDTO == null)
-        //    {
-        //        return BadRequest("Invalid Project data.");
-        //    }
 
-        //    if (!_Projects.IsProjectExists(ID))
-        //    {
-        //        return NotFound($"No Project With ID {ID}");
-        //    }
+        [HttpPut("Update/{ID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> UpdateProject(int ID, ProjectUpdateDTO projectDTO)
+        {
+            if (ID < 1||string.IsNullOrEmpty(projectDTO.title)|| string.IsNullOrEmpty(projectDTO.description) || projectDTO == null)
+            {
+                return BadRequest("Invalid Project data.");
+            }
 
-        //    if (_Projects.UpdateProject(ID, projectDTO) > 0)
-        //    {
-        //        return Ok(new ProjectListResponseDTO(
-        //            ID,
-        //            projectDTO.CreatedByUserID,
-        //            projectDTO.Title,projectDTO.Description,
-        //            projectDTO.Technologies));
-        //    }
+            if (!_Projects.IsProjectExists(ID))
+            {
+                return NotFound($"No Project With ID {ID}");
+            }
 
-        //    return BadRequest("Could Not Update Project");
-        //}
+            if (_Projects.UpdateProject(ID, projectDTO))
+            {
+                return Ok(true);
+            }
+
+            return BadRequest("Could Not Update Project");
+        }
 
 
 
