@@ -25,30 +25,33 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             return taskDTOs;
         }
 
-        //public TaskResponseDTO? Find(int taskID)
-        //{
-        //    TaskEntity? task = _Context.Tasks.Find(taskID);
-        //    return task == null ? null : ToResponseDTO(task);
-        //}
 
-        //public int AddTask(TaskCreateDTO task)
-        //{
-        //    TaskEntity taskEntity = new TaskEntity(
-        //        0,
-        //        task.CreatedByUserID,
-        //        task.OngoingProjectID,
-        //        task.title,
-        //        task.CreatedAt,
-        //        task.DueDate);
-        //    _Context.Tasks.Add(taskEntity);
 
-        //    if (_Context.SaveChanges() > 0)
-        //    {
-        //        return taskEntity.TaskID;
-        //    }
 
-        //    return -1;
-        //}
+        public int AddTask(TaskCreateDTO task)
+        {
+
+            TaskEntity taskEntity = new TaskEntity(0,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,DateTime.Now.Date,task.DueDate,false,null);
+
+            _Context.Tasks.Add(taskEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return taskEntity.TaskID;
+            }
+
+            return -1;
+        }
+
+
+        public TaskResponseDTO? Find(int taskID)
+        {
+            TaskEntity? task = _Context.Tasks.Find(taskID);
+            return task == null ? null : ToResponseDTO(task);
+        }
+
+
+
 
         //public int UpdateTask(int taskID, TaskCreateDTO taskDTO)
         //{

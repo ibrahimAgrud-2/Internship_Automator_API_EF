@@ -1,4 +1,4 @@
-using EF_InternApplicationAutomator.Business.Intern;
+﻿using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
@@ -38,55 +38,57 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         }
 
 
+        [HttpPost("Add")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<TaskResponseDTO> AddNewTask(TaskCreateDTO newTask)
+        {
+
+            if (newTask == null|| newTask.DueDate<DateTime.Now)
+            {
+                return BadRequest("Invalid Task data.");
+            }
+            
+             int taskID = _Tasks.AddTask(newTask);
+         
+            if (taskID < 1)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            TaskResponseDTO insertedTask = _Tasks.Find(taskID);
+            if(insertedTask==null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            var createdTask = new TaskResponseDTO(taskID, insertedTask.CreatedByUserID, insertedTask.OngoingProjectID, insertedTask.Title, insertedTask.Description, insertedTask.AssignedDate, insertedTask.DueDate, insertedTask.Completed, insertedTask.CompletedDate);
+
+            return CreatedAtRoute("FindTask", new { id = taskID }, createdTask);
+        }
 
 
+        [HttpGet("FindTask/{id}",Name = "FindTask")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<TaskResponseDTO> Find(int id)
+        {
+            if (id < 1)
+            {
+                return BadRequest($"Not Accepted ID {id}");
+            }
 
-        //[HttpGet("{id}", Name = "FindTask")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult<TaskResponseDTO> Find(int id)
-        //{
-        //    if (id < 1)
-        //    {
-        //        return BadRequest($"Not Accepted ID {id}");
-        //    }
+            TaskResponseDTO? task = _Tasks.Find(id);
+            if (task == null)
+            {
+                return NotFound($"No Task With ID {id}");
+            }
 
-        //    TaskResponseDTO? task = _Tasks.Find(id);
-        //    if (task == null)
-        //    {
-        //        return NotFound($"No Task With ID {id}");
-        //    }
+            return Ok(task);
+        }
 
-        //    return Ok(task);
-        //}
 
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public ActionResult<TaskResponseDTO> AddNewTask(TaskCreateDTO newTask)
-        //{
-        //    if (newTask == null)
-        //    {
-        //        return BadRequest("Invalid Task data.");
-        //    }
-
-        //    int taskID = _Tasks.AddTask(newTask);
-        //    if (taskID < 1)
-        //    {
-        //        return BadRequest("Could Not Add Task");
-        //    }
-
-        //    var createdTask = new TaskResponseDTO(
-        //        taskID,
-        //        newTask.CreatedByUserID,
-        //        newTask.OngoingProjectID,
-        //        newTask.title,
-        //        newTask.CreatedAt,
-        //        newTask.DueDate);
-
-        //    return CreatedAtRoute("FindTask", new { id = taskID }, createdTask);
-        //}
 
         //[HttpPut("{id}", Name = "UpdateTask")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
@@ -147,5 +149,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         //{
         //    return taskID > 0 && _Tasks.IsTaskExists(taskID);
         //}
+
+
+
     }
 }

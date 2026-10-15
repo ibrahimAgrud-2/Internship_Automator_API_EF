@@ -17,20 +17,22 @@ namespace EF_InternApplicationAutomator.Business.Tasks
             return _TaskDataAccess.GetAllInternTasks(internID);
         }
 
-        //public TaskResponseDTO? Find(int taskID)
-        //{
-        //    return _TaskDataAccess.Find(taskID);
-        //}
+        public int AddTask(TaskCreateDTO newTask)
+        {
+            return _TaskDataAccess.AddTask(newTask);
+        }
+
+        public TaskResponseDTO? Find(int taskID)
+        {
+            return _TaskDataAccess.Find(taskID);
+        }
 
         //public int UpdateTask(int taskID, TaskCreateDTO taskCreateDTO)
         //{
         //    return _TaskDataAccess.UpdateTask(taskID, taskCreateDTO);
         //}
 
-        //public int AddTask(TaskCreateDTO newTask)
-        //{
-        //    return _TaskDataAccess.AddTask(newTask);
-        //}
+
 
         //public bool DeleteTask(int taskID)
         //{

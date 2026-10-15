@@ -4,29 +4,39 @@ namespace Shared.Tasks
 {
     public class TaskCreateDTO
     {
-        public int? CreatedByUserID { get; set; }
 
-        public int? OngoingProjectID { get; set; }
+        [Required]
+        public int CreatedByUserID { get; set; }
+
+        [Required]
+        public int OngoingProjectID { get; set; }
 
         [MaxLength(100)]
-        public string? Title { get; set; }
+        [Required]
+        public string Title { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        [MaxLength(200)]
+        [Required]
+        public string Description { get; set; }
 
-        public DateTime? DueDate { get; set; }
+
+
+        [Required]
+        public DateTime DueDate { get; set; }
 
         public TaskCreateDTO(
-            int? createdByUserID,
-            int? ongoingProjectID,
-            string? title,
-            DateTime? createdAt,
-            DateTime? dueDate)
+            int createdByUserID,
+            int ongoingProjectID,
+            string title,string description,
+
+            DateTime dueDate)
         {
             CreatedByUserID = createdByUserID;
             OngoingProjectID = ongoingProjectID;
             Title = title;
-            CreatedAt = createdAt;
+          
             DueDate = dueDate;
+            this.Description = description;
         }
     }
 }

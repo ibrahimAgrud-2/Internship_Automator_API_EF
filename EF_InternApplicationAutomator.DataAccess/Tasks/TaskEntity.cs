@@ -10,11 +10,13 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         [Key]
         public int TaskID { get; set; }
 
-
+        [Required]
         public int CreatedByUserID { get; set; }
 
+        [Required]
         public int OngoingProjectID { get; set; }
 
+        [Required]
         [ForeignKey(nameof(OngoingProjectID))]
         public OngoingProjectEntity OngoingProject { get; set; }
 
@@ -22,31 +24,22 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         [MaxLength(100)]
         public string Title { get; set; }
 
-
+        [Required]
         [MaxLength(225)]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
-
+        [Required]
         public DateTime AssignedDate { get; set; }
 
         public DateTime DueDate { get; set; }
 
-      
+        [Required]
         public bool Completed { get; set; }
 
         
         public DateTime? CompletedDate { get; set; }
 
-        public TaskEntity(
-            int taskID,
-            int createdByUserID,
-            int ongoingProjectID,
-            string title,
-            string? description,
-            DateTime assignedDate,
-            DateTime dueDate,
-            bool completed,
-            DateTime? completedDate)
+        public TaskEntity(int taskID, int createdByUserID, int ongoingProjectID,string title, string description, DateTime assignedDate,   DateTime dueDate, bool completed,  DateTime? completedDate)
         {
             TaskID = taskID;
             CreatedByUserID = createdByUserID;
