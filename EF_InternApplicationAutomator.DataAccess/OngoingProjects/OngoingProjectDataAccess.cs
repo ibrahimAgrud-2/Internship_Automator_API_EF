@@ -58,7 +58,7 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
                 0,
                 ongoingProject.InternID,
                 ongoingProject.ProjectID,
-                ongoingProject.StartDate,
+                DateTime.Now.Date,
                 ongoingProject.DueDate);
             _Context.OngoingProjects.Add(entity);
 
@@ -70,6 +70,7 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
             return -1;
         }
 
+
         public int UpdateOngoingProject(int ongoingProjectID, OngoingProjectCreateDTO ongoingProjectDTO)
         {
             OngoingProjectEntity? ongoingProject = _Context.OngoingProjects.Find(ongoingProjectID);
@@ -80,7 +81,7 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
 
             ongoingProject.InternID = ongoingProjectDTO.InternID;
             ongoingProject.ProjectID = ongoingProjectDTO.ProjectID;
-            ongoingProject.StartDate = ongoingProjectDTO.StartDate;
+            ongoingProject.StartDate = DateTime.Now.Date;
             ongoingProject.DueDate = ongoingProjectDTO.DueDate;
 
             if (_Context.SaveChanges() > 0)
@@ -102,6 +103,13 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
         {
             return _Context.OngoingProjects.Any(
                 p => p.OngoingProjectID == ongoingProjectID);
+        }
+
+
+        public bool IsProjectAssignedToIntern(int projectID,int internID)
+        {
+            return _Context.OngoingProjects.Any(
+                p => p.ProjectID == projectID&&p.InternID==internID);
         }
 
         private static OngoingProjectResponseDTO ToResponseDTO(OngoingProjectEntity ongoingProject)

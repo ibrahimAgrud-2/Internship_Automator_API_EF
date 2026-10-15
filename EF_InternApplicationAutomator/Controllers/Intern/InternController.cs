@@ -168,7 +168,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             {
                 return NotFound("Intern Does Not Exists");
             }
-            if(_Intern.SeparateIntern(internID))
+            if(_Intern.IsInternActive(internID))
             {
                 return Ok();
             }

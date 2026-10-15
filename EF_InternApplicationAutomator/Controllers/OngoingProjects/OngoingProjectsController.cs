@@ -1,4 +1,4 @@
-using EF_InternApplicationAutomator.Business.Intern;
+﻿using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
@@ -13,6 +13,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
     {
         private readonly OngoingProjectsBL _OngoingProjects;
         private readonly Business.Intern.InternBL _Intern;
+        private readonly Business.Project.ProjectsBL _Project;
 
         public OngoingProjectsController(OngoingProjectsBL ongoingProjects, InternBL intern)
         {
@@ -62,7 +63,9 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             return Ok(ongoingProject);
         }
 
-        [HttpPost]
+      
+        
+        [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<OngoingProjectResponseDTO> AddNewOngoingProject(
@@ -71,6 +74,10 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             if (newOngoingProject == null)
             {
                 return BadRequest("Invalid Ongoing Project data.");
+            }
+            if(_Intern.IsInternExists(newOngoingProject.InternID))
+            {
+
             }
 
             int ongoingProjectID = _OngoingProjects.AddOngoingProject(newOngoingProject);
@@ -83,7 +90,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
                 ongoingProjectID,
                 newOngoingProject.InternID,
                 newOngoingProject.ProjectID,
-                newOngoingProject.StartDate,
+               DateTime.Now.Date,
                 newOngoingProject.DueDate);
 
             return CreatedAtRoute(
@@ -92,35 +99,43 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
                 createdOngoingProject);
         }
 
+      
+        
         [HttpPut("{id}", Name = "UpdateOngoingProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<OngoingProjectResponseDTO> UpdateOngoingProject(
-            int id,
-            OngoingProjectCreateDTO ongoingProjectDTO)
+        public ActionResult<OngoingProjectResponseDTO> UpdateOngoingProject( int id,  OngoingProjectCreateDTO ongoingProjectDTO)
         {
-            if (id < 1 || ongoingProjectDTO == null)
+            if (id < 1||ongoingProjectDTO.DueDate<DateTime.Now.Date|| ongoingProjectDTO == null)
             {
-                return BadRequest("Invalid Ongoing Project data.");
+                return BadRequest("Girilen veri formatı yanlış");
             }
-
-            if (!_OngoingProjects.IsOngoingProjectExists(id))
+          
+            if (!_Intern.IsInternExists(ongoingProjectDTO.InternID) ||!_Intern.IsInternActive(ongoingProjectDTO.InternID))
             {
-                return NotFound($"No Ongoing Project With ID {id}");
+                return BadRequest($"Ayrıla veya olmayan Stajyere proje atanamaz");
             }
-
+            if(!_Project.IsProjectExists(ongoingProjectDTO.ProjectID))
+            {
+                return BadRequest($"Atamak istediğiniz proje kayıtlı değil. Önce projeyi kayıt edin");
+            }
+            if (_Intern.IsProjectAssignedToIntern(ongoingProjectDTO.ProjectID, ongoingProjectDTO.InternID))
+            {
+                return BadRequest($"Stajyer zaten bu proje üzerinde çalışıyor.");
+            }
             if (_OngoingProjects.UpdateOngoingProject(id, ongoingProjectDTO) > 0)
             {
                 return Ok(new OngoingProjectResponseDTO(
                     id,
                     ongoingProjectDTO.InternID,
                     ongoingProjectDTO.ProjectID,
-                    ongoingProjectDTO.StartDate,
+                    DateTime.Now.Date,
                     ongoingProjectDTO.DueDate));
             }
 
-            return BadRequest("Could Not Update Ongoing Project");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         [HttpDelete("{id}", Name = "DeleteOngoingProject")]

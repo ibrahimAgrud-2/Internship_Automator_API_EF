@@ -1407,7 +1407,7 @@
         }
       }
     },
-    "/api/OngoingProjects": {
+    "/api/OngoingProjects/Add": {
       "post": {
         "tags": [
           "OngoingProjects"
@@ -3374,8 +3374,7 @@
         "required": [
           "dueDate",
           "internID",
-          "projectID",
-          "startDate"
+          "projectID"
         ],
         "type": "object",
         "properties": {
@@ -3386,10 +3385,6 @@
           "projectID": {
             "type": "integer",
             "format": "int32"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
           },
           "dueDate": {
             "type": "string",

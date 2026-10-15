@@ -11,16 +11,12 @@ namespace Shared.OngoingProjects
         public int ProjectID { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
-
-        [Required]
         public DateTime DueDate { get; set; }
 
-        public OngoingProjectCreateDTO(int internID, int projectID, DateTime startDate, DateTime dueDate)
+        public OngoingProjectCreateDTO(int internID, int projectID, DateTime dueDate)
         {
             InternID = internID;
             ProjectID = projectID;
-            StartDate = startDate;
             DueDate = dueDate;
         }
     }

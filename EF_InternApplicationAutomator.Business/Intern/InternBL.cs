@@ -1,4 +1,5 @@
 using EF_InternApplicationAutomator.DataAccess.Intern;
+using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
 using Shared.Intern;
 
 namespace EF_InternApplicationAutomator.Business.Intern
@@ -6,6 +7,7 @@ namespace EF_InternApplicationAutomator.Business.Intern
     public class InternBL
     {
         private readonly InternDataAccess _InternDataAccess;
+        private readonly OngoingProjectDataAccess _OngoingProjectDataAccess;
 
         public InternBL(InternDataAccess internDataAccess)
         {
@@ -53,11 +55,14 @@ namespace EF_InternApplicationAutomator.Business.Intern
         }
 
 
-        public bool SeparateIntern(int internID)
+        public bool IsInternActive(int internID)
         {
             return _InternDataAccess.SeparateIntern(internID); 
         }
 
-
+        public bool IsProjectAssignedToIntern(int projectID,int internID)
+        {
+            return _OngoingProjectDataAccess.IsProjectAssignedToIntern(projectID, internID);
+        }
     }
 }
