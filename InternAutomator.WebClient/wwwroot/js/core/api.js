@@ -195,3 +195,9 @@ async function apiDelete(path) {
 function deleteProject(projectID) {
     return apiDelete(`Projects/Delete/${projectID}`);
 }
+
+// Projenin adını, açıklamasını ve teknolojilerini günceller.
+// Başarıda gövde boş gelebilir; sendJson bunu null olarak döner.
+function updateProject(projectID, project) {
+    return apiPut(`Projects/Update/${projectID}`, project);
+}

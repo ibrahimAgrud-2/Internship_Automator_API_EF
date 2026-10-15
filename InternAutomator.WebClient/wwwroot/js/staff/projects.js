@@ -29,6 +29,8 @@ const descriptionInput = document.getElementById("projectDescriptionInput");
 const createSubmit = document.getElementById("createProjectSubmit");
 const createCancel = document.getElementById("createProjectCancel");
 const createError = document.getElementById("createProjectError");
+const createModalTitle = document.getElementById("createProjectTitle");
+
 
 // Silme penceresi
 const deleteModalElement = document.getElementById("deleteProjectModal");
@@ -94,7 +96,13 @@ function createProjectCard(project) {
     deleteButton.dataset.action = "delete";
     deleteButton.textContent = "Sil";
 
-    footer.append(detailsButton, deleteButton);
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "btn btn-sm btn-outline-secondary ms-2";
+    editButton.dataset.action = "edit";
+    editButton.textContent = "Düzenle";
+
+    footer.append(detailsButton, editButton, deleteButton);
 
     card.append(body, footer);
     return card;
@@ -193,12 +201,75 @@ function setCreateBusy(isBusy) {
     createSubmit.disabled = isBusy;
 }
 
+// Aynı form hem ekleme hem düzenleme için kullanılır.
+// editingProjectID null ise "yeni proje", dolu ise "düzenleme" modudur.
+let editingProjectID = null;
+
 function openCreateModal() {
+    editingProjectID = null;
+    createModalTitle.textContent = "Yeni Proje";
+    createSubmit.textContent = "Projeyi Ekle";
     createForm.reset();
     hideMessage(createError);
     setCreateBusy(false);
 
     createModal.show();
+}
+
+function openEditModal(projectID) {
+    const project = projectsById.get(projectID);
+    if (!project) return;
+
+    editingProjectID = projectID;
+    createModalTitle.textContent = "Projeyi Düzenle";
+    createSubmit.textContent = "Kaydet";
+    createForm.reset();
+    hideMessage(createError);
+    setCreateBusy(false);
+
+    titleInput.value = project.title ?? "";
+    technologiesInput.value = (project.technologies ?? "").trim();
+    descriptionInput.value = getDescription(project);
+
+    createModal.show();
+}
+
+async function submitUpdate(title) {
+    const project = projectsById.get(editingProjectID);
+    const changes = {
+        title,
+        description: descriptionInput.value.trim(),
+        technologies: technologiesInput.value.trim()
+    };
+
+    // Hiçbir şey değişmediyse sunucuya gitmeye gerek yok
+    if (project
+        && changes.title === (project.title ?? "").trim()
+        && changes.description === getDescription(project)
+        && changes.technologies === (project.technologies ?? "").trim()) {
+        createModal.hide();
+        return;
+    }
+
+    hideMessage(createError);
+    setCreateBusy(true);
+
+    try {
+        await updateProject(editingProjectID, changes);
+
+        createModal.hide();
+        showNotice(noticeBox, "success", `"${title}" projesi güncellendi.`);
+        await loadProjects();
+    } catch (error) {
+        showError(createError, error);
+
+        // Proje artık yoksa ekrandaki liste eskimiş demektir; arkada tazelenir
+        if (error instanceof ApiError && error.status === 404) {
+            loadProjects();
+        }
+    } finally {
+        setCreateBusy(false);
+    }
 }
 
 async function submitCreate(event) {
@@ -211,6 +282,12 @@ async function submitCreate(event) {
     if (!title) {
         showMessage(createError, "danger", "Proje adı zorunludur.");
         titleInput.focus();
+        return;
+    }
+
+    // Düzenleme modunda oluşturan kullanıcı değişmez; sadece alanlar güncellenir
+    if (editingProjectID !== null) {
+        await submitUpdate(title);
         return;
     }
 
@@ -289,6 +366,7 @@ projectList.addEventListener("click", (event) => {
     const projectID = Number(button.closest(".project-card").dataset.projectId);
 
     if (button.dataset.action === "details") openDetails(projectID);
+    if (button.dataset.action === "edit") openEditModal(projectID);
     if (button.dataset.action === "delete") openDeleteModal(projectID);
 });
 
