@@ -50,6 +50,24 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             return task == null ? null : ToResponseDTO(task);
         }
 
+        public bool CompleteTask(int taskID)
+        {
+
+            TaskEntity taskEntity = _Context.Tasks.Find(taskID);
+
+             if(taskEntity==null)
+            {
+                return false;
+            }
+            taskEntity.Completed = true;
+            if (_Context.SaveChanges() > 0)
+            {
+                return true;
+            }
+
+            return false ;
+        }
+
 
 
 

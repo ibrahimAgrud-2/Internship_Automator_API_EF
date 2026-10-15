@@ -95,6 +95,33 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
 
 
 
+        [HttpPut("Complete/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> CompleteTask(int id)
+        {
+            if (id < 1)
+            {
+                return BadRequest($"Not Accepted ID {id}");
+            }
+
+            TaskResponseDTO? task = _Tasks.Find(id);
+            if (task == null)
+            {
+                return NotFound($"No Task With ID {id}");
+            }
+            if(_Tasks.CompleteTask(id))
+            {
+                return Ok(true);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+
+
         //[HttpPut("{id}", Name = "UpdateTask")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -1,4 +1,4 @@
-using EF_InternApplicationAutomator.DataAccess.Tasks;
+﻿using EF_InternApplicationAutomator.DataAccess.Tasks;
 using Shared.Tasks;
 
 namespace EF_InternApplicationAutomator.Business.Tasks
@@ -25,6 +25,12 @@ namespace EF_InternApplicationAutomator.Business.Tasks
         public TaskResponseDTO? Find(int taskID)
         {
             return _TaskDataAccess.Find(taskID);
+        }
+
+        //TODO: normlade bu ID almamaı gerekirdi. BL yani bu sınıf propertyleri olurdu. Sen ID'i this.ID şekilde veridir. Dışardan da task.CompleteTask(); şekilnde kullanmalıydın.
+        public bool CompleteTask(int taskID)
+        {
+            return _TaskDataAccess.CompleteTask(taskID);
         }
 
         //public int UpdateTask(int taskID, TaskCreateDTO taskCreateDTO)
