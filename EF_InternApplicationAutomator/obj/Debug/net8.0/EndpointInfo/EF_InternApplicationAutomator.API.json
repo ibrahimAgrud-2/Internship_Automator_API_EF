@@ -2074,15 +2074,14 @@
         }
       }
     },
-    "/api/Projects/{id}": {
+    "/api/Projects/Delete/{ID}": {
       "delete": {
         "tags": [
           "Projects"
         ],
-        "operationId": "DeleteProject",
         "parameters": [
           {
-            "name": "id",
+            "name": "ID",
             "in": "path",
             "required": true,
             "schema": {

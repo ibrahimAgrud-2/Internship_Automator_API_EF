@@ -28,7 +28,6 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
         }
 
     
-        //TODO:şu anlik Find BL'de ve DAL'da implemente edilmedi. Sadece ADD sonrası URL oluşturmak için kullanılıyor.
         
         [HttpGet("{ID}", Name = "FindProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -50,26 +49,26 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             return Ok(project);
         }
         
-        //[HttpPut("{id}", Name = "UpdateProject")]
+        //[HttpPut("{ID}", Name = "UpdateProject")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult<ProjectListResponseDTO> UpdateProject(int id, ProjectCreateDTO projectDTO)
+        //public ActionResult<ProjectListResponseDTO> UpdateProject(int ID, ProjectCreateDTO projectDTO)
         //{
-        //    if (id < 1 || projectDTO == null)
+        //    if (ID < 1 || projectDTO == null)
         //    {
         //        return BadRequest("Invalid Project data.");
         //    }
 
-        //    if (!_Projects.IsProjectExists(id))
+        //    if (!_Projects.IsProjectExists(ID))
         //    {
-        //        return NotFound($"No Project With ID {id}");
+        //        return NotFound($"No Project With ID {ID}");
         //    }
 
-        //    if (_Projects.UpdateProject(id, projectDTO) > 0)
+        //    if (_Projects.UpdateProject(ID, projectDTO) > 0)
         //    {
         //        return Ok(new ProjectListResponseDTO(
-        //            id,
+        //            ID,
         //            projectDTO.CreatedByUserID,
         //            projectDTO.Title,projectDTO.Description,
         //            projectDTO.Technologies));
@@ -104,23 +103,23 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             return CreatedAtRoute("FindProject", new { ID = projectID }, createdProject);
         }
 
-        [HttpDelete("{id}", Name = "DeleteProject")]
+        [HttpDelete("Delete/{ID}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult DeleteProject(int id)
+        public ActionResult DeleteProject(int ID)
         {
-            if (id < 1)
+            if (ID < 1)
             {
-                return BadRequest($"Not Accepted ID {id}");
+                return BadRequest($"Not Accepted ID {ID}");
             }
 
-            if (!_Projects.IsProjectExists(id))
+            if (!_Projects.IsProjectExists(ID))
             {
-                return NotFound($"No Project With ID {id}");
+                return NotFound($"No Project With ID {ID}");
             }
 
-            if (_Projects.DeleteProject(id))
+            if (_Projects.DeleteProject(ID))
             {
                 return NoContent();
             }
@@ -128,6 +127,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             return NotFound("Delete Process terminated. No rows deleted!");
         }
 
+      
+        
         [HttpGet("exists/{projectID}")]
         public bool IsProjectExists(int projectID)
         {
@@ -145,5 +146,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             }
             return Ok(_OngoingProjects.GetAssignedInternCountForProject(projectID));
         }
+   
+    
     }
 }
