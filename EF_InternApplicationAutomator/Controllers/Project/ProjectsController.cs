@@ -120,7 +120,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             }
             if(_OngoingProjects.GetAssignedInternCountForProject(ID)>0)
             {
-                return    BadRequest($"Proje stajyer tarafında yapıldığı için silinemez");
+                return    BadRequest($"Bu proje stajyerlere atanmış olduğu için silinemez.");
             }
             if (_Projects.DeleteProject(ID))
             {
