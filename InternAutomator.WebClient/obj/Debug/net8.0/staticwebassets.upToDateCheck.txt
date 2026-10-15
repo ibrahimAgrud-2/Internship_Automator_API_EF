@@ -1,4 +1,3 @@
-wwwroot\Apply\apply.html
 wwwroot\bootstrap\css\bootstrap-grid.css
 wwwroot\bootstrap\css\bootstrap-grid.css.map
 wwwroot\bootstrap\css\bootstrap-grid.min.css
@@ -140,9 +139,6 @@ wwwroot\css\interns.css
 wwwroot\css\projects.css
 wwwroot\css\shell.css
 wwwroot\index.html
-wwwroot\Intern\home.html
-wwwroot\Intern\login.html
-wwwroot\Intern\projects.html
 wwwroot\js\apply\apply.js
 wwwroot\js\core\auth.js
 wwwroot\js\core\shell.js
@@ -151,14 +147,18 @@ wwwroot\js\intern\intern-home.js
 wwwroot\js\intern\intern-login.js
 wwwroot\js\intern\intern-projects.js
 wwwroot\js\staff\applications.js
-wwwroot\js\staff\intern-assign-project.js
 wwwroot\js\staff\intern-detail.js
 wwwroot\js\staff\interns.js
 wwwroot\js\staff\projects.js
 wwwroot\js\staff\staff-login.js
+wwwroot\Apply\apply.html
+wwwroot\Intern\home.html
+wwwroot\Intern\login.html
+wwwroot\Intern\projects.html
+wwwroot\js\core\api.js
+wwwroot\js\staff\intern-assign-project.js
 wwwroot\Staff\applications.html
 wwwroot\Staff\intern.html
 wwwroot\Staff\interns.html
 wwwroot\Staff\login.html
 wwwroot\Staff\projects.html
-wwwroot\js\core\api.js

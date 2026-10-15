@@ -134,9 +134,18 @@ async function loadAssignableProjects() {
     }
 }
 
+// Bugünün tarihi "yyyy-MM-dd" olarak (tarayıcının yerel saatiyle; toISOString UTC verir, kullanılmaz)
+function getTodayText() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${now.getFullYear()}-${month}-${day}`;
+}
+
 function openAssignModal() {
     selectedProjectID = null;
     assignDueDate.value = "";
+    assignDueDate.min = getTodayText();   // sayfa gece yarısını geçerse diye her açılışta yenilenir
     setAssignBusy(false);
     showListView();
 
@@ -149,12 +158,26 @@ async function confirmAssign() {
     if (isAssigning || selectedProjectID === null) return;   // çift tıklama koruması
 
     const project = assignableProjects.find(item => item.projectID === selectedProjectID);
+
+    // Teslim tarihi zorunludur ve bugünden önce olamaz. min özelliği elle yazılan tarihi engellemez,
+    // bu yüzden burada da kontrol edilir (yyyy-MM-dd metinleri tarih sırasıyla karşılaştırılabilir).
+    const dueDate = assignDueDate.value;
+    if (!dueDate) {
+        showMessage(assignError, "danger", "Teslim tarihi zorunludur.");
+        assignDueDate.focus();
+        return;
+    }
+    if (dueDate < getTodayText()) {
+        showMessage(assignError, "danger", "Teslim tarihi bugünden önce olamaz.");
+        assignDueDate.focus();
+        return;
+    }
+
     hideMessage(assignError);
     setAssignBusy(true);
 
     try {
-        await assignProjectToIntern(internID, selectedProjectID, assignDueDate.value || null);
-
+        await assignProjectToIntern(internID, selectedProjectID, dueDate);
         assignModal.hide();
         showNotice(assignNoticeBox, "success", `"${project?.title ?? "Proje"}" stajyere atandı.`);
         await loadDetails();

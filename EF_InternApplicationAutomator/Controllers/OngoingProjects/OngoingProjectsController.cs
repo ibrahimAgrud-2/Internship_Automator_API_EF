@@ -73,7 +73,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         public ActionResult<OngoingProjectResponseDTO> AddNewOngoingProject(
             OngoingProjectCreateDTO ongoingProjectDTO)
         {
-            if (ongoingProjectDTO.DueDate < DateTime.Now.Date || ongoingProjectDTO == null)
+            if (ongoingProjectDTO == null || ongoingProjectDTO.DueDate < DateTime.Now.Date)
             {
                 return BadRequest("Girilen veri formatı yanlış");
             }
