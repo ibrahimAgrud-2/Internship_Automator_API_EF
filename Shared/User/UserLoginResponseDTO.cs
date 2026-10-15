@@ -28,7 +28,7 @@ namespace Shared.User
 
         public UserLoginResponseDTO(int userID,string firstName,string lastName, int permissionType,bool isActive)
         {
-            this.UserID = UserID;
+            this.UserID = userID;
             this.firstName = firstName;
             this.lastName = lastName;
             this.PermissionType = permissionType;

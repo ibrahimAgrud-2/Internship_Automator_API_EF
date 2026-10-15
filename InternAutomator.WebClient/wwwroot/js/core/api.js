@@ -171,3 +171,7 @@ async function getAllProjects() {
 async function getProjectAssignedInternCount(projectID) {
     return Number(await apiGet(`Projects/AssignedInternCount?projectID=${encodeURIComponent(projectID)}`));
 }
+
+function createProject(project) {
+    return apiPost("Projects", project);
+}

@@ -18,6 +18,24 @@ const projectModalCreator = document.getElementById("projectModalCreator");
 const projectModalCount = document.getElementById("projectModalCount");
 const projectModalError = document.getElementById("projectModalError");
 
+const noticeBox = document.getElementById("noticeBox");
+const addProjectButton = document.getElementById("addProjectButton");
+const createModalElement = document.getElementById("createProjectModal");
+const createModal = new bootstrap.Modal(createModalElement);
+const createForm = document.getElementById("createProjectForm");
+const titleInput = document.getElementById("projectTitleInput");
+const technologiesInput = document.getElementById("projectTechnologiesInput");
+const descriptionInput = document.getElementById("projectDescriptionInput");
+const createSubmit = document.getElementById("createProjectSubmit");
+const createCancel = document.getElementById("createProjectCancel");
+const createError = document.getElementById("createProjectError");
+
+// Veritabanındaki sütun uzunluklarıyla aynı olmalı (şimdilik tahmin)
+const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };
+titleInput.maxLength = PROJECT_LIMITS.title;
+technologiesInput.maxLength = PROJECT_LIMITS.technologies;
+descriptionInput.maxLength = PROJECT_LIMITS.description;
+
 let projectsById = new Map();
 let detailsRequestId = 0;   // eski bir isteğin cevabı yeni açılan pencereyi bozmasın diye
 
@@ -151,6 +169,63 @@ async function openDetails(projectID) {
     }
 }
 
+// ---------- Yeni proje penceresi ----------
+function setCreateBusy(isBusy) {
+    titleInput.disabled = isBusy;
+    technologiesInput.disabled = isBusy;
+    descriptionInput.disabled = isBusy;
+    createCancel.disabled = isBusy;
+    createSubmit.disabled = isBusy;
+}
+
+function openCreateModal() {
+    createForm.reset();
+    hideMessage(createError);
+    setCreateBusy(false);
+
+    createModal.show();
+}
+
+async function submitCreate(event) {
+    event.preventDefault();
+
+    // İstek sürerken ikinci gönderim (Enter'a art arda basma vb.) yapılmasın
+    if (createSubmit.disabled) return;
+
+    const title = titleInput.value.trim();
+    if (!title) {
+        showMessage(createError, "danger", "Proje adı zorunludur.");
+        titleInput.focus();
+        return;
+    }
+
+    // Oturumda kullanıcı numarası yoksa istek hiç atılmaz
+    if (!session.userID) {
+        showMessage(createError, "danger", "Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.");
+        return;
+    }
+
+    hideMessage(createError);
+    setCreateBusy(true);
+
+    try {
+        await createProject({
+            createdByUserID: session.userID,
+            title,
+            description: descriptionInput.value.trim(),
+            technologies: technologiesInput.value.trim()
+        });
+
+        createModal.hide();
+        showNotice(noticeBox, "success", `"${title}" projesi eklendi.`);
+        await loadProjects();   // ekranda her zaman sunucudaki gerçek hal görünsün
+    } catch (error) {
+        showError(createError, error);
+    } finally {
+        setCreateBusy(false);
+    }
+}
+
 // ---------- Olay dinleyicileri ----------
 projectList.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-action=details]");
@@ -172,6 +247,14 @@ searchClear.addEventListener("click", () => {
     searchInput.value = "";
     applySearch();
     searchInput.focus();
+});
+
+
+addProjectButton.addEventListener("click", openCreateModal);
+createForm.addEventListener("submit", submitCreate);
+
+createModalElement.addEventListener("shown.bs.modal", () => {
+    titleInput.focus();
 });
 
 // Giriş yoksa renderStaffShell zaten yönlendirdi

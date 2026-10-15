@@ -28,10 +28,10 @@
                                autocomplete="off" disabled />
                         <button type="button" id="searchClear" class="btn btn-outline-secondary" disabled>Temizle</button>
                     </div>
-                    <button type="button" class="btn btn-outline-primary" disabled title="Yakında">Proje Ekle</button>
+                    <button type="button" id="addProjectButton" class="btn btn-outline-primary">Proje Ekle</button>
                 </div>
             </div>
-
+            <div id="noticeBox" class="alert" role="status" hidden></div>
             <!-- Yükleniyor / boş liste / hata mesajları -->
             <div id="statusBox" class="alert" hidden></div>
 
@@ -44,6 +44,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
+                    projectModal
                     <h5 class="modal-title text-break" id="projectModalTitle"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
@@ -62,7 +63,41 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="createProjectForm" novalidate autocomplete="off">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createProjectTitle">Yeni Proje</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div id="createProjectError" class="alert" role="alert" hidden></div>
 
+                        <div class="mb-3">
+                            <label for="projectTitleInput" class="form-label">Proje adı <span class="text-danger">*</span></label>
+                            <input type="text" id="projectTitleInput" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="projectTechnologiesInput" class="form-label">Teknolojiler</label>
+                            <input type="text" id="projectTechnologiesInput" class="form-control" placeholder="C#, EF Core, ASP.NET">
+                            <div class="form-text">Virgülle ayırın.</div>
+                        </div>
+
+                        <div class="mb-0">
+                            <label for="projectDescriptionInput" class="form-label">Açıklama</label>
+                            <textarea id="projectDescriptionInput" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="createProjectCancel" class="btn btn-outline-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                        <button type="submit" id="createProjectSubmit" class="btn btn-primary">Projeyi Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/js/core/auth.js?v=13"></script>
     <script src="/js/core/api.js?v=13"></script>
