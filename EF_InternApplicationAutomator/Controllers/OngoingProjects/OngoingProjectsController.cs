@@ -141,7 +141,9 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        [HttpDelete("{id}", Name = "DeleteOngoingProject")]
+     
+        
+        [HttpDelete("Delete/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -151,12 +153,21 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             {
                 return BadRequest($"Not Accepted ID {id}");
             }
-
+          
             if (!_OngoingProjects.IsOngoingProjectExists(id))
             {
-                return NotFound($"No Ongoing Project With ID {id}");
+                return BadRequest($"No Ongoing Project With ID {id}");
             }
+            OngoingProjectResponseDTO ongoingProject = _OngoingProjects.Find(id);
 
+            if (ongoingProject==null)
+            {
+                return BadRequest($"No Ongoing Project With ID {id}");
+            }
+            if (!_Intern.IsInternActive(ongoingProject.InternID))
+            {
+                return BadRequest($"Silmek istediğin projeyi alan stajyer aktif değil. Aktif olman stajyer'den proje/görev silinemez");
+            }
             if (_OngoingProjects.DeleteOngoingProject(id))
             {
                 return NoContent();
@@ -164,6 +175,10 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
 
             return NotFound("Delete Process terminated. No rows deleted!");
         }
+
+
+
+
 
         [HttpGet("exists/{ongoingProjectID}")]
         public bool IsOngoingProjectExists(int ongoingProjectID)
