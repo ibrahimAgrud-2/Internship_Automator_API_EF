@@ -1285,56 +1285,6 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
-    "Method": "UpdateTask",
-    "RelativePath": "api/Tasks/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "taskDTO",
-        "Type": "Shared.Tasks.TaskUpdateDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Boolean",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ],
-    "EndpointName": "UpdateTask"
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
     "Method": "AddNewTask",
     "RelativePath": "api/Tasks/Add",
     "HttpMethod": "POST",
@@ -1545,6 +1495,55 @@
       }
     ],
     "EndpointName": "FindTask"
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Tasks.TasksController",
+    "Method": "UpdateTask",
+    "RelativePath": "api/Tasks/Update/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "taskDTO",
+        "Type": "Shared.Tasks.TaskUpdateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.User.UserController",

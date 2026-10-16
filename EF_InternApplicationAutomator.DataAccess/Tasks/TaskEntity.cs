@@ -39,7 +39,15 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         
         public DateTime? CompletedDate { get; set; }
 
-        public TaskEntity(int taskID, int createdByUserID, int ongoingProjectID,string title, string description, DateTime assignedDate,   DateTime dueDate, bool completed,  DateTime? completedDate)
+        [Required]
+        public int lastModifiedByUserID { get; set; }
+
+        [Required]
+        public DateTime LastModifiedDate { get; set; }
+
+
+
+        public TaskEntity(int taskID, int createdByUserID,int ongoingProjectID,string title, string description, DateTime assignedDate,   DateTime dueDate, bool completed,  DateTime? completedDate,int lastModifiedByUserID,DateTime lastModifiedDate)
         {
             TaskID = taskID;
             CreatedByUserID = createdByUserID;
@@ -50,6 +58,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             DueDate = dueDate;
             Completed = completed;
             CompletedDate = completedDate;
+            this.lastModifiedByUserID = lastModifiedByUserID;
+            this.LastModifiedDate = lastModifiedDate;
         }
     }
 }

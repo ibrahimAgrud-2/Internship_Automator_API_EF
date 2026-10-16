@@ -2702,12 +2702,11 @@
         }
       }
     },
-    "/api/Tasks/{id}": {
+    "/api/Tasks/Update/{id}": {
       "put": {
         "tags": [
           "Tasks"
         ],
-        "operationId": "UpdateTask",
         "parameters": [
           {
             "name": "id",
@@ -4112,6 +4111,7 @@
         "required": [
           "description",
           "dueDate",
+          "lastUpdatedByUserID",
           "title"
         ],
         "type": "object",
@@ -4120,6 +4120,10 @@
             "maxLength": 100,
             "minLength": 1,
             "type": "string"
+          },
+          "lastUpdatedByUserID": {
+            "type": "integer",
+            "format": "int32"
           },
           "description": {
             "maxLength": 200,

@@ -14,6 +14,9 @@ namespace Shared.Tasks
         [Required]
         public string Title { get; set; }
 
+        [Required]
+        public int LastUpdatedByUserID { set; get; }
+
         [MaxLength(200)]
         [Required]
         public string Description { get; set; }
@@ -21,12 +24,15 @@ namespace Shared.Tasks
         [Required]
         public DateTime DueDate { get; set; }
 
-        public TaskUpdateDTO(string title, string description,  DateTime dueDate)
+
+
+        public TaskUpdateDTO(int lastUpdatedByUserID,string title, string description,  DateTime dueDate)
         {
-          
+
             Title = title;
             DueDate = dueDate;
             this.Description = description;
+            LastUpdatedByUserID = lastUpdatedByUserID;
         }
     }
 }

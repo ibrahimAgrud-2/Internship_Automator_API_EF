@@ -31,7 +31,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         public int AddTask(TaskCreateDTO task)
         {
 
-            TaskEntity taskEntity = new TaskEntity(0,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,DateTime.Now.Date,task.DueDate,false,null);
+            TaskEntity taskEntity = new TaskEntity(0,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,DateTime.Now.Date,task.DueDate,false,null,task.CreatedByUserID,DateTime.Now.Date);
 
             _Context.Tasks.Add(taskEntity);
 
@@ -55,7 +55,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
 
             TaskEntity taskEntity = _Context.Tasks.Find(taskID);
 
-             if(taskEntity==null)
+            if(taskEntity==null)
             {
                 return false;
             }
@@ -91,19 +91,19 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             task.Title = taskDTO.Title;
             task.Description = taskDTO.Description;
             task.DueDate =taskDTO.DueDate;
+            task.lastModifiedByUserID = taskDTO.LastUpdatedByUserID;
+            task.LastModifiedDate = DateTime.Now.Date;
 
             return _Context.SaveChanges()>0;
         }
-
-
-
-
 
         private static TaskResponseDTO ToResponseDTO(TaskEntity task)
         {
             return new TaskResponseDTO(task.TaskID,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,task.AssignedDate,task.DueDate,task.Completed,task.CompletedDate);
         }
         
+
+
         
         public bool DeleteTask(int taskID)
         {
