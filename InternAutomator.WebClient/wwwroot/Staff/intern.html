@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stajyer Detayı</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=23" />
-    <link rel="stylesheet" href="/css/intern-detail.css?v=23" />
+    <link rel="stylesheet" href="/css/shell.css?v=24" />
+    <link rel="stylesheet" href="/css/intern-detail.css?v=24" />
 </head>
 <body class="shell">
 
@@ -211,15 +211,39 @@
             </div>
         </div>
     </div>
+    <!-- Projeyi geri al onay penceresi -->
+    <div class="modal fade" id="revokeProjectModal" tabindex="-1" aria-labelledby="revokeProjectTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="revokeProjectTitle">Projeyi Geri Al</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="revokeProjectError" class="alert" role="alert" hidden></div>
+                    <p class="mb-2">
+                        <strong id="revokeProjectName" class="text-break"></strong> projesi stajyerden geri alınacak.
+                    </p>
+                    <div id="revokeProjectWarning" class="alert alert-warning mb-2" hidden></div>
+                    <p class="text-muted small mb-0">Bu işlem geri alınamaz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="revokeProjectCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="button" id="revokeProjectConfirm" class="btn btn-danger">Projeyi Geri Al</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=23"></script>
-    <script src="/js/core/api.js?v=23"></script>
-    <script src="/js/core/ui.js?v=23"></script>
-    <script src="/js/core/shell.js?v=23"></script>
-    <script src="/js/staff/intern-detail.js?v=23"></script>
-    <script src="/js/staff/intern-assign-project.js?v=23"></script>
-    <script src="/js/staff/intern-add-task.js?v=23"></script>
-    <script src="/js/staff/intern-complete-task.js?v=23"></script>
-    <script src="/js/staff/intern-delete-task.js?v=23"></script>
+    <script src="/js/core/auth.js?v=24"></script>
+    <script src="/js/core/api.js?v=24"></script>
+    <script src="/js/core/ui.js?v=24"></script>
+    <script src="/js/core/shell.js?v=24"></script>
+    <script src="/js/staff/intern-detail.js?v=24"></script>
+    <script src="/js/staff/intern-assign-project.js?v=24"></script>
+    <script src="/js/staff/intern-add-task.js?v=24"></script>
+    <script src="/js/staff/intern-complete-task.js?v=24"></script>
+    <script src="/js/staff/intern-delete-task.js?v=24"></script>
+    <script src="/js/staff/intern-revoke-project.js?v=24"></script>
 </body>
 </html>

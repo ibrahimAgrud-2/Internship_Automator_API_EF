@@ -228,3 +228,10 @@ function deleteTask(taskID) {
 function updateTask(taskID, task) {
     return apiPut(`Tasks/Update/${encodeURIComponent(taskID)}`, task);
 }
+
+
+// Atanmış projeyi stajyerden geri alır (atama kaydı silinir; API bağlı görevleri de siler).
+// Başarıda 204 döner; reddederse API'nin mesajı ApiError ile iletilir.
+function revokeProject(ongoingProjectID) {
+    return apiDelete(`OngoingProjects/Delete/${encodeURIComponent(ongoingProjectID)}`);
+}

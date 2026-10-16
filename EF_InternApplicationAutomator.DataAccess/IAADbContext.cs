@@ -6,6 +6,7 @@ using EF_InternApplicationAutomator.DataAccess.Tasks;
 using EF_InternApplicationAutomator.DataAccess.User;
 using Microsoft.EntityFrameworkCore;
 using System;
+using EF_InternApplicationAutomator.DataAccess.Announcement;
 
 namespace EF_InternApplicationAutomator.DataAccess
 {
@@ -25,5 +26,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         public DbSet<ProjectEntity> Projects { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<OngoingProjectEntity> OngoingProjects { get; set; }
+        public DbSet<AnnouncementEntity> Announcements { get; set; }
     }
 }

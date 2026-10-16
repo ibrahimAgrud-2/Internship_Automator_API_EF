@@ -47,9 +47,27 @@ function createProjectItem(project, index) {
             `Başlangıç: ${formatDate(project.startDate, "-")} · Teslim: ${formatDate(project.dueDate, "-")}`
         )
     );
+
+    // Geri al butonu. Ayrılan stajyerde pasiftir (asıl engel API'dadır).
+    const footer = document.createElement("div");
+    footer.className = "mt-2 d-flex justify-content-end";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn-sm btn-outline-danger";
+    button.dataset.action = "revoke";
+    button.dataset.ongoingProjectId = project.ongoingProjectID;
+    button.textContent = "Geri Al";
+
+    if (currentIntern && currentIntern.status !== INTERN_ACTIVE) {
+        button.disabled = true;
+        button.title = "Ayrılan stajyerden proje geri alınamaz";
+    }
+
+    footer.appendChild(button);
+    box.appendChild(footer);
     return box;
 }
-
 function createTaskStatusBadge(completed) {
     const badge = document.createElement("span");
     badge.className = completed ? "badge text-bg-success" : "badge text-bg-warning";
