@@ -68,7 +68,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<AnnouncementResponseDTO> AddNewAnnouncement( AnnouncementCreateDTO announcementCreateDTO)
         {
-            if (announcementCreateDTO == null || announcementCreateDTO.CreatedDate < DateTime.Now.Date)
+            if (announcementCreateDTO == null)
             {
                 return BadRequest("Girilen veri formatı yanlış");
             }
