@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Duyurular</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/shell.css?v=26" />
+    <link rel="stylesheet" href="/css/announcements.css?v=26" />
+</head>
+<body class="shell">
+
+    <header id="shellHeader"></header>
+
+    <div class="shell-body">
+        <nav id="shellSidebar"></nav>
+
+        <main class="shell-content">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <h4 class="mb-0">Duyurular</h4>
+                <span id="resultCount" class="small text-muted"></span>
+            </div>
+
+            <!-- Yükleniyor / boş liste / hata mesajları -->
+            <div id="statusBox" class="alert" hidden></div>
+
+            <div id="announcementList" class="d-flex flex-column gap-3"></div>
+        </main>
+    </div>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/core/auth.js?v=26"></script>
+    <script src="/js/core/api.js?v=26"></script>
+    <script src="/js/core/ui.js?v=26"></script>
+    <script src="/js/core/shell.js?v=26"></script>
+    <script src="/js/staff/announcements.js?v=26"></script>
+</body>
+</html>

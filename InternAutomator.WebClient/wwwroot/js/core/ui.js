@@ -121,3 +121,11 @@ function getTodayText() {
     const day = String(now.getDate()).padStart(2, "0");
     return `${now.getFullYear()}-${month}-${day}`;
 }
+
+
+// Tarih ve saat birlikte: "15.11.2023 09:30"
+function formatDateTime(isoDate, fallback = "") {
+    return isoDate
+        ? new Date(isoDate).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })
+        : fallback;
+}

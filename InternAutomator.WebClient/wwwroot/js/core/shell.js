@@ -13,7 +13,7 @@ const STAFF_MENU = [
     { key: "applications", text: "Başvurular", href: "/Staff/applications.html" },
     { key: "interns", text: "Stajyerler", href: "/Staff/interns.html" },
     { key: "projects", text: "Projeler", href: "/Staff/projects.html" },
-    { key: "announcements", text: "Duyurular", href: null },
+    { key: "announcements", text: "Duyurular", href: "/Staff/announcements.html" },
     { key: "courses", text: "Kurslar", href: null },
     { key: "messages", text: "Mesajlar", href: null }
 ];

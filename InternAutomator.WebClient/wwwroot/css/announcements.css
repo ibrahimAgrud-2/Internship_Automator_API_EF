@@ -1,0 +1,43 @@
+﻿/* Duyuru kartı: üstte renkli şerit (yayın tarihi), altında beyaz içerik */
+.announcement-card {
+    border: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+
+.announcement-band {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background-color: var(--accent);
+    color: var(--accent-text, #fff);
+}
+
+/* Renk sırası: en yeni duyuru kırmızı, sonra sarı, yeşil, mavi, mor; sonra başa döner */
+.announcement-color-0 {
+    --accent: #dc3545;
+}
+
+.announcement-color-1 {
+    --accent: #ffc107;
+    --accent-text: #212529;
+}
+
+.announcement-color-2 {
+    --accent: #198754;
+}
+
+.announcement-color-3 {
+    --accent: #0d6efd;
+}
+
+.announcement-color-4 {
+    --accent: #6f42c1;
+}
+
+/* Duyuru metni yazıldığı gibi görünür: satır sonları ve paragraflar korunur */
+.announcement-content {
+    white-space: pre-wrap;
+}

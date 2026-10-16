@@ -235,3 +235,12 @@ function updateTask(taskID, task) {
 function revokeProject(ongoingProjectID) {
     return apiDelete(`OngoingProjects/Delete/${encodeURIComponent(ongoingProjectID)}`);
 }
+
+// ---- Duyurular ----
+// API en yeni duyuruyu başa koyarak sıralı döner; olduğu gibi gösterilir.
+async function getAllAnnouncements() {
+    const announcements = await apiGet("Announcement/All");
+
+    // Duyuru yoksa API 200 + [] döner; beklenmeyen biçimde de boş liste say
+    return Array.isArray(announcements) ? announcements : [];
+}

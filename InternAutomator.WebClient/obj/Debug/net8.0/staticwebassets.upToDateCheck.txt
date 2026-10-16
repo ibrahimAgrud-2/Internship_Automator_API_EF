@@ -134,6 +134,7 @@ wwwroot\bootstrap\scss\_type.scss
 wwwroot\bootstrap\scss\_utilities.scss
 wwwroot\bootstrap\scss\_variables-dark.scss
 wwwroot\bootstrap\scss\_variables.scss
+wwwroot\css\announcements.css
 wwwroot\css\intern-detail.css
 wwwroot\css\interns.css
 wwwroot\css\projects.css
@@ -153,6 +154,7 @@ wwwroot\js\staff\intern-assign-project.js
 wwwroot\js\staff\intern-complete-task.js
 wwwroot\js\staff\intern-delete-task.js
 wwwroot\js\staff\intern-detail.js
+wwwroot\js\staff\intern-revoke-project.js
 wwwroot\js\staff\interns.js
 wwwroot\js\staff\projects.js
 wwwroot\js\staff\staff-login.js
@@ -160,7 +162,8 @@ wwwroot\Apply\apply.html
 wwwroot\Intern\home.html
 wwwroot\Intern\login.html
 wwwroot\Intern\projects.html
-wwwroot\js\staff\intern-revoke-project.js
+wwwroot\js\staff\announcements.js
+wwwroot\Staff\announcements.html
 wwwroot\Staff\applications.html
 wwwroot\Staff\intern.html
 wwwroot\Staff\interns.html
