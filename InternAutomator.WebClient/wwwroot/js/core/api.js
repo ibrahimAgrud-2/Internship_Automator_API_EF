@@ -223,3 +223,8 @@ function completeTask(taskID) {
 function deleteTask(taskID) {
     return apiDelete(`Tasks/Delete/${encodeURIComponent(taskID)}`);
 }
+
+
+function updateTask(taskID, task) {
+    return apiPut(`Tasks/Update/${encodeURIComponent(taskID)}`, task);
+}

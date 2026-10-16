@@ -26,6 +26,8 @@ namespace Shared.Tasks
 
         public DateTime? CompletedDate { get; set; }
 
+
+
         public TaskResponseDTO(
             int taskID,
             int createdByUserID,

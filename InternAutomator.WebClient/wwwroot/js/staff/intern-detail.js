@@ -103,8 +103,9 @@ function createTaskItem(task, projectTitles) {
         footer.appendChild(button);
     }
 
-    // "Tamamla" sadece tamamlanmamış görevde çıkar
+    // "Düzenle" ve "Tamamla" sadece tamamlanmamış görevde çıkar
     if (!task.completed) {
+        addTaskButton("edit", "btn-outline-secondary", "Düzenle");
         addTaskButton("complete", "btn-outline-success", "Tamamla");
     }
     addTaskButton("delete", "btn-outline-danger", "Sil");

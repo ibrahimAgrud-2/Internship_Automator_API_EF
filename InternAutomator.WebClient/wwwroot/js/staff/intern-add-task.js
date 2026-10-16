@@ -1,5 +1,6 @@
-﻿// Stajyer detay sayfası: "Görevler > Ekle" ile açılan görev ekleme penceresi.
-// intern-detail.js içindeki internID, internProjects ve loadDetails() burada kullanılır.
+﻿// Stajyer detay sayfası: "Görevler > Ekle" ve görevdeki "Düzenle" ile açılan görev penceresi.
+// Aynı form iki işlem için kullanılır. intern-detail.js içindeki internID, internProjects,
+// internTasks ve loadDetails() burada kullanılır.
 
 const taskAddButton = document.getElementById("tasksAdd");
 const taskModalElement = document.getElementById("addTaskModal");
@@ -13,6 +14,11 @@ const taskDescriptionInput = document.getElementById("taskDescriptionInput");
 const taskDueDateInput = document.getElementById("taskDueDateInput");
 const taskSubmit = document.getElementById("addTaskSubmit");
 const taskCancel = document.getElementById("addTaskCancel");
+const taskModalTitle = document.getElementById("addTaskTitle");
+
+// null ise "yeni görev", dolu ise düzenlenen görevin numarasıdır
+let editingTaskID = null;
+let editingOriginal = null;   // düzenlenen görevin açılıştaki değerleri (değişiklik karşılaştırması için)
 
 taskTitleInput.maxLength = TASK_LIMITS.title;
 taskDescriptionInput.maxLength = TASK_LIMITS.description;
@@ -25,7 +31,8 @@ function toTaskDueDate(dayText) {
 }
 
 function setTaskBusy(isBusy) {
-    taskProjectSelect.disabled = isBusy;
+    // Düzenlemede görevin projesi değiştirilemez; liste her zaman pasif kalır
+    taskProjectSelect.disabled = isBusy || editingTaskID !== null;
     taskTitleInput.disabled = isBusy;
     taskDescriptionInput.disabled = isBusy;
     taskDueDateInput.disabled = isBusy;
@@ -54,6 +61,11 @@ function fillTaskProjectSelect() {
 }
 
 function openTaskModal() {
+    editingTaskID = null;
+    editingOriginal = null;
+    taskModalTitle.textContent = "Görev Ekle";
+    taskSubmit.textContent = "Görevi Ekle";
+
     taskForm.reset();
     hideMessage(taskError);
     setTaskBusy(false);
@@ -62,6 +74,78 @@ function openTaskModal() {
     taskDueDateInput.min = getTodayText();   // sayfa gece yarısını geçerse diye her açılışta yenilenir
 
     taskModal.show();
+}
+
+// Görev adı, açıklama ve teslim günü düzenlenebilir; proje değişmez
+function openEditTaskModal(taskID) {
+    const task = internTasks.find(item => item.taskID === taskID);
+    if (!task) return;
+
+    editingTaskID = taskID;
+    editingOriginal = {
+        title: (task.title ?? "").trim(),
+        description: (task.description ?? "").trim(),
+        dayText: (task.dueDate ?? "").slice(0, 10),   // "2026-12-01T23:59:59" -> "2026-12-01"
+        dueDate: task.dueDate
+    };
+    taskModalTitle.textContent = "Görevi Düzenle";
+    taskSubmit.textContent = "Kaydet";
+
+    taskForm.reset();
+    hideMessage(taskError);
+    setTaskBusy(false);
+
+    // Proje alanı sadece görevin projesini gösterir (pasif)
+    taskProjectSelect.replaceChildren();
+    const project = internProjects.find(item => item.ongoingProjectID === task.ongoingProjectID);
+    const option = document.createElement("option");
+    option.value = task.ongoingProjectID;
+    option.textContent = project ? project.projectTitle : "-";
+    taskProjectSelect.appendChild(option);
+
+    taskTitleInput.value = editingOriginal.title;
+    taskDescriptionInput.value = editingOriginal.description;
+    taskDueDateInput.value = editingOriginal.dayText;
+    taskDueDateInput.min = getTodayText();
+
+    taskModal.show();
+}
+
+async function submitUpdate(title, dayText) {
+    const description = taskDescriptionInput.value.trim();
+    const isDateChanged = dayText !== editingOriginal.dayText;
+
+    // Hiçbir şey değişmediyse sunucuya gitmeye gerek yok
+    if (title === editingOriginal.title && description === editingOriginal.description && !isDateChanged) {
+        taskModal.hide();
+        return;
+    }
+
+    hideMessage(taskError);
+    setTaskBusy(true);
+
+    try {
+        await updateTask(editingTaskID, {
+            title,
+            lastUpdatedByUserID: session.userID,
+            description,
+            // Tarih değişmediyse eski değer aynen gönderilir; saat bilgisi sessizce değişmesin
+            dueDate: isDateChanged ? toTaskDueDate(dayText) : editingOriginal.dueDate
+        });
+
+        taskModal.hide();
+        showNotice(taskNoticeBox, "success", `"${title}" görevi güncellendi.`);
+        await loadDetails();
+    } catch (error) {
+        showError(taskError, error);   // API'nin mesajı olduğu gibi gösterilir
+
+        // Görev artık yoksa ekrandaki liste eskimiş demektir; arkada tazelenir
+        if (error instanceof ApiError && error.status === 404) {
+            loadDetails();
+        }
+    } finally {
+        setTaskBusy(false);
+    }
 }
 
 async function submitTask(event) {
@@ -86,7 +170,8 @@ async function submitTask(event) {
     } else if (!dayText) {
         message = "Teslim tarihi zorunludur.";
         invalidField = taskDueDateInput;
-    } else if (dayText < getTodayText()) {
+    } else if (dayText < getTodayText() && (editingTaskID === null || dayText !== editingOriginal.dayText)) {
+        // Düzenlemede tarih hiç değiştirilmediyse (gecikmiş görev) client engellemez; kararı API verir
         message = "Teslim tarihi bugünden önce olamaz.";
         invalidField = taskDueDateInput;
     } else if (!session.userID) {
@@ -96,6 +181,12 @@ async function submitTask(event) {
     if (message) {
         showMessage(taskError, "danger", message);
         invalidField?.focus();
+        return;
+    }
+
+    // Düzenleme modu: aynı doğrulamalardan sonra güncelleme isteği atılır
+    if (editingTaskID !== null) {
+        await submitUpdate(title, dayText);
         return;
     }
 
@@ -124,6 +215,13 @@ async function submitTask(event) {
 // ---------- Olay dinleyicileri ----------
 taskAddButton.addEventListener("click", openTaskModal);
 taskForm.addEventListener("submit", submitTask);
+
+document.getElementById("tasksList").addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action=edit]");
+    if (!button || button.disabled) return;
+
+    openEditTaskModal(Number(button.dataset.taskId));
+});
 
 taskModalElement.addEventListener("shown.bs.modal", () => {
     // Tek proje varsa doğrudan görev adına odaklan
