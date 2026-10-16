@@ -54,5 +54,13 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
             return -1;
         }
 
+        public bool DeleteAnnouncement(int ID)
+        {
+            return _Context.Announcements
+                    .Where(p => p.AnnouncementID == ID)
+                    .ExecuteDelete() > 0;
+        }
+
+
     }
 }

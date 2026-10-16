@@ -85,5 +85,28 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
+
+        //here we use HttpDelete method
+        [HttpDelete("Delete/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult DeleteAnnouncement(int id)
+        {
+            if (id < 1)
+            {
+                return BadRequest($"Not accepted ID {id}");
+            }
+
+       
+
+            if (_AnouncementsBL.DeleteAnnouncement(id))
+
+                return NoContent();
+            else
+                return NotFound($"Duyuru bulunamadı");
+        }
+
+
     }
 }
