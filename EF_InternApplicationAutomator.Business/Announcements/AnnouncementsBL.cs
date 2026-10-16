@@ -27,6 +27,16 @@ namespace EF_InternApplicationAutomator.Business.Announcements
             return _AnnouncementData.GetAll();
         }
 
+        public int AddAnnouncement(AnnouncementCreateDTO announcementCreateDTO)
+        {
+            return _AnnouncementData.AddAnnouncements(announcementCreateDTO);
+        }
+
+        public AnnouncementResponseDTO Find(int ID)
+        {
+            return _AnnouncementData.Find(ID);
+        }
+
 
     }
 }

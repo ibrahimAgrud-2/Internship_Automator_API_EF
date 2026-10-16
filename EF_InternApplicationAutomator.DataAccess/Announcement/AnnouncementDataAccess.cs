@@ -1,5 +1,6 @@
 ﻿using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;
 using Shared.Announcement;
 using System;
@@ -33,5 +34,25 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
             }
             return announcementDTOs;
         }
+
+        public AnnouncementResponseDTO Find(int ID)
+        {
+            AnnouncementEntity an= _Context.Announcements.Find(ID);
+            return (an == null) ? null :new AnnouncementResponseDTO(an.Title,an.Content,an.CreatedDate,an.CreatedByUserID);
+        }
+
+        public int AddAnnouncements(AnnouncementCreateDTO aDTO)
+        {
+            AnnouncementEntity announcement = new AnnouncementEntity(0,aDTO.Title,aDTO.Content,aDTO.CreatedByUserID,aDTO.CreatedDate,aDTO.CreatedByUserID,DateTime.Now.Date);
+            EntityEntry<AnnouncementEntity> pw = _Context.Announcements.Add(announcement);
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return announcement.AnnouncementID;
+            }
+
+            return -1;
+        }
+
     }
 }

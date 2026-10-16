@@ -85,6 +85,7 @@ namespace EF_InternApplicationAutomator.DataAccess
 
             return -1;
         }
+       
         public int AddPerson(PersonCreateSDTO person)
         {
             PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath);
@@ -102,6 +103,7 @@ namespace EF_InternApplicationAutomator.DataAccess
 
             return -1;
         }
+       
         public bool DeletePerson(int personID)
         {
             return _Context.People
