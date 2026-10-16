@@ -72,9 +72,9 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             {
                 return BadRequest("Girilen veri formatı yanlış");
             }
-
+            announcementCreateDTO.CreatedDate = DateTime.Now.Date;
             int insertedID = _AnouncementsBL.AddAnnouncement(announcementCreateDTO);
-
+           
             if (insertedID > 0)
             {
                 return CreatedAtRoute(

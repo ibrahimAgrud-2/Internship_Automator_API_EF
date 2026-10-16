@@ -244,3 +244,8 @@ async function getAllAnnouncements() {
     // Duyuru yoksa API 200 + [] döner; beklenmeyen biçimde de boş liste say
     return Array.isArray(announcements) ? announcements : [];
 }
+
+// Başarıda 201 döner; yayın tarihini API belirler
+function createAnnouncement(announcement) {
+    return apiPost("Announcement/Add", announcement);
+}

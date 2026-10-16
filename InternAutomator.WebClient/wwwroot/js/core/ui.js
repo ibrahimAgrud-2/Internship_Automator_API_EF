@@ -110,6 +110,8 @@ function normalizeSearchText(text) {
 // buradaki sınırlar sadece kullanıcıyı baştan uyarır.
 const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };
 
+// Duyuru alanı uzunlukları: veritabanı sütunlarına göre ayarla (şimdilik tahmin).
+const ANNOUNCEMENT_LIMITS = { title: 100, content: 1000 };
 
 // Görev alanı uzunlukları: veritabanı sütunlarına göre ayarla (şimdilik tahmin).
 const TASK_LIMITS = { title: 100, description: 200 };

@@ -4,6 +4,23 @@ const statusBox = document.getElementById("statusBox");
 const announcementList = document.getElementById("announcementList");
 const resultCount = document.getElementById("resultCount");
 
+
+const noticeBox = document.getElementById("noticeBox");
+
+// Yeni duyuru penceresi
+const addAnnouncementButton = document.getElementById("addAnnouncementButton");
+const modalElement = document.getElementById("announcementModal");
+const modal = new bootstrap.Modal(modalElement);
+const form = document.getElementById("announcementForm");
+const titleInput = document.getElementById("announcementTitleInput");
+const contentInput = document.getElementById("announcementContentInput");
+const submitButton = document.getElementById("announcementSubmit");
+const cancelButton = document.getElementById("announcementCancel");
+const errorBox = document.getElementById("announcementError");
+
+titleInput.maxLength = ANNOUNCEMENT_LIMITS.title;
+contentInput.maxLength = ANNOUNCEMENT_LIMITS.content;
+
 // Renk sayısı announcements.css içindeki announcement-color-N sınıflarıyla aynı olmalı
 const ANNOUNCEMENT_COLOR_COUNT = 5;
 
@@ -62,6 +79,75 @@ async function loadAnnouncements() {
         showError(statusBox, error);
     }
 }
+
+// ---------- Yeni duyuru penceresi ----------
+function setBusy(isBusy) {
+    titleInput.disabled = isBusy;
+    contentInput.disabled = isBusy;
+    cancelButton.disabled = isBusy;
+    submitButton.disabled = isBusy;
+}
+
+function openModal() {
+    form.reset();
+    hideMessage(errorBox);
+    setBusy(false);
+    modal.show();
+}
+
+async function submitAnnouncement(event) {
+    event.preventDefault();
+
+    // İstek sürerken ikinci gönderim (Enter'a art arda basma vb.) yapılmasın
+    if (submitButton.disabled) return;
+
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+
+    if (!title) {
+        showMessage(errorBox, "danger", "Başlık zorunludur.");
+        titleInput.focus();
+        return;
+    }
+    if (!content) {
+        showMessage(errorBox, "danger", "Duyuru metni zorunludur.");
+        contentInput.focus();
+        return;
+    }
+
+    // Oturumda kullanıcı numarası yoksa istek hiç atılmaz
+    if (!session.userID) {
+        showMessage(errorBox, "danger", "Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.");
+        return;
+    }
+
+    hideMessage(errorBox);
+    setBusy(true);
+
+    try {
+        // Yayın tarihini API belirler; istemci göndermez
+        await createAnnouncement({
+            createdByUserID: session.userID,
+            title,
+            content
+        });
+
+        modal.hide();
+        showNotice(noticeBox, "success", `"${title}" duyurusu yayınlandı.`);
+        await loadAnnouncements();   // ekranda her zaman sunucudaki gerçek hal görünsün
+    } catch (error) {
+        showError(errorBox, error);
+    } finally {
+        setBusy(false);
+    }
+}
+
+addAnnouncementButton.addEventListener("click", openModal);
+form.addEventListener("submit", submitAnnouncement);
+
+modalElement.addEventListener("shown.bs.modal", () => {
+    titleInput.focus();
+});
 
 // Giriş yoksa renderStaffShell zaten yönlendirdi
 if (session) {

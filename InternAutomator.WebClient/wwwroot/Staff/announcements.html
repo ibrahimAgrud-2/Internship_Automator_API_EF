@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Duyurular</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=26" />
-    <link rel="stylesheet" href="/css/announcements.css?v=26" />
+    <link rel="stylesheet" href="/css/shell.css?v=28" />
+    <link rel="stylesheet" href="/css/announcements.css?v=28" />
 </head>
 <body class="shell">
 
@@ -18,7 +18,17 @@
         <main class="shell-content">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                 <h4 class="mb-0">Duyurular</h4>
-                <span id="resultCount" class="small text-muted"></span>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <h4 class="mb-0">Duyurular</h4>
+
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <span id="resultCount" class="small text-muted"></span>
+                        <button type="button" id="addAnnouncementButton" class="btn btn-outline-primary">Duyuru Yayınla</button>
+                    </div>
+                </div>
+
+                <!-- İşlem sonucu bildirimi (duyuru yayınlandı...) -->
+                <div id="noticeBox" class="alert" role="status" hidden></div>
             </div>
 
             <!-- Yükleniyor / boş liste / hata mesajları -->
@@ -28,11 +38,40 @@
         </main>
     </div>
 
+    <div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="announcementForm" autocomplete="off" novalidate>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="announcementModalTitle">Yeni Duyuru</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="announcementTitleInput" class="form-label">Başlık <span class="text-danger">*</span></label>
+                        <input type="text" id="announcementTitleInput" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="announcementContentInput" class="form-label">Duyuru metni <span class="text-danger">*</span></label>
+                        <textarea id="announcementContentInput" class="form-control" rows="6"></textarea>
+                        <div class="form-text">Yazdığınız satır boşlukları olduğu gibi gösterilir.</div>
+                    </div>
+
+                    <div id="announcementError" class="alert alert-danger mb-0" hidden></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="announcementCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" id="announcementSubmit" class="btn btn-primary">Yayınla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=26"></script>
-    <script src="/js/core/api.js?v=26"></script>
-    <script src="/js/core/ui.js?v=26"></script>
-    <script src="/js/core/shell.js?v=26"></script>
-    <script src="/js/staff/announcements.js?v=26"></script>
+    <script src="/js/core/auth.js?v=28"></script>
+    <script src="/js/core/api.js?v=28"></script>
+    <script src="/js/core/ui.js?v=28"></script>
+    <script src="/js/core/shell.js?v=28"></script>
+    <script src="/js/staff/announcements.js?v=28"></script>
 </body>
 </html>
