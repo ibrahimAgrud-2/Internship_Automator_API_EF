@@ -844,7 +844,7 @@
         }
       }
     },
-    "/api/Conversation/GetAllMessages/{ConversationID}": {
+    "/api/Conversation/GetAllMessages/{ConversationID}/{messageCount}": {
       "get": {
         "tags": [
           "Conversation"
@@ -861,7 +861,8 @@
           },
           {
             "name": "messageCount",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4225,6 +4226,8 @@
           "content",
           "conversationID",
           "createdDate",
+          "isUser",
+          "personFullName",
           "personID"
         ],
         "type": "object",
@@ -4236,6 +4239,10 @@
           "personID": {
             "type": "integer",
             "format": "int32"
+          },
+          "personFullName": {
+            "minLength": 1,
+            "type": "string"
           },
           "conversationID": {
             "type": "integer",
@@ -4249,6 +4256,9 @@
           "createdDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "isUser": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

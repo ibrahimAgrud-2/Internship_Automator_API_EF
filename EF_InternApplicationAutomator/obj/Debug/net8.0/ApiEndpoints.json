@@ -460,7 +460,7 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.ConversationController",
     "Method": "GetAllMessagesForConversation",
-    "RelativePath": "api/Conversation/GetAllMessages/{ConversationID}",
+    "RelativePath": "api/Conversation/GetAllMessages/{ConversationID}/{messageCount}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -473,7 +473,7 @@
       {
         "Name": "messageCount",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [

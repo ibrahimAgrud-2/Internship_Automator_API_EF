@@ -35,7 +35,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
         public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID,int messageCount=50)
         {
-            List<MessageEntity> ce = _Context.Messages.OrderBy(m=>m.MessageID)
+            List<MessageEntity> ce = _Context.Messages.Include(p=>p.Person).OrderBy(m => m.MessageID)
                      .Take(messageCount)
                      .ToList();
 
@@ -43,7 +43,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
             foreach (var item in ce)
             {
-                conversationResponseDTOs.Add(new MessageResponseDTO(item.MessageID, item.PersonID, item.ConversationID, item.Content, item.CreatedDate));
+                conversationResponseDTOs.Add(new MessageResponseDTO(item.MessageID, item.PersonID, item.ConversationID, item.Content, item.CreatedDate, item.IsStaff,$"{item.Person.FirstName} {item.Person.LastName}"));
             }
             return conversationResponseDTOs;
         }

@@ -19,6 +19,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Messages
         public int PersonID { get; set; }
 
 
+        [ForeignKey(nameof(PersonID))]
+        public PersonEntity Person { get; set; }
+
         [Required]
         public int ConversationID { get; set; }
 
@@ -29,14 +32,17 @@ namespace EF_InternApplicationAutomator.DataAccess.Messages
         [Required]
         public DateTime CreatedDate { get; set; }
 
+        [Required]
+        public bool IsStaff { get; set; }
 
-        public MessageEntity(int messageID, int personID, int conversationID, string content, DateTime createdDate)
+        public MessageEntity(int messageID, int personID, int conversationID, string content, DateTime createdDate,bool isStaff)
         {
             MessageID = messageID;
             PersonID = personID;
             ConversationID = conversationID;
             Content = content;
             CreatedDate = createdDate;
+            this.IsStaff = isStaff;
         }
     }
 }

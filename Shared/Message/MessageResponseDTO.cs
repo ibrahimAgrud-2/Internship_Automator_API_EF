@@ -17,7 +17,10 @@ namespace Shared.Message
             [Required]
             public int PersonID { get; set; }
 
-            [Required]
+        [Required]
+        public string PersonFullName { get; set; }
+
+        [Required]
             public int ConversationID { get; set; }
 
             [Required]
@@ -27,13 +30,18 @@ namespace Shared.Message
             [Required]
             public DateTime CreatedDate { get; set; }
 
-            public MessageResponseDTO(int messageID, int personID, int conversationID, string content, DateTime createdDate)
+                [Required]
+                public bool IsUser { get; set; }
+
+        public MessageResponseDTO(int messageID, int personID, int conversationID, string content, DateTime createdDate,bool IsUser,string personFullName)
             {
                 MessageID = messageID;
                 PersonID = personID;
                 ConversationID = conversationID;
                 Content = content;
                 CreatedDate = createdDate;
+               this.IsUser = IsUser;
+            this.PersonFullName = personFullName;
             }
         
     }
