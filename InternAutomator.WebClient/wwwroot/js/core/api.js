@@ -260,3 +260,12 @@ function deleteAnnouncement(announcementID) {
 function updateAnnouncement(announcementID, announcement) {
     return apiPut(`Announcement/Update/${encodeURIComponent(announcementID)}`, announcement);
 }
+
+
+
+// ---- Mesajlar ----
+// Sohbetin son mesajlarını eskiden yeniye sıralı döner (API sıralar). Boşsa [].
+async function getConversationMessages(conversationID, messageCount) {
+    const messages = await apiGet(`Conversation/GetAllMessages/${conversationID}/${messageCount}`);
+    return Array.isArray(messages) ? messages : [];
+}
