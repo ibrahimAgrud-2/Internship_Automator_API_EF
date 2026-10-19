@@ -181,6 +181,7 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\EF_InternApplicationAutomator.API.pdb
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\MailKit.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
@@ -204,6 +205,9 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\MimeKit.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\NETCore.MailKit.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\BouncyCastle.Crypto.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -258,7 +262,3 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\EF_InternApplicationAutomator.API.pdb
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\EF_InternApplicationAutomator.API.genruntimeconfig.cache
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net8.0\ref\EF_InternApplicationAutomator.API.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\MailKit.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\MimeKit.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\NETCore.MailKit.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net8.0\BouncyCastle.Crypto.dll

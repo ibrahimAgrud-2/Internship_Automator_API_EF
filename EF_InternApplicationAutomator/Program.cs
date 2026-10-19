@@ -51,6 +51,9 @@ builder.Services.AddScoped<EF_InternApplicationAutomator.Business.OngoingProject
 builder.Services.AddScoped<EF_InternApplicationAutomator.DataAccess.Announcement.AnnouncementDataAccess>();
 builder.Services.AddScoped<EF_InternApplicationAutomator.Business.Announcements.AnnouncementsBL>();
 
+builder.Services.AddScoped<EF_InternApplicationAutomator.DataAccess.Conversation.ConversationDataAccess>();
+builder.Services.AddScoped<EF_InternApplicationAutomator.Business.conversation.ConversationBL>();
+
 var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>()!;
 builder.Services.AddSingleton(emailSettings);
 builder.Services.AddScoped<EmailService>();
