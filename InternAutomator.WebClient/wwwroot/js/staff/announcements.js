@@ -9,6 +9,7 @@ const noticeBox = document.getElementById("noticeBox");
 const addAnnouncementButton = document.getElementById("addAnnouncementButton");
 const modalElement = document.getElementById("announcementModal");
 const modal = new bootstrap.Modal(modalElement);
+const modalTitle = document.getElementById("announcementModalTitle");
 const form = document.getElementById("announcementForm");
 const titleInput = document.getElementById("announcementTitleInput");
 const contentInput = document.getElementById("announcementContentInput");
@@ -56,7 +57,7 @@ function createAnnouncementCard(announcement, index) {
 
     body.append(title, content);
 
-    // Alt satır: solda yayınlayan adı (API veriyorsa), sağda Sil butonu
+    // Alt satır: solda yayınlayan adı (API veriyorsa), sağda Düzenle ve Sil butonları
     const footer = document.createElement("div");
     footer.className = "d-flex align-items-center justify-content-between gap-3 mt-3";
 
@@ -67,15 +68,27 @@ function createAnnouncementCard(announcement, index) {
     }
     footer.appendChild(publisher);
 
-    // Kimliği olmayan duyuru silinemez; buton hiç çizilmez
+    // Kimliği olmayan duyuru düzenlenemez ya da silinemez; butonlar hiç çizilmez
     if (announcement.announcementID) {
+        const actions = document.createElement("div");
+        actions.className = "d-flex gap-2";
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "btn btn-sm btn-outline-primary";
+        editButton.textContent = "Düzenle";
+        editButton.dataset.action = "edit";
+        editButton.dataset.announcementId = announcement.announcementID;
+
         const deleteButton = document.createElement("button");
         deleteButton.type = "button";
         deleteButton.className = "btn btn-sm btn-outline-danger";
         deleteButton.textContent = "Sil";
         deleteButton.dataset.action = "delete";
         deleteButton.dataset.announcementId = announcement.announcementID;
-        footer.appendChild(deleteButton);
+
+        actions.append(editButton, deleteButton);
+        footer.appendChild(actions);
     }
 
     body.appendChild(footer);
@@ -108,7 +121,11 @@ async function loadAnnouncements() {
     }
 }
 
-// ---------- Yeni duyuru penceresi ----------
+// ---------- Yeni duyuru / düzenleme penceresi ----------
+// Aynı form hem yayınlama hem düzenleme için kullanılır.
+// editingAnnouncementID null ise "yeni duyuru", dolu ise "düzenleme" modudur.
+let editingAnnouncementID = null;
+
 function setBusy(isBusy) {
     titleInput.disabled = isBusy;
     contentInput.disabled = isBusy;
@@ -117,10 +134,63 @@ function setBusy(isBusy) {
 }
 
 function openModal() {
+    editingAnnouncementID = null;
+    modalTitle.textContent = "Yeni Duyuru";
+    submitButton.textContent = "Yayınla";
     form.reset();
     hideMessage(errorBox);
     setBusy(false);
     modal.show();
+}
+
+function openEditModal(announcementID) {
+    const announcement = announcementsById.get(announcementID);
+    if (!announcement) return;
+
+    editingAnnouncementID = announcementID;
+    modalTitle.textContent = "Duyuruyu Düzenle";
+    submitButton.textContent = "Kaydet";
+    form.reset();
+    hideMessage(errorBox);
+    setBusy(false);
+
+    titleInput.value = (announcement.title ?? "").trim();
+    contentInput.value = (announcement.content ?? "").trim();
+
+    modal.show();
+}
+
+async function submitUpdate(title, content) {
+    const announcement = announcementsById.get(editingAnnouncementID);
+
+    // Hiçbir şey değişmediyse sunucuya gitmeye gerek yok
+    if (announcement
+        && title === (announcement.title ?? "").trim()
+        && content === (announcement.content ?? "").trim()) {
+        modal.hide();
+        return;
+    }
+
+    hideMessage(errorBox);
+    setBusy(true);
+
+    try {
+        // Güncelleme tarihini API belirler; istemci göndermez
+        await updateAnnouncement(editingAnnouncementID, { title, content });
+
+        modal.hide();
+        showNotice(noticeBox, "success", `"${title}" duyurusu güncellendi.`);
+        await loadAnnouncements();
+    } catch (error) {
+        showError(errorBox, error);
+
+        // Duyuru artık yoksa ekrandaki liste eskimiş demektir; arkada tazelenir
+        if (error instanceof ApiError && error.status === 404) {
+            loadAnnouncements();
+        }
+    } finally {
+        setBusy(false);
+    }
 }
 
 async function submitAnnouncement(event) {
@@ -140,6 +210,12 @@ async function submitAnnouncement(event) {
     if (!content) {
         showMessage(errorBox, "danger", "Duyuru metni zorunludur.");
         contentInput.focus();
+        return;
+    }
+
+    // Düzenleme modunda yayınlayan ve yayın tarihi değişmez; sadece başlık ve metin güncellenir
+    if (editingAnnouncementID !== null) {
+        await submitUpdate(title, content);
         return;
     }
 
@@ -221,10 +297,16 @@ async function confirmDelete() {
 }
 
 announcementList.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-action='delete']");
+    const button = event.target.closest("button[data-action]");
     if (!button) return;
 
-    openDeleteModal(Number(button.dataset.announcementId));
+    const announcementID = Number(button.dataset.announcementId);
+
+    if (button.dataset.action === "edit") {
+        openEditModal(announcementID);
+    } else if (button.dataset.action === "delete") {
+        openDeleteModal(announcementID);
+    }
 });
 
 deleteConfirm.addEventListener("click", confirmDelete);

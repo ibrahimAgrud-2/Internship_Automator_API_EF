@@ -255,3 +255,8 @@ function createAnnouncement(announcement) {
 function deleteAnnouncement(announcementID) {
     return apiDelete(`Announcement/Delete/${announcementID}`);
 }
+
+// Duyurunun başlığını ve metnini günceller. Başarıda API true döner.
+function updateAnnouncement(announcementID, announcement) {
+    return apiPut(`Announcement/Update/${encodeURIComponent(announcementID)}`, announcement);
+}

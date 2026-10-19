@@ -99,7 +99,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             {
                 return BadRequest("Girilen veriler Geçerli değil.");
             }
-            if(_AnouncementsBL.IsAnnouncementExists(ID))
+            if(!_AnouncementsBL.IsAnnouncementExists(ID))
             {
                 return NotFound("Güncellemen istediğiniz duyuru bulunamadı. Silinmiş olabilir");
             }

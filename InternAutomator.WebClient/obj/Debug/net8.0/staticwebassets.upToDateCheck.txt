@@ -141,14 +141,12 @@ wwwroot\css\projects.css
 wwwroot\css\shell.css
 wwwroot\index.html
 wwwroot\js\apply\apply.js
-wwwroot\js\core\api.js
 wwwroot\js\core\auth.js
 wwwroot\js\core\shell.js
 wwwroot\js\core\ui.js
 wwwroot\js\intern\intern-home.js
 wwwroot\js\intern\intern-login.js
 wwwroot\js\intern\intern-projects.js
-wwwroot\js\staff\announcements.js
 wwwroot\js\staff\applications.js
 wwwroot\js\staff\intern-add-task.js
 wwwroot\js\staff\intern-assign-project.js
@@ -163,6 +161,8 @@ wwwroot\Apply\apply.html
 wwwroot\Intern\home.html
 wwwroot\Intern\login.html
 wwwroot\Intern\projects.html
+wwwroot\js\core\api.js
+wwwroot\js\staff\announcements.js
 wwwroot\Staff\announcements.html
 wwwroot\Staff\applications.html
 wwwroot\Staff\intern.html
