@@ -26,7 +26,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
 
 
 
-        [HttpGet("GetAllMessages/{ConversationID}")]
+        [HttpGet("GetAllMessages/{ConversationID}/{messageCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<MessageResponseDTO>> GetAllMessagesForConversation(int ConversationID, int messageCount=50)
         {

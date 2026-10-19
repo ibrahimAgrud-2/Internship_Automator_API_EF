@@ -35,7 +35,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
         public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID,int messageCount=50)
         {
-            List<MessageEntity> ce = _Context.Messages
+            List<MessageEntity> ce = _Context.Messages.OrderBy(m=>m.MessageID)
                      .Take(messageCount)
                      .ToList();
 

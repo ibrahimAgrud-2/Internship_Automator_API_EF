@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mesajlar</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/shell.css?v=32" />
+    <link rel="stylesheet" href="/css/messages.css?v=32" />
+</head>
+<body class="shell">
+
+    <header id="shellHeader"></header>
+
+    <div class="shell-body">
+        <nav id="shellSidebar"></nav>
+
+        <main class="shell-content">
+            <h4 class="mb-4">Mesajlar</h4>
+
+            <div class="chat-layout card">
+
+                <!-- Sol: sohbet listesi -->
+                <aside class="chat-list-panel border-end">
+                    <div class="p-3 border-bottom">
+                        <button type="button" class="btn btn-outline-primary w-100" disabled>Yeni sohbet</button>
+                    </div>
+
+                    <div id="chatList" class="flex-grow-1 overflow-auto">
+                        <!-- Ortak grup her zaman en üstte -->
+                        <button type="button" class="chat-list-item active">
+                            <span class="avatar-circle rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-semibold">SG</span>
+                            <span class="chat-list-text">
+                                <span class="d-flex justify-content-between gap-2">
+                                    <span class="fw-semibold text-truncate">Stajyerler Ortak Grup</span>
+                                    <span class="small text-muted flex-shrink-0">10:24</span>
+                                </span>
+                                <span class="chat-preview d-block small text-muted">Personel: Toplantı saati 14:00'de.</span>
+                            </span>
+                        </button>
+
+                        <p class="text-muted small text-center p-3 mb-0">Henüz birebir sohbet yok.</p>
+                    </div>
+                </aside>
+
+                <!-- Sağ: seçili sohbet -->
+                <section class="chat-panel">
+                    <div class="d-flex align-items-center gap-3 p-3 border-bottom">
+                        <span class="avatar-circle rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-semibold">SG</span>
+                        <div>
+                            <div class="fw-semibold">Stajyerler Ortak Grup</div>
+                            <div class="small text-muted">Tüm stajyerler ve personel</div>
+                        </div>
+                    </div>
+
+                    <!-- ÖRNEK mesajlar: listeleme API'ya bağlanınca bu alan JS ile doldurulacak -->
+                    <div id="messageList" class="chat-messages">
+                        <div class="chat-day">18 Ekim 2026</div>
+
+                        <div class="chat-bubble from-intern">
+                            <div class="chat-sender text-success">Zeynep Kaya</div>
+                            <div class="chat-text">Arkadaşlar, yarınki sunum için hazırlıklar tamam mı?</div>
+                            <div class="chat-time">09:12</div>
+                        </div>
+
+                        <div class="chat-bubble from-staff">
+                            <div class="chat-sender text-secondary">Personel</div>
+                            <div class="chat-text">Evet, sunum dosyasını gözden geçirdik.</div>
+                            <div class="chat-time">09:15</div>
+                        </div>
+
+                        <div class="chat-bubble from-intern">
+                            <div class="chat-sender text-primary">Mehmet Demir</div>
+                            <div class="chat-text">Ben yarın 10:00'da ofiste olacağım.</div>
+                            <div class="chat-time">09:16</div>
+                        </div>
+
+                        <div class="chat-bubble from-staff">
+                            <div class="chat-sender text-secondary">Personel</div>
+                            <div class="chat-text">
+                                Toplantı saati 14:00'de.
+                                Herkes hazır olsun lütfen.
+                            </div>
+                            <div class="chat-time">10:24</div>
+                        </div>
+                    </div>
+
+                    <!-- Mesaj yazma satırı: şimdilik hepsi pasif -->
+                    <div class="chat-composer border-top">
+                        <div class="dropup">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="dropdown"
+                                    aria-expanded="false" aria-label="Ekle">
+                                +
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><button type="button" class="dropdown-item" disabled>Dosya seç</button></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><h6 class="dropdown-header">Referans ver</h6></li>
+                                <li><button type="button" class="dropdown-item" disabled>Duyuru</button></li>
+                                <li><button type="button" class="dropdown-item" disabled>Proje</button></li>
+                            </ul>
+                        </div>
+
+                        <textarea class="form-control" rows="1" placeholder="Mesajınızı yazın..." aria-label="Mesaj" disabled></textarea>
+                        <button type="button" class="btn btn-outline-primary" disabled>Gönder</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/core/auth.js?v=32"></script>
+    <script src="/js/core/api.js?v=32"></script>
+    <script src="/js/core/ui.js?v=32"></script>
+    <script src="/js/core/shell.js?v=32"></script>
+    <script src="/js/staff/messages.js?v=32"></script>
+</body>
+</html>

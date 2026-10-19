@@ -13,7 +13,7 @@ const STAFF_MENU = [
     { key: "interns", text: "Stajyerler", href: "/Staff/interns.html" },
     { key: "projects", text: "Projeler", href: "/Staff/projects.html" },
     { key: "announcements", text: "Duyurular", href: "/Staff/announcements.html" },
-    { key: "messages", text: "Mesajlar", href: null }
+    { key: "messages", text: "Mesajlar", href: "/Staff/messages.html" }
 ];
 
 // Rol -> giriş sayfası ve menü
