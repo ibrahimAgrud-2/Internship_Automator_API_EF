@@ -249,3 +249,9 @@ async function getAllAnnouncements() {
 function createAnnouncement(announcement) {
     return apiPost("Announcement/Add", announcement);
 }
+
+
+// Duyuruyu siler. Başarıda 204 döner; kayıt yoksa 404 ve mesaj döner.
+function deleteAnnouncement(announcementID) {
+    return apiDelete(`Announcement/Delete/${announcementID}`);
+}

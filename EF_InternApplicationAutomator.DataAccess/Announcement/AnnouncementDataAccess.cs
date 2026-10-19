@@ -30,7 +30,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
             //mapping
             foreach (var a in announcements)
             {
-                announcementDTOs.Add(new AnnouncementResponseDTO(a.Title,a.Content,a.CreatedDate,a.CreatedByUserID));
+                announcementDTOs.Add(new AnnouncementResponseDTO(a.AnnouncementID,a.Title,a.Content,a.CreatedDate,a.CreatedByUserID));
             }
             return announcementDTOs;
         }
@@ -38,7 +38,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
         public AnnouncementResponseDTO Find(int ID)
         {
             AnnouncementEntity an= _Context.Announcements.Find(ID);
-            return (an == null) ? null :new AnnouncementResponseDTO(an.Title,an.Content,an.CreatedDate,an.CreatedByUserID);
+            return (an == null) ? null :new AnnouncementResponseDTO(an.AnnouncementID,an.Title,an.Content,an.CreatedDate,an.CreatedByUserID);
         }
 
         public int AddAnnouncements(AnnouncementCreateDTO aDTO)

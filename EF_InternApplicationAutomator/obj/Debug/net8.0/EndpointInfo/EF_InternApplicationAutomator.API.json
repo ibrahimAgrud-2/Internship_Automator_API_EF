@@ -3606,6 +3606,7 @@
       },
       "AnnouncementResponseDTO": {
         "required": [
+          "announcementID",
           "content",
           "createdByUserID",
           "createdDate",
@@ -3613,6 +3614,10 @@
         ],
         "type": "object",
         "properties": {
+          "announcementID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "title": {
             "maxLength": 200,
             "minLength": 1,

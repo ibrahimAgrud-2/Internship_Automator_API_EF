@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Duyurular</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=28" />
-    <link rel="stylesheet" href="/css/announcements.css?v=28" />
+    <link rel="stylesheet" href="/css/shell.css?v=33" />
+    <link rel="stylesheet" href="/css/announcements.css?v=33" />
 </head>
 <body class="shell">
 
@@ -18,24 +18,43 @@
         <main class="shell-content">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                 <h4 class="mb-0">Duyurular</h4>
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-                    <h4 class="mb-0">Duyurular</h4>
 
-                    <div class="d-flex flex-wrap align-items-center gap-3">
-                        <span id="resultCount" class="small text-muted"></span>
-                        <button type="button" id="addAnnouncementButton" class="btn btn-outline-primary">Duyuru Yayınla</button>
-                    </div>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <span id="resultCount" class="small text-muted"></span>
+                    <button type="button" id="addAnnouncementButton" class="btn btn-outline-primary">Duyuru Yayınla</button>
                 </div>
-
-                <!-- İşlem sonucu bildirimi (duyuru yayınlandı...) -->
-                <div id="noticeBox" class="alert" role="status" hidden></div>
             </div>
+
+            <!-- İşlem sonucu bildirimi (duyuru yayınlandı...) -->
+            <div id="noticeBox" class="alert" role="status" hidden></div>
 
             <!-- Yükleniyor / boş liste / hata mesajları -->
             <div id="statusBox" class="alert" hidden></div>
 
             <div id="announcementList" class="d-flex flex-column gap-3"></div>
         </main>
+    </div>
+
+    <div class="modal fade" id="deleteAnnouncementModal" tabindex="-1" aria-labelledby="deleteAnnouncementTitle"
+         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAnnouncementTitle">Duyuruyu Sil</h5>
+                </div>
+                <div class="modal-body">
+                    <div id="deleteAnnouncementError" class="alert" role="alert" hidden></div>
+                    <p class="mb-2">
+                        <strong id="deleteAnnouncementName" class="text-break"></strong> duyurusu kalıcı olarak silinecek.
+                    </p>
+                    <p class="text-muted small mb-0">Bu işlem geri alınamaz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="deleteAnnouncementCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="button" id="deleteAnnouncementConfirm" class="btn btn-danger">Duyuruyu Sil</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalTitle"
@@ -68,10 +87,10 @@
     </div>
 
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=28"></script>
-    <script src="/js/core/api.js?v=28"></script>
-    <script src="/js/core/ui.js?v=28"></script>
-    <script src="/js/core/shell.js?v=28"></script>
-    <script src="/js/staff/announcements.js?v=28"></script>
+    <script src="/js/core/auth.js?v=33"></script>
+    <script src="/js/core/api.js?v=33"></script>
+    <script src="/js/core/ui.js?v=33"></script>
+    <script src="/js/core/shell.js?v=33"></script>
+    <script src="/js/staff/announcements.js?v=33"></script>
 </body>
 </html>

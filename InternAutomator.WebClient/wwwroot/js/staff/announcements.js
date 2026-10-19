@@ -3,8 +3,6 @@
 const statusBox = document.getElementById("statusBox");
 const announcementList = document.getElementById("announcementList");
 const resultCount = document.getElementById("resultCount");
-
-
 const noticeBox = document.getElementById("noticeBox");
 
 // Yeni duyuru penceresi
@@ -18,8 +16,19 @@ const submitButton = document.getElementById("announcementSubmit");
 const cancelButton = document.getElementById("announcementCancel");
 const errorBox = document.getElementById("announcementError");
 
+// Silme penceresi
+const deleteModalElement = document.getElementById("deleteAnnouncementModal");
+const deleteModal = new bootstrap.Modal(deleteModalElement);
+const deleteName = document.getElementById("deleteAnnouncementName");
+const deleteError = document.getElementById("deleteAnnouncementError");
+const deleteConfirm = document.getElementById("deleteAnnouncementConfirm");
+const deleteCancel = document.getElementById("deleteAnnouncementCancel");
+
 titleInput.maxLength = ANNOUNCEMENT_LIMITS.title;
 contentInput.maxLength = ANNOUNCEMENT_LIMITS.content;
+
+// Silme penceresi için listedeki duyurular (ID -> duyuru)
+let announcementsById = new Map();
 
 // Renk sayısı announcements.css içindeki announcement-color-N sınıflarıyla aynı olmalı
 const ANNOUNCEMENT_COLOR_COUNT = 5;
@@ -47,17 +56,34 @@ function createAnnouncementCard(announcement, index) {
 
     body.append(title, content);
 
-    // Yayınlayan adı API'dan geliyorsa en altta gösterilirloadAnnouncements
+    // Alt satır: solda yayınlayan adı (API veriyorsa), sağda Sil butonu
+    const footer = document.createElement("div");
+    footer.className = "d-flex align-items-center justify-content-between gap-3 mt-3";
+
+    const publisher = document.createElement("span");
+    publisher.className = "small text-muted";
     if (announcement.createdByUserName) {
-        const publisher = document.createElement("div");
-        publisher.className = "small text-muted mt-3";
         publisher.textContent = `Yayınlayan: ${announcement.createdByUserName}`;
-        body.appendChild(publisher);
     }
+    footer.appendChild(publisher);
+
+    // Kimliği olmayan duyuru silinemez; buton hiç çizilmez
+    if (announcement.announcementID) {
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "btn btn-sm btn-outline-danger";
+        deleteButton.textContent = "Sil";
+        deleteButton.dataset.action = "delete";
+        deleteButton.dataset.announcementId = announcement.announcementID;
+        footer.appendChild(deleteButton);
+    }
+
+    body.appendChild(footer);
 
     card.append(band, body);
     return card;
 }
+
 // ---------- Sayfa akışı ----------
 async function loadAnnouncements() {
     announcementList.replaceChildren();
@@ -73,8 +99,10 @@ async function loadAnnouncements() {
         }
 
         hideMessage(statusBox);
+        announcementsById = new Map(announcements.map(item => [item.announcementID, item]));
         // Sıralama API'dan geldiği gibi gösterilir (en yeni başta)
-        announcements.forEach((item, index) => announcementList.appendChild(createAnnouncementCard(item, index)));        resultCount.textContent = `${announcements.length} duyuru`;
+        announcements.forEach((item, index) => announcementList.appendChild(createAnnouncementCard(item, index)));
+        resultCount.textContent = `${announcements.length} duyuru`;
     } catch (error) {
         showError(statusBox, error);
     }
@@ -148,6 +176,58 @@ form.addEventListener("submit", submitAnnouncement);
 modalElement.addEventListener("shown.bs.modal", () => {
     titleInput.focus();
 });
+
+// ---------- Silme penceresi ----------
+let announcementToDeleteID = null;
+
+function openDeleteModal(announcementID) {
+    const announcement = announcementsById.get(announcementID);
+    if (!announcement) return;
+
+    announcementToDeleteID = announcementID;
+    deleteName.textContent = announcement.title;
+    hideMessage(deleteError);
+    deleteConfirm.disabled = false;
+    deleteCancel.disabled = false;
+
+    deleteModal.show();
+}
+
+async function confirmDelete() {
+    if (deleteConfirm.disabled || announcementToDeleteID === null) return;   // çift tıklama koruması
+
+    const title = announcementsById.get(announcementToDeleteID)?.title ?? "";
+    hideMessage(deleteError);
+    deleteConfirm.disabled = true;
+    deleteCancel.disabled = true;
+
+    try {
+        await deleteAnnouncement(announcementToDeleteID);
+
+        deleteModal.hide();
+        showNotice(noticeBox, "success", `"${title}" duyurusu silindi.`);
+        await loadAnnouncements();
+    } catch (error) {
+        showError(deleteError, error);
+
+        // Duyuru zaten yoksa ekrandaki liste eskimiş demektir; arkada tazelenir
+        if (error instanceof ApiError && error.status === 404) {
+            loadAnnouncements();
+        }
+    } finally {
+        deleteConfirm.disabled = false;
+        deleteCancel.disabled = false;
+    }
+}
+
+announcementList.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action='delete']");
+    if (!button) return;
+
+    openDeleteModal(Number(button.dataset.announcementId));
+});
+
+deleteConfirm.addEventListener("click", confirmDelete);
 
 // Giriş yoksa renderStaffShell zaten yönlendirdi
 if (session) {

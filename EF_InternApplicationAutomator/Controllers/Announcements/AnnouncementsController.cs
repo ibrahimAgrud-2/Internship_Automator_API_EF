@@ -79,7 +79,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             {
                 return CreatedAtRoute(
                    "FindAnnouncement",
-                   new { id = insertedID }, new AnnouncementResponseDTO(
+                   new { id = insertedID }, new AnnouncementResponseDTO(0,
                                      announcementCreateDTO.Title, announcementCreateDTO.Content, announcementCreateDTO.CreatedDate, announcementCreateDTO.CreatedByUserID));
             }
             return StatusCode(StatusCodes.Status500InternalServerError);
