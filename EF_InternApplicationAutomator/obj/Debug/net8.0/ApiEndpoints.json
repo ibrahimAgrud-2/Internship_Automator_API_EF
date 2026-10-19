@@ -141,8 +141,8 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Announcements.AnnouncementsController",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/Announcement/Update{ID}",
+    "Method": "UpdateAnnouncement",
+    "RelativePath": "api/Announcement/Update/{ID}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,

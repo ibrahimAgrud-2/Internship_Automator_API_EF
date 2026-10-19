@@ -93,20 +93,23 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<bool> UpdateStatus(int ID,AnnouncementUpdateDTO updatedAnnouncement)
+        public ActionResult<bool> UpdateAnnouncement(int ID,AnnouncementUpdateDTO updatedAnnouncement)
         {
             if (updatedAnnouncement == null || ID < 1)
             {
                 return BadRequest("Girilen veriler Geçerli değil.");
             }
-
+            if(_AnouncementsBL.IsAnnouncementExists(ID))
+            {
+                return NotFound("Güncellemen istediğiniz duyuru bulunamadı. Silinmiş olabilir");
+            }
             if (_AnouncementsBL.UpdateAnnouncement(ID,updatedAnnouncement))
             {
                 return Ok(true);
             }
             else
             {
-                return NotFound("Güncelleme başarısız Oldu!!!");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

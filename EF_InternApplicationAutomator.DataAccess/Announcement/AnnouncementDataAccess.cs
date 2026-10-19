@@ -84,6 +84,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
             return false;
         }
 
+        public bool IsAnnouncementExists(int ID)
+        {
+            return _Context.Announcements.Any(a=>a.AnnouncementID==ID);
+        }
 
     }
 }

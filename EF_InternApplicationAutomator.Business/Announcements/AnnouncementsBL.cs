@@ -46,6 +46,10 @@ namespace EF_InternApplicationAutomator.Business.Announcements
             return _AnnouncementData.DeleteAnnouncement(ID);
         }
 
+        public bool IsAnnouncementExists(int ID)
+        {
+            return _AnnouncementData.IsAnnouncementExists(ID);
+        }
 
     }
 }

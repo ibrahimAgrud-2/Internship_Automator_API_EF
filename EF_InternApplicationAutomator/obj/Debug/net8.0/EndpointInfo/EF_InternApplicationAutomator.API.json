@@ -192,7 +192,7 @@
         }
       }
     },
-    "/api/Announcement/Update{ID}": {
+    "/api/Announcement/Update/{ID}": {
       "put": {
         "tags": [
           "Announcements"
