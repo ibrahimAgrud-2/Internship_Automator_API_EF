@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;
 using Shared.Announcement;
+using Shared.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,28 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
             return _Context.Announcements
                     .Where(p => p.AnnouncementID == ID)
                     .ExecuteDelete() > 0;
+        }
+
+        public bool UpdateAnnouncement(int announcementID, AnnouncementUpdateDTO update)
+        {
+            var app = _Context.Announcements.Find(announcementID);
+
+            if (app == null || update == null)
+            {
+                return false;
+            }
+
+            //TODO: 2 yerine LOGİN yapmış use'ın ID'sini ver
+            app.Title = update.Title;
+            app.Content = update.Content;
+
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
 

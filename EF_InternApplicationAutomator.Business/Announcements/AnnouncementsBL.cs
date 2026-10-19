@@ -31,6 +31,10 @@ namespace EF_InternApplicationAutomator.Business.Announcements
         {
             return _AnnouncementData.AddAnnouncements(announcementCreateDTO);
         }
+        public bool UpdateAnnouncement(int ID,AnnouncementUpdateDTO update)
+        {
+            return _AnnouncementData.UpdateAnnouncement(ID,update);
+        }
 
         public AnnouncementResponseDTO Find(int ID)
         {

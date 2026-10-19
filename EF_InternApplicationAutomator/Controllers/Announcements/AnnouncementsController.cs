@@ -4,9 +4,11 @@ using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Project;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Announcement;
+using Shared.Application;
 using Shared.OngoingProjects;
 using Shared.Tasks;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 {
@@ -84,6 +86,31 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             }
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+
+
+        [HttpPut("Update/{ID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> UpdateStatus(int ID,AnnouncementUpdateDTO updatedAnnouncement)
+        {
+            if (updatedAnnouncement == null || ID < 1)
+            {
+                return BadRequest("Girilen veriler Geçerli değil.");
+            }
+
+            if (_AnouncementsBL.UpdateAnnouncement(ID,updatedAnnouncement))
+            {
+                return Ok(true);
+            }
+            else
+            {
+                return NotFound("Güncelleme başarısız Oldu!!!");
+            }
+        }
+
+
 
 
         //here we use HttpDelete method
