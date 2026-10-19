@@ -844,7 +844,7 @@
         }
       }
     },
-    "/api/ConversationCon/All": {
+    "/api/Conversation/All": {
       "get": {
         "tags": [
           "Conversation"
@@ -874,6 +874,55 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ConversationResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Conversation/AllMessages/{ConversationID}": {
+      "get": {
+        "tags": [
+          "Conversation"
+        ],
+        "parameters": [
+          {
+            "name": "ConversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageResponseDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageResponseDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageResponseDTO"
                   }
                 }
               }
@@ -4224,6 +4273,39 @@
           "status": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageResponseDTO": {
+        "required": [
+          "content",
+          "conversationID",
+          "createdDate",
+          "personID"
+        ],
+        "type": "object",
+        "properties": {
+          "messageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conversationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

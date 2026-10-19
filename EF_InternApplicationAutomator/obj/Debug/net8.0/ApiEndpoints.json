@@ -460,7 +460,7 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.ConversationController",
     "Method": "GetAllInterns",
-    "RelativePath": "api/ConversationCon/All",
+    "RelativePath": "api/Conversation/All",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -468,6 +468,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.Conversations.ConversationResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.ConversationController",
+    "Method": "GetAllMessagesForConversation",
+    "RelativePath": "api/Conversation/AllMessages/{ConversationID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ConversationID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.Message.MessageResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

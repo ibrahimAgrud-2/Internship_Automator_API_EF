@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EF_InternApplicationAutomator.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abcf1befb70e3439889fbb1878db6cfd42285f40")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+936f9da593c0012b84c6736bfc96f1cfa182f543")]
 [assembly: System.Reflection.AssemblyProductAttribute("EF_InternApplicationAutomator.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EF_InternApplicationAutomator.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

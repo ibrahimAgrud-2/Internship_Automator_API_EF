@@ -25,45 +25,45 @@ namespace EF_InternApplicationAutomator.Business.conversation
 
         //public List<InternDetailedResponseDTO> GetDetailedInternRecord()
         //{
-        //    return _ConversationDataAccess.GetDetailedInternRecord();
+        //    return _MessageDataAccess.GetDetailedInternRecord();
         //}
 
         //public InternCardResponseDTO Find(int internID)
         //{
-        //    return _ConversationDataAccess.Find(internID);
+        //    return _MessageDataAccess.Find(internID);
         //}
         //public InterLoginResponseDTO? FindByPasswordAndEmail(string email,string password)
         //{
-        //    return _ConversationDataAccess.FindByPasswordAndEmail(email,password);
+        //    return _MessageDataAccess.FindByPasswordAndEmail(email,password);
         //}
         //public InternResponseDTO FindByPersonID(int personID)
         //{
-        //    return _ConversationDataAccess.FindByPersonID(personID);
+        //    return _MessageDataAccess.FindByPersonID(personID);
         //}
         //public int UpdateIntern(int internID, InternCreateDTO internCreateDTO)
         //{
-        //    return _ConversationDataAccess.UpdateIntern(internID, internCreateDTO);
+        //    return _MessageDataAccess.UpdateIntern(internID, internCreateDTO);
         //}
 
         //public int AddIntern(InternCreateDTO newIntern)
         //{
-        //    return _ConversationDataAccess.AddIntern(newIntern);
+        //    return _MessageDataAccess.AddIntern(newIntern);
         //}
 
         //public bool DeleteIntern(int internID)
         //{
-        //    return _ConversationDataAccess.DeleteIntern(internID);
+        //    return _MessageDataAccess.DeleteIntern(internID);
         //}
 
         //public bool IsInternExists(int internID)
         //{
-        //    return _ConversationDataAccess.IsInternExists(internID);
+        //    return _MessageDataAccess.IsInternExists(internID);
         //}
 
 
         //public bool IsInternActive(int internID)
         //{
-        //    return _ConversationDataAccess.IsInternActive(internID); 
+        //    return _MessageDataAccess.IsInternActive(internID); 
         //}
 
         //public bool IsProjectAssignedToIntern(int projectID,int internID)

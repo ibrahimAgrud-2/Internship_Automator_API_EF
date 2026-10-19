@@ -1,23 +1,27 @@
 ﻿using EF_InternApplicationAutomator.Business.conversation;
+using EF_InternApplicationAutomator.Business.Message;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application;
 using Shared.Conversations;
 using Shared.Intern;
+using Shared.Message;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Intern
 {
-    [Route("api/ConversationCon")]
+    [Route("api/Conversation")]
     [ApiController]
     public class ConversationController : ControllerBase
     {
         private readonly ConversationBL _ConversationBL;
+        private readonly MessageBL _Message;
 
        
 
-        public ConversationController(ConversationBL conversation)
+        public ConversationController(ConversationBL conversation, MessageBL message)
         {
             _ConversationBL = conversation;
+            _Message = message;
         }
 
         [HttpGet("All")]
@@ -27,6 +31,17 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             List<ConversationResponseDTO> internList = _ConversationBL.GetAll();
             return Ok(internList);
         }
+
+
+        [HttpGet("AllMessages/{ConversationID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<MessageResponseDTO>> GetAllMessagesForConversation(int ConversationID)
+        {
+            List<MessageResponseDTO> internList = _Message.GetAllMessagesForConversation(ConversationID);
+            return Ok(internList);
+        }
+
+
 
         //[HttpGet("{ID}", Name = "FindIntern")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
