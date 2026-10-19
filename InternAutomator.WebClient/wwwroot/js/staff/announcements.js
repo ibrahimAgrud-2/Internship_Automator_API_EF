@@ -5,7 +5,6 @@ const announcementList = document.getElementById("announcementList");
 const resultCount = document.getElementById("resultCount");
 const noticeBox = document.getElementById("noticeBox");
 
-// Yeni duyuru penceresi
 const addAnnouncementButton = document.getElementById("addAnnouncementButton");
 const modalElement = document.getElementById("announcementModal");
 const modal = new bootstrap.Modal(modalElement);
@@ -17,7 +16,7 @@ const submitButton = document.getElementById("announcementSubmit");
 const cancelButton = document.getElementById("announcementCancel");
 const errorBox = document.getElementById("announcementError");
 
-// Silme penceresi
+
 const deleteModalElement = document.getElementById("deleteAnnouncementModal");
 const deleteModal = new bootstrap.Modal(deleteModalElement);
 const deleteName = document.getElementById("deleteAnnouncementName");
@@ -28,18 +27,13 @@ const deleteCancel = document.getElementById("deleteAnnouncementCancel");
 titleInput.maxLength = ANNOUNCEMENT_LIMITS.title;
 contentInput.maxLength = ANNOUNCEMENT_LIMITS.content;
 
-// Silme penceresi için listedeki duyurular (ID -> duyuru)
 let announcementsById = new Map();
 
-// Renk sayısı announcements.css içindeki announcement-color-N sınıflarıyla aynı olmalı
 const ANNOUNCEMENT_COLOR_COUNT = 5;
-
-// ---------- Kart oluşturucu (veri her zaman textContent ile yazılır) ----------
 function createAnnouncementCard(announcement, index) {
     const card = document.createElement("div");
     card.className = `card announcement-card announcement-color-${index % ANNOUNCEMENT_COLOR_COUNT}`;
 
-    // Renkli şerit: tarihin ne olduğunu açıkça yazar
     const band = document.createElement("div");
     band.className = "announcement-band";
     band.textContent = `Yayın tarihi: ${formatDateTime(announcement.createdDate, "-")}`;
@@ -57,7 +51,6 @@ function createAnnouncementCard(announcement, index) {
 
     body.append(title, content);
 
-    // Alt satır: solda yayınlayan adı (API veriyorsa), sağda Düzenle ve Sil butonları
     const footer = document.createElement("div");
     footer.className = "d-flex align-items-center justify-content-between gap-3 mt-3";
 
@@ -68,7 +61,6 @@ function createAnnouncementCard(announcement, index) {
     }
     footer.appendChild(publisher);
 
-    // Kimliği olmayan duyuru düzenlenemez ya da silinemez; butonlar hiç çizilmez
     if (announcement.announcementID) {
         const actions = document.createElement("div");
         actions.className = "d-flex gap-2";
@@ -97,7 +89,6 @@ function createAnnouncementCard(announcement, index) {
     return card;
 }
 
-// ---------- Sayfa akışı ----------
 async function loadAnnouncements() {
     announcementList.replaceChildren();
     resultCount.textContent = "";
@@ -121,9 +112,7 @@ async function loadAnnouncements() {
     }
 }
 
-// ---------- Yeni duyuru / düzenleme penceresi ----------
-// Aynı form hem yayınlama hem düzenleme için kullanılır.
-// editingAnnouncementID null ise "yeni duyuru", dolu ise "düzenleme" modudur.
+
 let editingAnnouncementID = null;
 
 function setBusy(isBusy) {
