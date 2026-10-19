@@ -24,24 +24,24 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             _Message = message;
         }
 
-        [HttpGet("All")]
+
+
+        [HttpGet("GetAllMessages/{ConversationID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ConversationResponseDTO>> GetAllInterns()
+        public ActionResult<IEnumerable<MessageResponseDTO>> GetAllMessagesForConversation(int ConversationID, int messageCount=50)
         {
-            List<ConversationResponseDTO> internList = _ConversationBL.GetAll();
+            List<MessageResponseDTO> internList = _ConversationBL.GetAllMessagesForConversation(ConversationID);
             return Ok(internList);
         }
 
 
-        [HttpGet("AllMessages/{ConversationID}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<MessageResponseDTO>> GetAllMessagesForConversation(int ConversationID)
-        {
-            List<MessageResponseDTO> internList = _Message.GetAllMessagesForConversation(ConversationID);
-            return Ok(internList);
-        }
-
-
+        //[HttpGet("All")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public ActionResult<IEnumerable<ConversationResponseDTO>> GetAllInterns()
+        //{
+        //    List<ConversationResponseDTO> internList = _ConversationBL.GetAll();
+        //    return Ok(internList);
+        //}
 
         //[HttpGet("{ID}", Name = "FindIntern")]
         //[ProducesResponseType(StatusCodes.Status200OK)]

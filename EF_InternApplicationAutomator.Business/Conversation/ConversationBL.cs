@@ -2,6 +2,7 @@ using EF_InternApplicationAutomator.DataAccess.Conversation;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
 using Shared.Conversations;
 using Shared.Intern;
+using Shared.Message;
 
 namespace EF_InternApplicationAutomator.Business.conversation
 {
@@ -15,13 +16,20 @@ namespace EF_InternApplicationAutomator.Business.conversation
             _ConversationDataAccess = conversationDataAccess;
         }
 
-        public List<ConversationResponseDTO> GetAll()
+
+
+        public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID,int messageCount=50)
         {
-            return _ConversationDataAccess.GetAll();
+            return _ConversationDataAccess.GetAllMessagesForConversation(conversationID, messageCount);
         }
 
+
+        //public List<ConversationResponseDTO> GetAll()
+        //{
+        //    return _ConversationDataAccess.GetAll();
+        //}
         //public enum enStatus { newIntern=0,separated=1};
-        
+
 
         //public List<InternDetailedResponseDTO> GetDetailedInternRecord()
         //{
@@ -70,6 +78,6 @@ namespace EF_InternApplicationAutomator.Business.conversation
         //{
         //    return _OngoingProjectDataAccess.IsProjectAssignedToIntern(projectID, internID);
         //}
-    
+
     }
 }

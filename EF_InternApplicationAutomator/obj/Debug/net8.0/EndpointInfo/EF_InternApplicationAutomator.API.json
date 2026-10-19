@@ -844,45 +844,7 @@
         }
       }
     },
-    "/api/Conversation/All": {
-      "get": {
-        "tags": [
-          "Conversation"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ConversationResponseDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ConversationResponseDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ConversationResponseDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Conversation/AllMessages/{ConversationID}": {
+    "/api/Conversation/GetAllMessages/{ConversationID}": {
       "get": {
         "tags": [
           "Conversation"
@@ -895,6 +857,15 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "messageCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
             }
           }
         ],
@@ -4028,34 +3999,6 @@
           "notes": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ConversationResponseDTO": {
-        "required": [
-          "conversationID",
-          "conversationName",
-          "internID",
-          "isGroup"
-        ],
-        "type": "object",
-        "properties": {
-          "conversationID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "internID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "conversationName": {
-            "maxLength": 150,
-            "minLength": 1,
-            "type": "string"
-          },
-          "isGroup": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

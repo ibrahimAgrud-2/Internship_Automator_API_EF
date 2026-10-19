@@ -20,10 +20,6 @@ namespace EF_InternApplicationAutomator.Business.Message
             _MessageDataAccess = messageDataAccess;
         }
 
-        public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID)
-        {
-            return _MessageDataAccess.GetAllMessagesForConversation(conversationID);
-        }
-
+     
     }
 }

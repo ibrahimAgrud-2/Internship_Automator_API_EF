@@ -1,7 +1,10 @@
 ﻿
 
 using EF_InternApplicationAutomator.DataAccess.Conversation;
+using EF_InternApplicationAutomator.DataAccess.Messages;
+using Microsoft.EntityFrameworkCore;
 using Shared.Conversations;
+using Shared.Message;
 using System.Collections.Generic;
 
 namespace EF_InternApplicationAutomator.DataAccess.Conversation
@@ -24,6 +27,23 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
             foreach (var item in ce)
             {
                 conversationResponseDTOs.Add(new ConversationResponseDTO(item.ConversationID,item.InternID,item.ConversationName,item.IsGroup));
+            }
+            return conversationResponseDTOs;
+        }
+
+
+
+        public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID,int messageCount=50)
+        {
+            List<MessageEntity> ce = _Context.Messages
+                     .Take(messageCount)
+                     .ToList();
+
+            List<MessageResponseDTO> conversationResponseDTOs = new List<MessageResponseDTO>();
+
+            foreach (var item in ce)
+            {
+                conversationResponseDTOs.Add(new MessageResponseDTO(item.MessageID, item.PersonID, item.ConversationID, item.Content, item.CreatedDate));
             }
             return conversationResponseDTOs;
         }
