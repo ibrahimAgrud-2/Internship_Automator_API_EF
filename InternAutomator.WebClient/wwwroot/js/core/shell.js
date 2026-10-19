@@ -3,7 +3,6 @@
 const INTERN_MENU = [
     { key: "home", text: "Ana sayfa", href: "/Intern/home.html" },
     { key: "announcements", text: "Duyurular", href: null },
-    { key: "courses", text: "Kurslarım", href: null },
     { key: "projects", text: "Projelerim", href: "/Intern/projects.html" },
     { key: "messages", text: "Mesaj", href: null },
     { key: "faq", text: "SSS", href: null }
@@ -14,7 +13,6 @@ const STAFF_MENU = [
     { key: "interns", text: "Stajyerler", href: "/Staff/interns.html" },
     { key: "projects", text: "Projeler", href: "/Staff/projects.html" },
     { key: "announcements", text: "Duyurular", href: "/Staff/announcements.html" },
-    { key: "courses", text: "Kurslar", href: null },
     { key: "messages", text: "Mesajlar", href: null }
 ];
 
