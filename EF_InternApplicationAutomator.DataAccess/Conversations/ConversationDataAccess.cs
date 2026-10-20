@@ -1,9 +1,12 @@
 ﻿
 
 using EF_InternApplicationAutomator.DataAccess.Conversation;
+using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.Messages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Conversations;
+using Shared.Intern;
 using Shared.Message;
 using System.Collections.Generic;
 
@@ -47,9 +50,31 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
             }
             return conversationResponseDTOs;
         }
-    
-        
-    
-    
+
+
+        public bool IsConversationExists(int conversationID)
+        {
+            return _Context.Conversations.Any(c=>c.ConversationID==conversationID);
+        }
+
+        //conversation.AddMessage olmalı
+        public bool AddMessage(MessageCreateDTO message)
+        {
+            MessageEntity messageEntity = new MessageEntity(0,message.PersonID,message.ConversationID,message.Content,DateTime.Now,message.IsStaff);
+            EntityEntry<MessageEntity> addedIntern = _Context.Messages.Add(messageEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+
+                return true;
+            }
+
+            return true;
+        }
+
+
+
+
+
     }
 }

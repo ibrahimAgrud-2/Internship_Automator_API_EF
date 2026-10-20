@@ -11,7 +11,7 @@ namespace Shared.Message
     public class MessageResponseDTO
     {
         
-            [Key]
+    
             public int MessageID { get; set; }
 
             [Required]
@@ -31,7 +31,7 @@ namespace Shared.Message
             public DateTime CreatedDate { get; set; }
 
                 [Required]
-                public bool IsUser { get; set; }
+                public bool IsStaff { get; set; }
 
         public MessageResponseDTO(int messageID, int personID, int conversationID, string content, DateTime createdDate,bool IsUser,string personFullName)
             {
@@ -40,7 +40,7 @@ namespace Shared.Message
                 ConversationID = conversationID;
                 Content = content;
                 CreatedDate = createdDate;
-               this.IsUser = IsUser;
+               this.IsStaff = IsUser;
             this.PersonFullName = personFullName;
             }
         

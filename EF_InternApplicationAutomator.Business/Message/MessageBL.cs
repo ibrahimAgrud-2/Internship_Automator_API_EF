@@ -20,6 +20,6 @@ namespace EF_InternApplicationAutomator.Business.Message
             _MessageDataAccess = messageDataAccess;
         }
 
-     
+       
     }
 }

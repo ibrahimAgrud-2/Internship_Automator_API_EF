@@ -2,6 +2,7 @@
 using EF_InternApplicationAutomator.Business.Message;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Conversations;
+using Shared.Intern;
 using Shared.Message;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Message
@@ -21,6 +22,6 @@ namespace EF_InternApplicationAutomator.API.Controllers.Message
             _MessageBL = message;
         }
 
-
+      
     }
 }

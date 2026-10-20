@@ -489,6 +489,46 @@
     ]
   },
   {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.ConversationController",
+    "Method": "StaffAddNewMessage",
+    "RelativePath": "api/Conversation/StaffAddMessage",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "newMessage",
+        "Type": "Shared.Message.StaffAddMessageDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
+      }
+    ]
+  },
+  {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.InternController",
     "Method": "AddNewIntern",
     "RelativePath": "api/Intern",

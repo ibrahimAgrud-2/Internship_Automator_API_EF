@@ -1,10 +1,12 @@
 ﻿using EF_InternApplicationAutomator.Business.conversation;
 using EF_InternApplicationAutomator.Business.Message;
+using EF_InternApplicationAutomator.Business.User;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application;
 using Shared.Conversations;
 using Shared.Intern;
 using Shared.Message;
+using System;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Intern
@@ -15,13 +17,15 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
     {
         private readonly ConversationBL _ConversationBL;
         private readonly MessageBL _Message;
+        private readonly UserBL  _User;
 
-       
 
-        public ConversationController(ConversationBL conversation, MessageBL message)
+
+        public ConversationController(ConversationBL conversation, MessageBL message, UserBL user)
         {
             _ConversationBL = conversation;
             _Message = message;
+            _User = user;
         }
 
 
@@ -34,6 +38,37 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             return Ok(internList);
         }
 
+      
+
+        [HttpPost("StaffAddMessage")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<bool> StaffAddNewMessage(StaffAddMessageDTO newMessage)
+        {
+            if (newMessage == null||string.IsNullOrEmpty(newMessage.Content))
+                return BadRequest("Girilen veri geçersiz");
+            
+            if(!_ConversationBL.IsConversationExists(newMessage.ConversationID))
+            {
+                return BadRequest("Mesaj yazmak istediğiniz sohbet odası geçersiz. Oda silinmiş olabilir");
+            }
+            if (!_User.IsUserExists(newMessage.UserID))
+            {
+                return BadRequest("Bu sohbet odasında mesaj yazamazsınız. Hesabınız silinmiş olabilir");
+            }
+
+            if (_ConversationBL.StaffAddMessage(newMessage))
+            {
+                return Ok(true);
+            }
+
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
+            
+        }
+
 
         //[HttpGet("All")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,26 +78,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         //    return Ok(internList);
         //}
 
-        //[HttpGet("{ID}", Name = "FindIntern")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public ActionResult<InternCardResponseDTO> Find(int ID)
-        //{
-        //    if (ID < 1)
-        //    {
-        //        return BadRequest($"Not Accepted ID {ID}");
-        //    }
-
-        //    InternCardResponseDTO intern = _Intern.Find(ID);
-        //    if (intern == null)
-        //    {
-        //        return NotFound($"No Intern With ID {ID}");
-        //    }
-
-        //    return Ok(intern);
-        //}
-
+       
         //[HttpPost]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(StatusCodes.Status201Created)]
