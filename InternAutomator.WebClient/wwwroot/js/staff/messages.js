@@ -9,6 +9,13 @@ const messageList = document.getElementById("messageList");
 const groupPreview = document.getElementById("groupPreview");
 const groupTime = document.getElementById("groupTime");
 
+// Mesaj yazma satırı
+const composerForm = document.getElementById("composerForm");
+const messageInput = document.getElementById("messageInput");
+const sendButton = document.getElementById("sendButton");
+const sendError = document.getElementById("sendError");
+
+messageInput.maxLength = MESSAGE_LIMITS.content;
 // Stajyer adları kişi numarasına göre sabit bir renkte görünür
 const SENDER_COLORS = ["text-success", "text-primary", "text-danger", "text-warning-emphasis", "text-info-emphasis", "text-secondary-emphasis"];
 
@@ -31,7 +38,7 @@ function formatDayLabel(isoDate) {
 
 // API'da isUser true ise mesajı personel yazmıştır, false ise stajyer
 function isFromStaff(message) {
-    return message.isUser === true;
+    return message.isStaff === true;
 }
 
 // Personelin adı gösterilmez (şimdilik stajyer - sistem yazışması); stajyerin adı gösterilir
@@ -102,12 +109,15 @@ function renderPreview(messages) {
     groupTime.textContent = formatTime(last.createdDate);
 }
 
-// ---------- Sayfa akışı ----------
-async function loadMessages() {
-    messageList.replaceChildren();
-    showMessage(chatStatus, "info", "Mesajlar yükleniyor...");
+// showLoading false ise (mesaj gönderdikten sonra yenileme) liste silinip yükleniyor yazısı çıkmaz
+async function loadMessages(showLoading = true) {
+    if (showLoading) {
+        messageList.replaceChildren();
+        showMessage(chatStatus, "info", "Mesajlar yükleniyor...");
+    }
 
     try {
+// ... geri kalan aynı
         const messages = await getConversationMessages(GROUP_CONVERSATION_ID, MESSAGE_COUNT);
 
         renderPreview(messages);
@@ -124,8 +134,63 @@ async function loadMessages() {
         showError(chatStatus, error);
     }
 }
+// ---------- Mesaj gönderme ----------
+// Metin boşken ya da istek sürerken Gönder pasif olur
+let isSending = false;
 
-// Giriş yoksa renderStaffShell zaten yönlendirdi
+function updateSendButton() {
+    sendButton.disabled = isSending || messageInput.value.trim() === "";
+}
+
+async function sendMessage(event) {
+    event.preventDefault();
+
+    // İstek sürerken ikinci gönderim (Enter'a art arda basma vb.) yapılmasın
+    if (isSending) return;
+
+    const content = messageInput.value.trim();
+    if (!content) return;
+
+    // Oturumda kullanıcı numarası yoksa istek hiç atılmaz
+    if (!session.userID) {
+        showMessage(sendError, "danger", "Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.");
+        return;
+    }
+
+    hideMessage(sendError);
+    isSending = true;
+    messageInput.disabled = true;
+    updateSendButton();
+
+    try {
+        await staffAddMessage({
+            userID: session.userID,
+            conversationID: GROUP_CONVERSATION_ID,
+            content
+        });
+
+        messageInput.value = "";
+        await loadMessages(false);   // ekranda her zaman sunucudaki gerçek hal görünsün
+    } catch (error) {
+        showError(sendError, error);   // yazılan metin silinmez, tekrar denenebilir
+    } finally {
+        isSending = false;
+        messageInput.disabled = false;
+        updateSendButton();
+        messageInput.focus();
+    }
+}
+
+composerForm.addEventListener("submit", sendMessage);
+messageInput.addEventListener("input", updateSendButton);
+
+// Enter gönderir, Shift+Enter yeni satır ekler
+messageInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+        event.preventDefault();
+        composerForm.requestSubmit();
+    }
+});
 if (session) {
     loadMessages();
 }

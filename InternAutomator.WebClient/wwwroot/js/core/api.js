@@ -269,3 +269,9 @@ async function getConversationMessages(conversationID, messageCount) {
     const messages = await apiGet(`Conversation/GetAllMessages/${conversationID}/${messageCount}`);
     return Array.isArray(messages) ? messages : [];
 }
+
+// Personel olarak sohbete mesaj yazar. Başarıda API true döner.
+// userID şimdilik oturumdan gelir; API bunu kişi kaydına çevirir. JWT eklenince token'dan alınacak.
+function staffAddMessage(message) {
+    return apiPost("Conversation/StaffAddMessage", message);
+}

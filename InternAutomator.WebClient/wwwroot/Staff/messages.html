@@ -59,8 +59,11 @@
                     <!-- Mesajlar JS ile doldurulur -->
                     <div id="messageList" class="chat-messages"></div>
 
-                    <!-- Mesaj yazma satırı: şimdilik hepsi pasif -->
-                    <div class="chat-composer border-top">
+                    <!-- Gönderme hatası -->
+                    <div id="sendError" class="alert alert-danger m-3 mb-0" role="alert" hidden></div>
+
+                    <!-- Mesaj yazma satırı -->
+                    <form id="composerForm" class="chat-composer border-top" autocomplete="off" novalidate>
                         <div class="dropup">
                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="dropdown"
                                     aria-expanded="false" aria-label="Ekle">
@@ -75,19 +78,22 @@
                             </ul>
                         </div>
 
-                        <textarea class="form-control" rows="1" placeholder="Mesajınızı yazın..." aria-label="Mesaj" disabled></textarea>
-                        <button type="button" class="btn btn-outline-primary" disabled>Gönder</button>
-                    </div>
+                        <textarea id="messageInput" class="form-control" rows="2" placeholder="Mesajınızı yazın..." aria-label="Mesaj"></textarea>
+                        <button type="submit" id="sendButton" class="btn btn-outline-primary" disabled>Gönder</button>
+                    </form>
+
+                
+</div>
                 </section>
             </div>
         </main>
     </div>
 
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=32"></script>
-    <script src="/js/core/api.js?v=32"></script>
-    <script src="/js/core/ui.js?v=32"></script>
-    <script src="/js/core/shell.js?v=32"></script>
-    <script src="/js/staff/messages.js?v=32"></script>
+    <script src="/js/core/auth.js?v=37"></script>
+    <script src="/js/core/api.js?v=37"></script>
+    <script src="/js/core/ui.js?v=37"></script>
+    <script src="/js/core/shell.js?v=37"></script>
+    <script src="/js/staff/messages.js?v=37"></script>
 </body>
 </html>

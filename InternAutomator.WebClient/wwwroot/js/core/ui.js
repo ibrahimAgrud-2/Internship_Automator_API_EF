@@ -106,6 +106,8 @@ function normalizeSearchText(text) {
         .replace(/\s+/g, " ");
 }
 
+// Mesaj uzunluğu: API'daki MaxLength(500) ile aynı olmalı.
+const MESSAGE_LIMITS = { content: 500 };
 // Alan uzunlukları: veritabanı sütunlarına göre ayarla. Asıl doğrulama API'dadır;
 // buradaki sınırlar sadece kullanıcıyı baştan uyarır.
 const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 };
