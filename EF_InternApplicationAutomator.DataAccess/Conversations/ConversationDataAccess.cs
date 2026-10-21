@@ -57,24 +57,5 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
             return _Context.Conversations.Any(c=>c.ConversationID==conversationID);
         }
 
-        //conversation.AddMessage olmalı
-        public bool AddMessage(MessageCreateDTO message)
-        {
-            MessageEntity messageEntity = new MessageEntity(0,message.PersonID,message.ConversationID,message.Content,DateTime.Now,message.IsStaff);
-            EntityEntry<MessageEntity> addedIntern = _Context.Messages.Add(messageEntity);
-
-            if (_Context.SaveChanges() > 0)
-            {
-
-                return true;
-            }
-
-            return true;
-        }
-
-
-
-
-
     }
 }

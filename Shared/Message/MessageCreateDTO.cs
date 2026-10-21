@@ -24,13 +24,19 @@ namespace Shared.Message
 
         [Required]
         public bool IsStaff { get; set; }
+        [Required]
+        public int? ReferencedContentID { get; set; }
 
-        public MessageCreateDTO( int personID, int conversationID, string content, bool isStaff)
+        [Required]
+        public byte? ReferencedContentType { get; set; }
+        public MessageCreateDTO( int personID, int conversationID, string content, bool isStaff, int? referencedContentID, byte? ReferencedContentType)
         {
             PersonID = personID;
             ConversationID = conversationID;
             Content = content;
             this.IsStaff = isStaff;
+            this.ReferencedContentID = referencedContentID;
+            this.ReferencedContentType = ReferencedContentType;
         }
 
     }

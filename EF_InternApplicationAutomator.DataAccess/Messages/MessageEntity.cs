@@ -35,7 +35,13 @@ namespace EF_InternApplicationAutomator.DataAccess.Messages
         [Required]
         public bool IsStaff { get; set; }
 
-        public MessageEntity(int messageID, int personID, int conversationID, string content, DateTime createdDate,bool isStaff)
+        [Required]
+        public int? ReferencedContentID { get; set; }
+
+        [Required]
+        public byte? ReferencedContentType { get; set; }
+
+        public MessageEntity(int messageID, int personID, int conversationID, string content, DateTime createdDate,bool isStaff, int? referencedContentID, byte? ReferencedContentType)
         {
             MessageID = messageID;
             PersonID = personID;
@@ -43,6 +49,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Messages
             Content = content;
             CreatedDate = createdDate;
             this.IsStaff = isStaff;
+            this.ReferencedContentID = referencedContentID;
+            this.ReferencedContentType = ReferencedContentType;
         }
     }
 }

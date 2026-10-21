@@ -13,12 +13,14 @@ namespace EF_InternApplicationAutomator.Business.conversation
     {
         private readonly ConversationDataAccess _ConversationDataAccess;
         private readonly UserDataAccess _User;
+        private readonly MessageDataAccess _MessageData;
 
 
-        public ConversationBL(ConversationDataAccess conversationDataAccess, UserDataAccess user)
+        public ConversationBL(ConversationDataAccess conversationDataAccess, UserDataAccess user, MessageDataAccess message)
         {
             _ConversationDataAccess = conversationDataAccess;
             _User = user;
+            _MessageData = message;
         }
 
 
@@ -44,7 +46,7 @@ namespace EF_InternApplicationAutomator.Business.conversation
         {
             int personID = _User.Find(newMessage.UserID).PersonID;
 
-            return _ConversationDataAccess.AddMessage(new MessageCreateDTO(personID,newMessage.ConversationID,newMessage.Content,true));
+            return _MessageData.AddMessage(new MessageCreateDTO(personID,newMessage.ConversationID,newMessage.Content,true,newMessage.ReferencedContentID,newMessage.ReferencedContentType));
         }
       
 

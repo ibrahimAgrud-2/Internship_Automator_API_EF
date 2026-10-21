@@ -1,4 +1,5 @@
 ﻿using EF_InternApplicationAutomator.DataAccess.Conversation;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Conversations;
 using Shared.Message;
 using System;
@@ -17,6 +18,23 @@ namespace EF_InternApplicationAutomator.DataAccess.Messages
         {
             _Context = context;
         }
+
+
+
+        public bool AddMessage(MessageCreateDTO message)
+        {
+            MessageEntity messageEntity = new MessageEntity(0, message.PersonID, message.ConversationID, message.Content, DateTime.Now, message.IsStaff, message.ReferencedContentID, message.ReferencedContentType);
+            EntityEntry<MessageEntity> addedIntern = _Context.Messages.Add(messageEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+
+                return true;
+            }
+
+            return true;
+        }
+
 
     }
 }

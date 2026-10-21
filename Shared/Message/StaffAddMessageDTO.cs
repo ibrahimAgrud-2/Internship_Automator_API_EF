@@ -23,12 +23,18 @@ namespace Shared.Message
         [MaxLength(500)]
         public string Content { get; set; }
 
+        [Required]
+        public int? ReferencedContentID { get; set; }
 
-        public StaffAddMessageDTO(int userID, int conversationID, string content)
+        [Required]
+        public byte? ReferencedContentType { get; set; }
+        public StaffAddMessageDTO(int userID, int conversationID, string content,int? referencedContentID, byte? ReferencedContentType)
         {
             this.UserID = userID;
             ConversationID = conversationID;
             Content = content;
+            this.ReferencedContentID = referencedContentID;
+            this.ReferencedContentType = ReferencedContentType;
         }
     }
 }
