@@ -1,6 +1,5 @@
 import { apiPost } from './http'
 
-// ---- Giriş ----
 export function staffLogin(userName, password) {
   return apiPost('User/UserLogin', { userName, password })
 }

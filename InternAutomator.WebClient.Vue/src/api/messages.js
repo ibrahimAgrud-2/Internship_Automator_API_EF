@@ -8,6 +8,7 @@ export async function getConversationMessages(conversationID, messageCount) {
 }
 
 // Personel olarak sohbete mesaj yazar. Başarıda API true döner.
+// Referans varsa message içine { referencedContentID, referencedContentType } eklenir; yoksa bu alanlar hiç gönderilmez.
 // userID şimdilik oturumdan gelir; API bunu kişi kaydına çevirir. JWT eklenince token'dan alınacak.
 export function staffAddMessage(message) {
   return apiPost('Conversation/StaffAddMessage', message)

@@ -24,9 +24,9 @@ namespace Shared.Message
 
         public bool IsStaff { get; set; }
 
-        public int ReferencedContentID { get; set; }
+        public int? ReferencedContentID { get; set; }
 
-        public short ReferencedContentType { get; set; }
+        public short? ReferencedContentType { get; set; }
 
         public string? ReferencedContentTitle { get; set; }
 

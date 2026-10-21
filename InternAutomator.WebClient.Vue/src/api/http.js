@@ -36,7 +36,6 @@ async function readErrorMessages(response) {
   return [text || `İstek reddedildi (kod: ${response.status}).`]
 }
 
-// Tüm istekler buradan geçer; GET, POST, PUT, DELETE için ortak
 async function request(method, path, body) {
   const options = { method }
 
@@ -57,7 +56,6 @@ async function request(method, path, body) {
     throw new ApiError(response.status, await readErrorMessages(response))
   }
 
-  // Gövde boş olabilir (Ok(), 204): null döner. JSON değilse düz metin döner.
   const text = await response.text()
   if (!text) return null
 

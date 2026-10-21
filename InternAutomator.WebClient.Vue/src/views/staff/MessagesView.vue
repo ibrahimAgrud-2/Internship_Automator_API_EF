@@ -3,9 +3,10 @@ import { ref, computed, nextTick, onMounted } from 'vue'
 import { getConversationMessages, staffAddMessage } from '@/api/messages'
 import { getErrorMessages } from '@/api/http'
 import { getSession } from '@/auth/session'
-import { MESSAGE_LIMITS } from '@/constants'
+import { MESSAGE_LIMITS, REFERENCE_TYPES, REFERENCE_NONE, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT } from '@/constants'
 import { formatTime, formatDayLabel } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
+import ReferencePickerModal from '@/components/ReferencePickerModal.vue'
 import '@/assets/css/messages.css'
 
 const session = getSession()
@@ -31,6 +32,10 @@ const getSenderLabel = (message) => (isFromStaff(message) ? 'Personel' : message
 
 const getSenderColor = (message) =>
   isFromStaff(message) ? 'text-secondary' : SENDER_COLORS[Math.abs(Number(message.personID) || 0) % SENDER_COLORS.length]
+
+// Mesaj bir duyuruyu/projeyi/görevi referans ediyorsa true (referencedContentID 0 = referans yok)
+const hasReference = (message) => Number(message.referencedContentID) > 0 && Number(message.referencedContentType) > REFERENCE_NONE
+const getReferenceTypeLabel = (message) => REFERENCE_TYPES[message.referencedContentType] ?? 'İçerik'
 
 // Mesajlar eskiden yeniye gelir; gün değişince ayraç eklenir
 const items = computed(() => {
@@ -93,6 +98,16 @@ const isSending = ref(false)
 const sendError = ref([])
 const messageInput = ref(null)
 
+// Mesaja eklenecek referans: { id, type, title } ya da null. Seçici pencere duyuru/proje için aynı bileşeni kullanır.
+const reference = ref(null)
+const isPickerOpen = ref(false)
+const pickerType = ref(REFERENCE_ANNOUNCEMENT)
+
+function openPicker(type) {
+  pickerType.value = type
+  isPickerOpen.value = true
+}
+
 // Metin boşken ya da istek sürerken Gönder pasif olur
 const canSend = computed(() => !isSending.value && draft.value.trim() !== '')
 
@@ -113,8 +128,17 @@ async function sendMessage() {
   isSending.value = true
 
   try {
-    await staffAddMessage({ userID: session.userID, conversationID: GROUP_CONVERSATION_ID, content })
+  const message = {
+      userID: session.userID,
+      conversationID: GROUP_CONVERSATION_ID,
+      content,
+      referencedContentID: reference.value ? reference.value.id : 0,
+      referencedContentType: reference.value ? reference.value.type : REFERENCE_NONE,
+    }
+
+    await staffAddMessage(message)
     draft.value = ''
+    reference.value = null
     await loadMessages(false) // ekranda her zaman sunucudaki gerçek hal görünsün
   } catch (error) {
     sendError.value = getErrorMessages(error) // yazılan metin silinmez, tekrar denenebilir
@@ -181,6 +205,10 @@ function onEnter(event) {
             <div v-if="item.type === 'day'" class="chat-day">{{ item.label }}</div>
             <div v-else class="chat-bubble" :class="isFromStaff(item.message) ? 'from-staff' : 'from-intern'">
               <div class="chat-sender" :class="getSenderColor(item.message)">{{ getSenderLabel(item.message) }}</div>
+              <div v-if="hasReference(item.message)" class="chat-reference text-break">
+                <span class="chat-reference-type">{{ getReferenceTypeLabel(item.message) }}</span>
+                {{ item.message.referencedContentTitle }}
+              </div>
               <div class="chat-text text-break">{{ item.message.content }}</div>
               <div class="chat-time">{{ formatTime(item.message.createdDate) }}</div>
             </div>
@@ -190,6 +218,13 @@ function onEnter(event) {
         <!-- Gönderme hatası -->
         <AlertMessages v-if="sendError.length" class="m-3 mb-0" :messages="sendError" />
 
+        <!-- Seçilen referans: gönderilene kadar burada durur, istenirse kaldırılır -->
+        <div v-if="reference" class="d-flex align-items-center gap-2 px-3 pt-2 small">
+          <span class="text-muted">Referans:</span>
+          <span class="badge text-bg-secondary text-break text-wrap">{{ REFERENCE_TYPES[reference.type] }}: {{ reference.title }}</span>
+          <button type="button" class="btn-close ms-1" aria-label="Referansı kaldır" :disabled="isSending" @click="reference = null"></button>
+        </div>
+
         <!-- Mesaj yazma satırı -->
         <form class="chat-composer border-top" autocomplete="off" novalidate @submit.prevent="sendMessage">
           <div class="dropup">
@@ -198,8 +233,8 @@ function onEnter(event) {
               <li><button type="button" class="dropdown-item" disabled>Dosya seç</button></li>
               <li><hr class="dropdown-divider" /></li>
               <li><h6 class="dropdown-header">Referans ver</h6></li>
-              <li><button type="button" class="dropdown-item" disabled>Duyuru</button></li>
-              <li><button type="button" class="dropdown-item" disabled>Proje</button></li>
+              <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_ANNOUNCEMENT)">Duyuru</button></li>
+              <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_PROJECT)">Proje</button></li>
             </ul>
           </div>
 
@@ -218,5 +253,7 @@ function onEnter(event) {
         </form>
       </section>
     </div>
+
+    <ReferencePickerModal v-model="isPickerOpen" :type="pickerType" @picked="reference = $event" />
   </div>
 </template>

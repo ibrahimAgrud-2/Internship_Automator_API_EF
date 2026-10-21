@@ -26,3 +26,15 @@ export const PROJECT_LIMITS = { title: 100, technologies: 100, description: 200 
 export const ANNOUNCEMENT_LIMITS = { title: 100, content: 1000 }
 export const TASK_LIMITS = { title: 100, description: 200 }
 export const APPLICATION_NOTES_LIMIT = 150
+
+// ---- Mesajın referans ettiği içerik (API: referencedContentType) ----
+// 0 = referans yok (referencedContentID de 0 gelir), 1 = duyuru, 2 = proje, 3 = görev
+export const REFERENCE_NONE = 0
+export const REFERENCE_ANNOUNCEMENT = 1
+export const REFERENCE_PROJECT = 2
+export const REFERENCE_TASK = 3
+export const REFERENCE_TYPES = {
+  [REFERENCE_ANNOUNCEMENT]: 'Duyuru',
+  [REFERENCE_PROJECT]: 'Proje',
+  [REFERENCE_TASK]: 'Görev',
+}

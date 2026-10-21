@@ -43,6 +43,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
             List<vw_MessagesWithContentDTO> conversationResponseDTOs = new List<vw_MessagesWithContentDTO>();
 
+          
+
             foreach (var item in ce)
             {
                 conversationResponseDTOs.Add(new vw_MessagesWithContentDTO(item.MessageID,item.PersonID,item.ConversationID,item.Content,item.CreatedDate,item.IsStaff,item.ReferencedContentID,item.ReferencedContentType,item.ReferencedContentTitle));
