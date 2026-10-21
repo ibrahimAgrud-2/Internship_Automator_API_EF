@@ -57,7 +57,7 @@ namespace EF_InternApplicationAutomator.Business.Application
                     return null;
                 }
                 string password = Shared.Common.CommonTools.GenerateRandomPassword(8);
-                if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now, 0))!=-1)
+                if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now))!=-1)
                 {
                     if(SendEmail(person.PersonID))
                     {

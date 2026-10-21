@@ -9,7 +9,7 @@ namespace Shared.Intern
 
         [Required]
         [MaxLength(100)]
-        public string PasswordHash { get; set; }
+        public string password { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -19,18 +19,15 @@ namespace Shared.Intern
         [Required]
         public DateTime CreatedDate { get; set; }
 
-        [Required]
-        public byte Status { get; set; }
 
-        public InternCreateDTO(int personID, string passwordHash, DateTime startDate,
-            DateTime? endDate, DateTime createdDate, byte status)
+        public InternCreateDTO(int personID, string password, DateTime startDate,
+            DateTime? endDate, DateTime createdDate)
         {
             PersonID = personID;
-            PasswordHash = passwordHash;
+            this.password = password;
             StartDate = startDate;
             EndDate = endDate;
             CreatedDate = createdDate;
-            Status = status;
         }
     }
 }

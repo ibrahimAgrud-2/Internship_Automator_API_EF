@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { staffLogin } from '@/api/auth'
 import { getErrorMessages } from '@/api/http'
 import { saveSession, ROLE_STAFF } from '@/auth/session'
+import AlertMessages from '@/components/AlertMessages.vue'
 
 const router = useRouter()
 
@@ -32,7 +33,7 @@ async function submit() {
       isActive: user.isActive,
     })
 
-    await router.replace('/staff')
+    await router.replace('/staff/applications')
   } catch (error) {
     password.value = ''
     errors.value = getErrorMessages(error)
@@ -59,9 +60,7 @@ async function submit() {
 
       <button type="submit" class="btn btn-primary w-100" :disabled="isSubmitting">Giriş Yap</button>
 
-      <div v-if="errors.length" class="alert alert-danger mt-3">
-        <div v-for="(line, i) in errors" :key="i">{{ line }}</div>
-      </div>
+      <AlertMessages v-if="errors.length" :messages="errors" class="mt-3" />
     </form>
   </main>
 </template>

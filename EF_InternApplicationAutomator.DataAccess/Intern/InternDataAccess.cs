@@ -15,6 +15,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         private readonly IAADbContext _Context;
         private readonly OngoingProjectDataAccess _OngoingProjectDataAccess;
 
+        
         public InternDataAccess(IAADbContext context, OngoingProjectDataAccess ongoingProjectDataAccess)
         {
             _Context = context;
@@ -69,9 +70,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
       
         public int AddIntern(InternCreateDTO intern)
         {
+            //Status 1 means the intern is active/new meanwhile 0 means separated
             InternEntity internEntity = new InternEntity(0, intern.PersonID,
-                intern.PasswordHash, intern.StartDate, intern.EndDate,
-                intern.CreatedDate, intern.Status);
+                Shared.Common.CommonTools.ComputeHash(intern.password), intern.StartDate, intern.EndDate,
+                intern.CreatedDate, 1);
             EntityEntry<InternEntity> addedIntern = _Context.Interns.Add(internEntity);
 
             if (_Context.SaveChanges() > 0)
@@ -91,11 +93,11 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             }
 
             intern.PersonID = internDTO.PersonID;
-            intern.PasswordHash = internDTO.PasswordHash;
+            intern.PasswordHash = internDTO.password;
             intern.StartDate = internDTO.StartDate;
             intern.EndDate = internDTO.EndDate;
             intern.CreatedDate = internDTO.CreatedDate;
-            intern.Status = internDTO.Status;
+          
 
             if (_Context.SaveChanges() > 0)
             {

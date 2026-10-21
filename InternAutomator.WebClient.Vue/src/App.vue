@@ -1,6 +1,6 @@
 <script setup></script>
 
 <template>
-  <!-- Router, adrese göre doğru sayfayı (view) buraya koyar -->
+  <!-- Router, adrese göre doğru sayfayı buraya koyar -->
   <RouterView />
 </template>

@@ -4155,10 +4155,9 @@
       "InternCreateDTO": {
         "required": [
           "createdDate",
-          "passwordHash",
+          "password",
           "personID",
-          "startDate",
-          "status"
+          "startDate"
         ],
         "type": "object",
         "properties": {
@@ -4166,7 +4165,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "passwordHash": {
+          "password": {
             "maxLength": 100,
             "minLength": 1,
             "type": "string"
@@ -4183,10 +4182,6 @@
           "createdDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -1,0 +1,30 @@
+/* Proje kartları: sabit genişlikli kartlar ızgarası */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 320px));
+    gap: 1.5rem;
+    justify-content: start;
+}
+
+.project-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+    .project-card:hover {
+        transform: translateY(-6px);
+        box-shadow: -10px 16px 24px rgba(0, 0, 0, 0.15);
+    }
+
+/* Açıklama en fazla 3 satır görünür; tamamı detay penceresinde */
+.project-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .project-card {
+        transition: none;
+    }
+}
