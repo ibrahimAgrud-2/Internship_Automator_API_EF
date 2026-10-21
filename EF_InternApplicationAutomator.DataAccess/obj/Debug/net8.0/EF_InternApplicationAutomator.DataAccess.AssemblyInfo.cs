@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EF_InternApplicationAutomator.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d4b4f438543aa388d845585d61a9a98dd95d3e9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5b4a1218abcdb2c66868ecaf8a1e35cbe5e1997")]
 [assembly: System.Reflection.AssemblyProductAttribute("EF_InternApplicationAutomator.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EF_InternApplicationAutomator.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

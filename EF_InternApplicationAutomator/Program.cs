@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("WebClient", policy =>
-        policy.WithOrigins("https://localhost:7156")
+        policy.WithOrigins("https://localhost:7156", "http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
