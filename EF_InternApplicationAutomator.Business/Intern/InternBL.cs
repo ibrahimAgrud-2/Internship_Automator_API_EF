@@ -15,7 +15,7 @@ namespace EF_InternApplicationAutomator.Business.Intern
             _OngoingProjectDataAccess = ongoingProjectDataAccess;
         }
 
-        public enum enStatus { newIntern=0,separated=1};
+        public enum enStatus { newIntern=1,separated=0};
         
 
         public List<InternDetailedResponseDTO> GetDetailedInternRecord()

@@ -1,0 +1,5 @@
+Bu js dosyaları vue'nın bir parçası değil
+Sadece “API ile konuşan kod ekran kodundan ayrı dursun” kuralı. yani API'ları 
+Ayrı bir dosyada ayrı bir şekilde görmek istediğimiz için bu şekide kullandık. 
+ayrıca vue.js bile kullansak bir şekilde verileri API'dan almalıuyız
+vue.js asıl olayı Asıl fark dosya sayısında değil, ekranı nasıl çizdiğimizde.
