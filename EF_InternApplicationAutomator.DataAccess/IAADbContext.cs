@@ -30,5 +30,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         public DbSet<AnnouncementEntity> Announcements { get; set; }
         public DbSet<ConversationEntity> Conversations { get; set; }
         public DbSet<Messages.MessageEntity> Messages { get; set; }
+        public DbSet<Messages.vw_MessagesWithContent> MessageDetailedView { get; set; }
     }
 }

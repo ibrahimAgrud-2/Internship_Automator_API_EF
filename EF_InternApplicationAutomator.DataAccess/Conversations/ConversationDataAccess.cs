@@ -36,17 +36,16 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
 
 
-        public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID,int messageCount=50)
-        {
-            List<MessageEntity> ce = _Context.Messages.Include(p=>p.Person).OrderBy(m => m.MessageID)
-                     .Take(messageCount)
-                     .ToList();
 
-            List<MessageResponseDTO> conversationResponseDTOs = new List<MessageResponseDTO>();
+        public List<vw_MessagesWithContentDTO> GetAllMessagesForConversation(int conversationID, int messageCount = 50)
+        {
+            List<vw_MessagesWithContent> ce = _Context.MessageDetailedView.Take(messageCount).ToList();
+
+            List<vw_MessagesWithContentDTO> conversationResponseDTOs = new List<vw_MessagesWithContentDTO>();
 
             foreach (var item in ce)
             {
-                conversationResponseDTOs.Add(new MessageResponseDTO(item.MessageID, item.PersonID, item.ConversationID, item.Content, item.CreatedDate, item.IsStaff,$"{item.Person.FirstName} {item.Person.LastName}"));
+                conversationResponseDTOs.Add(new vw_MessagesWithContentDTO(item.MessageID,item.PersonID,item.ConversationID,item.Content,item.CreatedDate,item.IsStaff,item.ReferencedContentID,item.ReferencedContentType,item.ReferencedContentTitle));
             }
             return conversationResponseDTOs;
         }

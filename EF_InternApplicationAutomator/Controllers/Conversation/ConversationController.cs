@@ -32,13 +32,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
 
         [HttpGet("GetAllMessages/{ConversationID}/{messageCount}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<MessageResponseDTO>> GetAllMessagesForConversation(int ConversationID, int messageCount=50)
+        public ActionResult<IEnumerable<vw_MessagesWithContentDTO>> GetAllMessagesForConversation(int ConversationID, int messageCount = 50)
         {
-            List<MessageResponseDTO> internList = _ConversationBL.GetAllMessagesForConversation(ConversationID);
+            List<vw_MessagesWithContentDTO> internList = _ConversationBL.GetAllMessagesForConversation(ConversationID, messageCount);
             return Ok(internList);
         }
 
-      
+
 
         [HttpPost("StaffAddMessage")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

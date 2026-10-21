@@ -25,11 +25,11 @@ namespace EF_InternApplicationAutomator.Business.conversation
 
 
 
-        public List<MessageResponseDTO> GetAllMessagesForConversation(int conversationID,int messageCount=50)
+      
+        public List<vw_MessagesWithContentDTO> GetAllMessagesForConversation(int conversationID, int messageCount = 50)
         {
             return _ConversationDataAccess.GetAllMessagesForConversation(conversationID, messageCount);
         }
-
 
         public bool IsConversationExists(int conversationID)
         {

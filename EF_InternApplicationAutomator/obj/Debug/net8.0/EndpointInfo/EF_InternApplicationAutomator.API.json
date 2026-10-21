@@ -878,7 +878,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MessageResponseDTO"
+                    "$ref": "#/components/schemas/vw_MessagesWithContentDTO"
                   }
                 }
               },
@@ -886,7 +886,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MessageResponseDTO"
+                    "$ref": "#/components/schemas/vw_MessagesWithContentDTO"
                   }
                 }
               },
@@ -894,7 +894,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MessageResponseDTO"
+                    "$ref": "#/components/schemas/vw_MessagesWithContentDTO"
                   }
                 }
               }
@@ -4287,48 +4287,6 @@
         },
         "additionalProperties": false
       },
-      "MessageResponseDTO": {
-        "required": [
-          "content",
-          "conversationID",
-          "createdDate",
-          "isStaff",
-          "personFullName",
-          "personID"
-        ],
-        "type": "object",
-        "properties": {
-          "messageID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "personID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "personFullName": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "conversationID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "content": {
-            "maxLength": 500,
-            "minLength": 1,
-            "type": "string"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "isStaff": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
       "OngoingInternProjectResponseDTO": {
         "required": [
           "dueDate",
@@ -4892,6 +4850,47 @@
           },
           "isActive": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "vw_MessagesWithContentDTO": {
+        "type": "object",
+        "properties": {
+          "messageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conversationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isStaff": {
+            "type": "boolean"
+          },
+          "referencedContentID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "referencedContentType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "referencedContentTitle": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
