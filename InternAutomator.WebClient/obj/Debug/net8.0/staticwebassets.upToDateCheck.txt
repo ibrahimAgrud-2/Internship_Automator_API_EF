@@ -149,7 +149,7 @@ wwwroot\js\core\ui.js
 wwwroot\js\intern\intern-home.js
 wwwroot\js\intern\intern-login.js
 wwwroot\js\intern\intern-projects.js
-wwwroot\js\staff\announcements.js
+wwwroot\js\lib\vue.global.prod.js
 wwwroot\js\staff\applications.js
 wwwroot\js\staff\intern-add-task.js
 wwwroot\js\staff\intern-assign-project.js
@@ -158,13 +158,14 @@ wwwroot\js\staff\intern-delete-task.js
 wwwroot\js\staff\intern-detail.js
 wwwroot\js\staff\intern-revoke-project.js
 wwwroot\js\staff\interns.js
+wwwroot\js\staff\messages.js
 wwwroot\js\staff\projects.js
 wwwroot\js\staff\staff-login.js
 wwwroot\Apply\apply.html
 wwwroot\Intern\home.html
 wwwroot\Intern\login.html
 wwwroot\Intern\projects.html
-wwwroot\js\staff\messages.js
+wwwroot\js\staff\announcements.js
 wwwroot\Staff\announcements.html
 wwwroot\Staff\applications.html
 wwwroot\Staff\intern.html

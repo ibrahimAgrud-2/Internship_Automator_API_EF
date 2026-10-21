@@ -48,3 +48,6 @@ body.sidebar-collapsed .shell-sidebar {
     height: 48px;
     flex-shrink: 0;
 }
+[v-cloak] {
+    display: none !important;
+}

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Duyurular</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/shell.css?v=37" />
-    <link rel="stylesheet" href="/css/announcements.css?v=37" />
+    <link rel="stylesheet" href="/css/shell.css?v=35" />
+    <link rel="stylesheet" href="/css/announcements.css?v=35" />
 </head>
 <body class="shell">
 
@@ -15,82 +15,119 @@
     <div class="shell-body">
         <nav id="shellSidebar"></nav>
 
-        <main class="shell-content">
+        <!-- Vue bu alanı yönetir: {{ }}, v-if, v-for, @click gibi ifadeler Vue'nundur -->
+        <main class="shell-content" id="app" v-cloak>
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                 <h4 class="mb-0">Duyurular</h4>
 
                 <div class="d-flex flex-wrap align-items-center gap-3">
-                    <span id="resultCount" class="small text-muted"></span>
-                    <button type="button" id="addAnnouncementButton" class="btn btn-outline-primary">Duyuru Yayınla</button>
+                    <span v-if="hasAnnouncements" id="resultCount" class="small text-muted">{{ announcements.length }} duyuru</span>
+                    <button type="button" id="addAnnouncementButton" class="btn btn-outline-primary" @click="openCreateModal">Duyuru Yayınla</button>
                 </div>
             </div>
 
             <!-- İşlem sonucu bildirimi (duyuru yayınlandı...) -->
-            <div id="noticeBox" class="alert" role="status" hidden></div>
+            <div v-if="notice" id="noticeBox" class="alert" :class="'alert-' + notice.type" role="status">{{ notice.text }}</div>
 
-            <!-- Yükleniyor / boş liste / hata mesajları -->
-            <div id="statusBox" class="alert" hidden></div>
+            <!-- Yükleniyor / hata / boş liste: aynı anda yalnızca biri çizilir -->
+            <div v-if="isLoading" id="statusBox" class="alert alert-info">Duyurular yükleniyor...</div>
+            <div v-else-if="loadErrors.length" id="statusBox" class="alert alert-danger">
+                <div v-for="(line, i) in loadErrors" :key="i">{{ line }}</div>
+            </div>
+            <div v-else-if="!hasAnnouncements" id="statusBox" class="alert alert-secondary">Henüz duyuru yok.</div>
 
-            <div id="announcementList" class="d-flex flex-column gap-3"></div>
+            <!-- Duyuru listesi (sıralama API'dan geldiği gibi, en yeni başta) -->
+            <div v-else id="announcementList" class="d-flex flex-column gap-3">
+                <div v-for="(item, index) in announcements" :key="item.announcementID ?? index"
+                     class="card announcement-card" :class="colorClass(index)">
+
+                    <!-- Renkli şerit: tarihin ne olduğunu açıkça yazar -->
+                    <div class="announcement-band">Yayın tarihi: {{ formatDateTime(item.createdDate, "-") }}</div>
+
+                    <div class="card-body">
+                        <h5 class="card-title text-break mb-3">{{ item.title }}</h5>
+                        <p class="card-text text-break announcement-content mb-0">{{ item.content }}</p>
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 mt-3">
+                            <span class="small text-muted">{{ item.createdByUserName ? "Yayınlayan: " + item.createdByUserName : "" }}</span>
+
+                            <!-- Kimliği olmayan duyuru düzenlenemez ya da silinemez -->
+                            <div v-if="item.announcementID" class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-primary" @click="openEditModal(item)">Düzenle</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" @click="openDeleteModal(item)">Sil</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Silme penceresi -->
+            <div class="modal fade" id="deleteAnnouncementModal" ref="deleteModalEl" tabindex="-1"
+                 aria-labelledby="deleteAnnouncementTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteAnnouncementTitle">Duyuruyu Sil</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div v-if="deleteErrors.length" id="deleteAnnouncementError" class="alert alert-danger" role="alert">
+                                <div v-for="(line, i) in deleteErrors" :key="i">{{ line }}</div>
+                            </div>
+                            <p class="mb-2">
+                                <strong id="deleteAnnouncementName" class="text-break">{{ announcementToDelete?.title }}</strong> duyurusu kalıcı olarak silinecek.
+                            </p>
+                            <p class="text-muted small mb-0">Bu işlem geri alınamaz.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="deleteAnnouncementCancel" class="btn btn-secondary" data-bs-dismiss="modal" :disabled="isDeleting">Vazgeç</button>
+                            <button type="button" id="deleteAnnouncementConfirm" class="btn btn-danger" :disabled="isDeleting" @click="confirmDelete">Duyuruyu Sil</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yayınlama / düzenleme penceresi (aynı form iki iş için kullanılır) -->
+            <div class="modal fade" id="announcementModal" ref="formModalEl" tabindex="-1"
+                 aria-labelledby="announcementModalTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <form class="modal-content" id="announcementForm" autocomplete="off" novalidate @submit.prevent="submitForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="announcementModalTitle">{{ isEditing ? "Duyuruyu Düzenle" : "Yeni Duyuru" }}</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="announcementTitleInput" class="form-label">Başlık <span class="text-danger">*</span></label>
+                                <input type="text" id="announcementTitleInput" class="form-control" ref="titleInput"
+                                       v-model="form.title" :maxlength="limits.title" :disabled="isSaving" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="announcementContentInput" class="form-label">Duyuru metni <span class="text-danger">*</span></label>
+                                <textarea id="announcementContentInput" class="form-control" rows="6" ref="contentInput"
+                                          v-model="form.content" :maxlength="limits.content" :disabled="isSaving"></textarea>
+                                <div class="form-text">Yazdığınız satır boşlukları olduğu gibi gösterilir.</div>
+                            </div>
+
+                            <div v-if="formErrors.length" id="announcementError" class="alert alert-danger mb-0">
+                                <div v-for="(line, i) in formErrors" :key="i">{{ line }}</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="announcementCancel" class="btn btn-secondary" data-bs-dismiss="modal" :disabled="isSaving">Vazgeç</button>
+                            <button type="submit" id="announcementSubmit" class="btn btn-primary" :disabled="isSaving">{{ isEditing ? "Kaydet" : "Yayınla" }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 
-    <div class="modal fade" id="deleteAnnouncementModal" tabindex="-1" aria-labelledby="deleteAnnouncementTitle"
-         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteAnnouncementTitle">Duyuruyu Sil</h5>
-                </div>
-                <div class="modal-body">
-                    <div id="deleteAnnouncementError" class="alert" role="alert" hidden></div>
-                    <p class="mb-2">
-                        <strong id="deleteAnnouncementName" class="text-break"></strong> duyurusu kalıcı olarak silinecek.
-                    </p>
-                    <p class="text-muted small mb-0">Bu işlem geri alınamaz.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="deleteAnnouncementCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
-                    <button type="button" id="deleteAnnouncementConfirm" class="btn btn-danger">Duyuruyu Sil</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalTitle"
-         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <form class="modal-content" id="announcementForm" autocomplete="off" novalidate>
-                <div class="modal-header">
-                    <h5 class="modal-title" id="announcementModalTitle">Yeni Duyuru</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="announcementTitleInput" class="form-label">Başlık <span class="text-danger">*</span></label>
-                        <input type="text" id="announcementTitleInput" class="form-control" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="announcementContentInput" class="form-label">Duyuru metni <span class="text-danger">*</span></label>
-                        <textarea id="announcementContentInput" class="form-control" rows="6"></textarea>
-                        <div class="form-text">Yazdığınız satır boşlukları olduğu gibi gösterilir.</div>
-                    </div>
-
-                    <div id="announcementError" class="alert alert-danger mb-0" hidden></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="announcementCancel" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
-                    <button type="submit" id="announcementSubmit" class="btn btn-primary">Yayınla</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/core/auth.js?v=37"></script>
-    <script src="/js/core/api.js?v=37"></script>
-    <script src="/js/core/ui.js?v=37"></script>
-    <script src="/js/core/shell.js?v=37"></script>
-    <script src="/js/staff/announcements.js?v=37"></script>
+    <script src="/js/lib/vue.global.prod.js"></script>
+    <script src="/js/core/auth.js?v=38"></script>
+    <script src="/js/core/api.js?v=38"></script>
+    <script src="/js/core/ui.js?v=38"></script>
+    <script src="/js/core/shell.js?v=38"></script>
+    <script src="/js/staff/announcements.js?v=38"></script>
 </body>
 </html>
