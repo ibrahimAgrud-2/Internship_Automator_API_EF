@@ -34,9 +34,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
             return conversationResponseDTOs;
         }
 
-
-
-
         public List<vw_MessagesWithContentDTO> GetAllMessagesForConversation(int conversationID, int messageCount = 50)
         {
             List<vw_MessagesWithContent> ce = _Context.MessageDetailedView.Take(messageCount).ToList();
@@ -52,10 +49,37 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
             return conversationResponseDTOs;
         }
 
-
         public bool IsConversationExists(int conversationID)
         {
             return _Context.Conversations.Any(c=>c.ConversationID==conversationID);
+        }
+
+
+        public ConversationResponseDTO AddNewConversation(ConversationCreateDTO newConversation)
+        {
+
+
+            ConversationEntity conversationEntity = new ConversationEntity(0, newConversation.InternID, newConversation.ConversationName, newConversation.IsGroup);
+
+            EntityEntry<ConversationEntity> CE = _Context.Conversations.Add(conversationEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return new ConversationResponseDTO(conversationEntity.ConversationID, conversationEntity.InternID, conversationEntity.ConversationName, conversationEntity.IsGroup);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+
+        public ConversationResponseDTO? Find(int  ID)
+        {
+            ConversationEntity ce = _Context.Conversations.Find(ID);
+            return (ce == null) ? null : new ConversationResponseDTO(ce.ConversationID,ce.InternID,ce.ConversationName,ce.IsGroup);
+          
         }
 
     }

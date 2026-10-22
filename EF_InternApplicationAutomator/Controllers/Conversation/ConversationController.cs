@@ -1,4 +1,5 @@
 ﻿using EF_InternApplicationAutomator.Business.conversation;
+using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.Message;
 using EF_InternApplicationAutomator.Business.User;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,16 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         private readonly ConversationBL _ConversationBL;
         private readonly MessageBL _Message;
         private readonly UserBL  _User;
+        private readonly InternBL  _Intern;
 
 
 
-        public ConversationController(ConversationBL conversation, MessageBL message, UserBL user)
+        public ConversationController(ConversationBL conversation, MessageBL message, UserBL user,InternBL intern)
         {
             _ConversationBL = conversation;
             _Message = message;
             _User = user;
+            _Intern = intern;
         }
 
 
@@ -69,147 +72,52 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             
         }
 
+        [HttpGet("Find/{ID}", Name = "FindConversation")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<ConversationResponseDTO> Find(int ID)
+        {
+            if (ID < 1)
+            {
+                return BadRequest($"Girdiğiniz ID ({ID}) geçersiz");
+            }
 
-        //[HttpGet("All")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //public ActionResult<IEnumerable<ConversationResponseDTO>> GetAllInterns()
-        //{
-        //    List<ConversationResponseDTO> internList = _ConversationBL.GetAll();
-        //    return Ok(internList);
-        //}
+            ConversationResponseDTO? intern = _ConversationBL.Find(ID);
+            if (intern == null)
+            {
+                return NotFound($"{ID} ID'ye sahip Stajyer bulunamadı ");
+            }
 
-       
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public ActionResult<InternResponseDTO> AddNewIntern(InternCreateDTO newIntern)
-        //{
-        //    if (newIntern == null)
-        //    {
-        //        return BadRequest("Invalid Intern data.");
-        //    }
-
-        //    int ID = _Intern.AddIntern(newIntern);
-        //    if (ID < 1)
-        //    {
-        //        return BadRequest("Could Not Add Intern");
-        //    }
-
-        //    return CreatedAtRoute("FindIntern", new { id = ID }, newIntern);
-        //}
-
-        //[HttpPut("{id}", Name = "UpdateIntern")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult<InternResponseDTO> UpdateIntern(int id, InternCreateDTO internDTO)
-        //{
-        //    if (id < 1 || internDTO == null)
-        //    {
-        //        return BadRequest("Invalid Intern data.");
-        //    }
-
-        //    if (!_Intern.IsInternExists(id))
-        //    {
-        //        return NotFound($"No Intern With ID {id}");
-        //    }
-
-        //    if (_Intern.UpdateIntern(id, internDTO) > 0)
-        //    {
-        //        return Ok(internDTO);
-        //    }
-
-        //    return BadRequest("Could Not Update Intern");
-        //}
-
-        //[HttpDelete("{id}", Name = "DeleteIntern")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult DeleteIntern(int id)
-        //{
-        //    if (id < 1)
-        //    {
-        //        return BadRequest($"Not Accepted ID {id}");
-        //    }
-
-        //    if (!_Intern.IsInternExists(id))
-        //    {
-        //        return NotFound($"No Intern With ID {id}");
-        //    }
-
-        //    if (_Intern.DeleteIntern(id))
-        //    {
-        //        return NoContent();
-        //    }
-
-        //    return NotFound("Delete Process terminated. No rows deleted!");
-        //}
-
-        //[HttpGet("exists/{internID}")]
-        //public bool IsInternExists(int internID)
-        //{
-        //    if (internID < 1)
-        //    {
-        //        return false;
-        //    }
-
-        //    return _Intern.IsInternExists(internID);
-        //}
+            return Ok(intern);
+        }
 
 
-        //[HttpPost("InternLogin")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public ActionResult<InterLoginResponseDTO> InternLogin(InternLoginDTO internLogin)
-        //{
-        //    if (string.IsNullOrEmpty(internLogin.Email) || string.IsNullOrEmpty(internLogin.Password))
-        //    {
-        //        return BadRequest($"E-posta ve şifre zorunludur.");
-        //    }
-
-        //    InterLoginResponseDTO intern = _Intern.FindByPasswordAndEmail(internLogin.Email, internLogin.Password);
-        //    if (intern == null)
-        //    {
-        //        return NotFound("E-posta veya şifre hatalı");
-        //    }
-        //    else if (intern.Status == (byte)Business.Intern.InternBL.enStatus.separated)
-        //    {
-        //        return StatusCode(403, new { message = "Stajyer hesabınız aktif değil " });
-        //    }
-
-        //    return Ok(intern);
-        //}
 
 
-        //[HttpPut("Separate/{internID}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public ActionResult<string> SeparateIntern(int internID)
-        //{
-        //    if (internID < 1)
-        //    {
-        //        return BadRequest("Invalid Intern ID ");
-        //    }
-        //    if (!_Intern.IsInternExists(internID))
-        //    {
-        //        return NotFound("Intern Does Not Exists");
-        //    }
-        //    if (_Intern.IsInternActive(internID))
-        //    {
-        //        return Ok();
-        //    }
-        //    else
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-        //    }
 
-        //}
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<ConversationResponseDTO> AddNewConversation(ConversationCreateDTO conversation)
+        {
+            if (conversation == null||conversation.InternID<1||string.IsNullOrEmpty(conversation.ConversationName))
+            {
+                return BadRequest("Sohbet başlatılmak için gerekli bilgiler yeterli değil veya geçersiz");
+            }
+            if (!_Intern.IsInternExists(conversation.InternID))
+            {
+                return BadRequest("Sohbet başlatılmak istediğiniz stajyer sistemden silinmiş olabilir.");
+            }
+            ConversationResponseDTO cr = _ConversationBL.AddNewConversation(conversation);
+            if (cr==null)
+            {
+                return BadRequest("Sohbet eklenemedi");
+            }
+
+            return CreatedAtRoute("FindConversation", new { id =  cr.ConversationID }, conversation);
+        }
 
     }
 }
