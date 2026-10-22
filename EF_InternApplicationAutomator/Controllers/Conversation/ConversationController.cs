@@ -79,6 +79,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             
         }
 
+       
         [HttpGet("Find/{ID}", Name = "FindConversation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -109,30 +110,31 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<ConversationResponseDTO> AddNewConversation(ConversationCreateDTO conversation)
         {
-            if (conversation == null||conversation.InternID<1||string.IsNullOrEmpty(conversation.ConversationName))
+
+            if (conversation == null || conversation.InternIDs.Length<1 || string.IsNullOrEmpty(conversation.ConversationName))
             {
                 return BadRequest("Sohbet başlatılmak için gerekli bilgiler yeterli değil veya geçersiz");
             }
-            if (!conversation.IsGroup && !_Intern.IsInternExists(conversation.InternID))
-            {
-                return BadRequest("Sohbet başlatılmak istediğiniz stajyer sistemden silinmiş olabilir.");
-            }
-            //eğer sohbet grup değil ve intern zaten özel sohbeti varsa yeni sohbet  oluşturmadan o sohbeti dönder 
-            if(!conversation.IsGroup&&_ConversationBL.IsInternHasPrivateConversation(conversation.InternID))
-            {
-                ConversationResponseDTO? conversationResponse = _ConversationBL.FindByInternID(conversation.InternID);
-                if(conversationResponse!=null)
-                {
-                    return CreatedAtRoute("FindConversation", new { id = conversationResponse.ConversationID }, conversationResponse);
-                }
-            }
+          
             ConversationResponseDTO cr = _ConversationBL.AddNewConversation(conversation);
-            if (cr==null)
+            if (cr == null)
             {
                 return BadRequest("Sohbet eklenemedi");
             }
 
-            return CreatedAtRoute("FindConversation", new { id =  cr.ConversationID }, cr);
+            return CreatedAtRoute("FindConversation", new { id = cr.ConversationID }, cr);
+        }
+
+        //sonradan gruba intern ekleyebilmek için
+        [HttpPost("AddIntern")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<bool> AddNewConversation(int internID,int conversationID)
+        {
+
+
+            return _ConversationBL.AddInternToConversation(internID,conversationID);
         }
 
     }

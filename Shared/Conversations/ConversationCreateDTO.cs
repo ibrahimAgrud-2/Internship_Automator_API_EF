@@ -12,7 +12,7 @@ namespace Shared.Conversations
     {
 
         [Required]
-        public int InternID { get; set; }
+        public int[] InternIDs { get; set; }
 
         [Required]
         [MaxLength(150)]
@@ -23,10 +23,10 @@ namespace Shared.Conversations
 
 
        
-        public ConversationCreateDTO(int internID, string conversationName, bool isGroup)
+        public ConversationCreateDTO(int[] internIDs, string conversationName, bool isGroup)
         {
       
-            InternID = internID;
+            InternIDs = internIDs;
             ConversationName = conversationName;
             IsGroup = isGroup;
         }

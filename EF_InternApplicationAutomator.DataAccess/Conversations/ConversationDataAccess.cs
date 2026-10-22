@@ -1,6 +1,7 @@
 ﻿
 
 using EF_InternApplicationAutomator.DataAccess.Conversation;
+using EF_InternApplicationAutomator.DataAccess.ConversationInterns;
 using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.Messages;
 using Microsoft.EntityFrameworkCore;
@@ -19,19 +20,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
         public ConversationDataAccess(IAADbContext context)
         {
             _Context = context;
-        }
-
-        public List<ConversationResponseDTO> GetAll()
-        {
-            List<ConversationEntity> ce= _Context.Conversations.ToList();
-
-            List<ConversationResponseDTO> conversationResponseDTOs = new List<ConversationResponseDTO>();
-
-            foreach (var item in ce)
-            {
-                conversationResponseDTOs.Add(new ConversationResponseDTO(item.ConversationID,item.InternID,item.ConversationName,item.IsGroup));
-            }
-            return conversationResponseDTOs;
         }
 
         public List<vw_MessagesWithContentDTO> GetAllMessagesForConversation(int conversationID, int messageCount = 50)
@@ -59,7 +47,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
             foreach (var item in ce)
             {
-                conversationResponseDTOs.Add(new ConversationResponseDTO(item.ConversationID,item.InternID,item.ConversationName,item.IsGroup));
+                conversationResponseDTOs.Add(new ConversationResponseDTO(item.ConversationID,item.ConversationName,item.IsGroup));
             }
             return conversationResponseDTOs;
         }
@@ -77,11 +65,11 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
             if (newConversation.IsGroup)
             {
-                conversationEntity =  new ConversationEntity(0, null, newConversation.ConversationName, newConversation.IsGroup);
+                conversationEntity =  new ConversationEntity(0, newConversation.ConversationName, newConversation.IsGroup);
             }
             else
             {
-                conversationEntity = new ConversationEntity(0, newConversation.InternID, newConversation.ConversationName, newConversation.IsGroup);
+                conversationEntity = new ConversationEntity(0, newConversation.ConversationName, newConversation.IsGroup);
             }
 
 
@@ -89,13 +77,22 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
             if (_Context.SaveChanges() > 0)
             {
-                return new ConversationResponseDTO(conversationEntity.ConversationID, conversationEntity.InternID, conversationEntity.ConversationName, conversationEntity.IsGroup);
+                return new ConversationResponseDTO(conversationEntity.ConversationID,  conversationEntity.ConversationName, conversationEntity.IsGroup);
             }
             else
             {
                 return null;
             }
         }
+
+        public bool AddInternToConversation(int internID, int conversationID)
+        {
+            ConversationInternsEntity conversationInternsEntity = new ConversationInternsEntity(0, internID, conversationID);
+            _Context.ConversationInterns.Add(conversationInternsEntity);
+            return (_Context.SaveChanges() > 0) ? true : false;
+        }
+
+
 
         /// <summary>
         /// BU fonk. İntern'in private chat için zaten sohbet'i olup olmadıpını kontrol eder
@@ -107,35 +104,30 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
         /// </summary>
         /// <param name="interID"></param>
         /// <returns></returns>
-        public bool IsInternHasPrivateConversation(int interID)
-        {
-            return _Context.Conversations.Any(c=>c.InternID== interID && !c.IsGroup);
-        }
+        //public bool IsInternHasPrivateConversation(int interID)
+        //{
+        //    return _Context.Conversations.Any(c=>c.InternIDs== interID && !c.IsGroup);
+        //}
 
-         /// <summary>
-                ///Buda yukardaki fonkiyon gibi ama bu fonkisyon intern'in bir grup sohbetinde ekli olupolmadığını 
-                ///bulurbir gruba stajyer eklerken eğer o stajyer zaten grupta ise ekleme olmaz.
-            /// </summary>
-            /// <param name="interID"></param>
-            /// <param name="conversationID"></param>
-            /// <returns></returns>
-        public bool IsInternHasInvolvedToGroupConversation(int interID,int conversationID)
-        {
-            return _Context.Conversations.Any(c => c.InternID == interID && c.IsGroup&&c.ConversationID== conversationID);
-        }
+        /// <summary>
+        ///Buda yukardaki fonkiyon gibi ama bu fonkisyon intern'in bir grup sohbetinde ekli olupolmadığını 
+        ///bulurbir gruba stajyer eklerken eğer o stajyer zaten grupta ise ekleme olmaz.
+        /// </summary>
+        /// <param name="interID"></param>
+        /// <param name="conversationID"></param>
+        /// <returns></returns>
+        //public bool IsInternHasInvolvedToGroupConversation(int interID,int conversationID)
+        //{
+        //    return _Context.Conversations.Any(c => c.InternIDs == interID && c.IsGroup&&c.ConversationID== conversationID);
+        //}
         public ConversationResponseDTO? Find(int  ID)
         {
             ConversationEntity ce = _Context.Conversations.Find(ID);
-            return (ce == null) ? null : new ConversationResponseDTO(ce.ConversationID,ce.InternID,ce.ConversationName,ce.IsGroup);
+            return (ce == null) ? null : new ConversationResponseDTO(ce.ConversationID,ce.ConversationName,ce.IsGroup);
           
         }
 
-        public ConversationResponseDTO? FindByInternID(int ID)
-        {
-            ConversationEntity ce = _Context.Conversations.FirstOrDefault(c => c.InternID == ID);
-            return (ce == null) ? null : new ConversationResponseDTO(ce.ConversationID, ce.InternID, ce.ConversationName, ce.IsGroup);
-
-        }
+ 
 
     }
 }

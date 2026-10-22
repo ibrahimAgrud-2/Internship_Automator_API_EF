@@ -499,6 +499,51 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.ConversationController",
+    "Method": "AddNewConversation",
+    "RelativePath": "api/Conversation/AddIntern",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "internID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "conversationID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 201
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Intern.ConversationController",
     "Method": "Find",
     "RelativePath": "api/Conversation/Find/{ID}",
     "HttpMethod": "GET",

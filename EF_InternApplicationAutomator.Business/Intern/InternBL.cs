@@ -1,3 +1,4 @@
+using EF_InternApplicationAutomator.DataAccess.Conversation;
 using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
 using Shared.Intern;
@@ -8,11 +9,12 @@ namespace EF_InternApplicationAutomator.Business.Intern
     {
         private readonly InternDataAccess _InternDataAccess;
         private readonly OngoingProjectDataAccess _OngoingProjectDataAccess;
-
+     
         public InternBL(InternDataAccess internDataAccess, OngoingProjectDataAccess ongoingProjectDataAccess)
         {
             _InternDataAccess = internDataAccess;
             _OngoingProjectDataAccess = ongoingProjectDataAccess;
+          
         }
 
         public enum enStatus { newIntern=1,separated=0};
@@ -65,5 +67,8 @@ namespace EF_InternApplicationAutomator.Business.Intern
         {
             return _OngoingProjectDataAccess.IsProjectAssignedToIntern(projectID, internID);
         }
+
+
+        
     }
 }

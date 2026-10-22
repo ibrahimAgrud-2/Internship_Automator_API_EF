@@ -14,9 +14,7 @@ namespace Shared.Conversations
    
         public int ConversationID { get; set; }
 
-        [Required]
-        public int? InternID { get; set; }
-
+   
         [Required]
         [MaxLength(150)]
         public string ConversationName { get; set; }
@@ -26,10 +24,10 @@ namespace Shared.Conversations
 
 
         // Yapıcı Metot (Constructor)
-        public ConversationResponseDTO(int conversationID, int? internID, string conversationName, bool isGroup)
+        public ConversationResponseDTO(int conversationID, string conversationName, bool isGroup)
         {
             ConversationID = conversationID;
-            InternID = internID;
+     
             ConversationName = conversationName;
             IsGroup = isGroup;
         }

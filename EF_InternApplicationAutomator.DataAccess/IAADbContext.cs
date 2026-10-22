@@ -8,6 +8,7 @@ using EF_InternApplicationAutomator.DataAccess.Conversation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using EF_InternApplicationAutomator.DataAccess.Announcement;
+using EF_InternApplicationAutomator.DataAccess.ConversationInterns;
 
 namespace EF_InternApplicationAutomator.DataAccess
 {
@@ -31,5 +32,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         public DbSet<ConversationEntity> Conversations { get; set; }
         public DbSet<Messages.MessageEntity> Messages { get; set; }
         public DbSet<Messages.vw_MessagesWithContent> MessageDetailedView { get; set; }
+        public DbSet<ConversationInternsEntity> ConversationInterns { get; set; }
     }
 }

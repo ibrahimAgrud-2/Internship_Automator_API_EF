@@ -1,4 +1,4 @@
-using EF_InternApplicationAutomator.DataAccess;
+﻿using EF_InternApplicationAutomator.DataAccess;
 using EF_InternApplicationAutomator.DataAccess.Conversation;
 using EF_InternApplicationAutomator.DataAccess.Messages;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
@@ -48,11 +48,32 @@ namespace EF_InternApplicationAutomator.Business.conversation
 
             return _MessageData.AddMessage(new MessageCreateDTO(personID,newMessage.ConversationID,newMessage.Content,true,newMessage.ReferencedContentID,newMessage.ReferencedContentType));
         }
-      
 
+        public bool AddInternToConversation(int internID, int conversationID)
+        {
+            //TODO: add yaparken intern'in zaten sobhette olup olmadığu veya
+            //intern'İn ID'si sistemde olup  olmaduı - isExist kontroller yap
+            //varsa ekleme.
+           return  _ConversationDataAccess.AddInternToConversation(internID, conversationID);
+        }
+
+        public void AddInternsToConversation(int[] internIDs, int conversationID)
+        {
+            //TODO: add yaparken intern'in zaten sobhette olup olmadığu veya
+            //intern'İn ID'si sistemde olup  olmaduı - isExist kontroller yap
+            //varsa ekleme. 
+            for (int i = 0; i < internIDs.Length; i++)
+            {
+                _ConversationDataAccess.AddInternToConversation(internIDs[i], conversationID);
+            }
+        }
         public ConversationResponseDTO AddNewConversation(ConversationCreateDTO conversation)
         {
-            return _ConversationDataAccess.AddNewConversation(conversation);
+            
+             ConversationResponseDTO cr=_ConversationDataAccess.AddNewConversation(conversation);
+
+            AddInternsToConversation(conversation.InternIDs, cr.ConversationID);
+            return cr;
         }
     
 
@@ -60,18 +81,20 @@ namespace EF_InternApplicationAutomator.Business.conversation
         {
             return _ConversationDataAccess.Find(ID);
         }
-        public ConversationResponseDTO? FindByInternID(int ID)
-        {
-            return _ConversationDataAccess.FindByInternID(ID);
-        }
-        public bool IsInternHasPrivateConversation(int interID)
-        {
-            return _ConversationDataAccess.IsInternHasPrivateConversation(interID);
-        }
+        //public ConversationResponseDTO? FindByInternID(int ID)
+        //{
+        //    return _ConversationDataAccess.FindByInternID(ID);
+        //}
+        //public bool IsInternHasPrivateConversation(int interID)
+        //{
+        //    return _ConversationDataAccess.IsInternHasPrivateConversation(interID);
+        //}
 
         public List<ConversationResponseDTO> GetAllConversation()
         {
             return _ConversationDataAccess.GetAllConversation();
         }
+
+
     }
 }
