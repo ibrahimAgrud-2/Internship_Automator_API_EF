@@ -41,6 +41,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             return Ok(internList);
         }
 
+        [HttpGet("GetAll")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<ConversationResponseDTO>> GetAllConversation()
+        {
+            List<ConversationResponseDTO> internList = _ConversationBL.GetAllConversation();
+            return Ok(internList);
+        }
 
 
         [HttpPost("StaffAddMessage")]
@@ -106,9 +113,18 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             {
                 return BadRequest("Sohbet başlatılmak için gerekli bilgiler yeterli değil veya geçersiz");
             }
-            if (!_Intern.IsInternExists(conversation.InternID))
+            if (!conversation.IsGroup && !_Intern.IsInternExists(conversation.InternID))
             {
                 return BadRequest("Sohbet başlatılmak istediğiniz stajyer sistemden silinmiş olabilir.");
+            }
+            //eğer sohbet grup değil ve intern zaten özel sohbeti varsa yeni sohbet  oluşturmadan o sohbeti dönder 
+            if(!conversation.IsGroup&&_ConversationBL.IsInternHasPrivateConversation(conversation.InternID))
+            {
+                ConversationResponseDTO? conversationResponse = _ConversationBL.FindByInternID(conversation.InternID);
+                if(conversationResponse!=null)
+                {
+                    return CreatedAtRoute("FindConversation", new { id = conversationResponse.ConversationID }, conversationResponse);
+                }
             }
             ConversationResponseDTO cr = _ConversationBL.AddNewConversation(conversation);
             if (cr==null)
@@ -116,7 +132,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
                 return BadRequest("Sohbet eklenemedi");
             }
 
-            return CreatedAtRoute("FindConversation", new { id =  cr.ConversationID }, conversation);
+            return CreatedAtRoute("FindConversation", new { id =  cr.ConversationID }, cr);
         }
 
     }

@@ -60,5 +60,18 @@ namespace EF_InternApplicationAutomator.Business.conversation
         {
             return _ConversationDataAccess.Find(ID);
         }
+        public ConversationResponseDTO? FindByInternID(int ID)
+        {
+            return _ConversationDataAccess.FindByInternID(ID);
+        }
+        public bool IsInternHasPrivateConversation(int interID)
+        {
+            return _ConversationDataAccess.IsInternHasPrivateConversation(interID);
+        }
+
+        public List<ConversationResponseDTO> GetAllConversation()
+        {
+            return _ConversationDataAccess.GetAllConversation();
+        }
     }
 }
