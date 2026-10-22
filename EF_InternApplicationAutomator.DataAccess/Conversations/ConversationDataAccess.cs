@@ -36,7 +36,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
 
         public List<vw_MessagesWithContentDTO> GetAllMessagesForConversation(int conversationID, int messageCount = 50)
         {
-            List<vw_MessagesWithContent> ce = _Context.MessageDetailedView.Take(messageCount).ToList();
+            List<vw_MessagesWithContent> ce = _Context.MessageDetailedView.Where(m=>m.ConversationID==conversationID).Take(messageCount).ToList();
 
             List<vw_MessagesWithContentDTO> conversationResponseDTOs = new List<vw_MessagesWithContentDTO>();
 
