@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EF_InternApplicationAutomator.Business;
 using EF_InternApplicationAutomator.Business.Application;
-using Shared.Application;
-using System.Collections.Generic;
-using System;
-using Shared.Intern;
 using EF_InternApplicationAutomator.Business.Conversation;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Application;
+using Shared.Intern;
 using Shared.Message;
+using System;
+using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
 {
@@ -14,10 +16,12 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
     public class ConversationController : ControllerBase
     {
         ConversationBL _Conversation;
+        Business.PersonBL _People;
 
-        public ConversationController(ConversationBL conversation)
+        public ConversationController(ConversationBL conversation, PersonBL people)
         {
             _Conversation = conversation;
+            _People = people;
         }
 
         [HttpGet("All")]
@@ -50,5 +54,37 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             return Ok(messageList);
         }
 
+
+        [HttpPost("AddMessage")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<MessageDetailedResponseDTO>> AddMessage(MessageCreateDTO message)
+        {
+            if (message == null)
+            {
+                return BadRequest("Mesaj Eklemek için girilen parametreler verilen değil");
+            }
+            if (!_Conversation.IsConversationExists(message.ConversationID))
+            {
+                return NotFound("Mesaj eklemek istediğiniz Sohbet bulunamadı.");
+            }
+            if (!_People.IsPersonExistByID(message.PersonID))
+            {
+                return NotFound("Sistemde Kaydınız olmadığı için mesaj gönderemezsiniz");
+            }
+
+            int ID = _Conversation.AddMessage(message);
+
+            if (ID < 1)
+            {
+                return BadRequest("Mesaj Eklenemedi");
+            }
+
+            return Ok();
+        }
+    
+    
     }
 }

@@ -55,6 +55,9 @@ namespace EF_InternApplicationAutomator.Business
         {
             return _PersonDataAccess.IsPersonExistByEmail(email);
         }
-
+        public bool IsPersonExistByID(int ID)
+        {
+            return _PersonDataAccess.IsPersonExistByID(ID);
+        }
     }
 }

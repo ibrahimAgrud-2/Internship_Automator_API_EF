@@ -1,6 +1,7 @@
 ﻿
 using EF_InternApplicationAutomator.DataAccess.Application;
 using EF_InternApplicationAutomator.DataAccess.Conversation;
+using EF_InternApplicationAutomator.DataAccess.Message;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared;
@@ -22,10 +23,11 @@ namespace EF_InternApplicationAutomator.Business.Conversation
 
 
          ConversationDataAccess _ConversationDataAccess;
-
-        public ConversationBL(ConversationDataAccess conversationDataAccess)
+       MessagesDataAccess _MessagesDataAccess;
+        public ConversationBL(ConversationDataAccess conversationDataAccess, MessagesDataAccess messagesDataAccess)
         {
             _ConversationDataAccess = conversationDataAccess;
+            _MessagesDataAccess = messagesDataAccess;
         }
 
         public List<ConversationResponseDTO>GetAllConversation()
@@ -35,6 +37,20 @@ namespace EF_InternApplicationAutomator.Business.Conversation
         public List<MessageDetailedResponseDTO> GetAllMessages(int conversationID)
         {
             return _ConversationDataAccess.GetAllMessages(conversationID);
+        }
+
+        public ConversationResponseDTO? Find(int ID)
+        {
+            return _ConversationDataAccess.Find(ID);
+        }
+
+        public int AddMessage(MessageCreateDTO message)
+        {
+            return _MessagesDataAccess.AddMessage(message);
+        }
+        public bool IsConversationExists(int conversationID)
+        {
+            return true;
         }
     }
 }

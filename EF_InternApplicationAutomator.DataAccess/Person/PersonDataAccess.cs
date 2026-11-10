@@ -118,5 +118,9 @@ namespace EF_InternApplicationAutomator.DataAccess
         {
             return _Context.People.Any(p => p.Email == email);
         }
+        public bool IsPersonExistByID(int ID)
+        {
+            return _Context.People.Any(p => p.PersonID == ID);
+        }
     }
 }

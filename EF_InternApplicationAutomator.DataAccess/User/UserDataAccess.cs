@@ -56,7 +56,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
 
                 return null;
             }
-           return new UserLoginResponseDTO(userEntity.UserID, userEntity.Person.FirstName, userEntity.Person.LastName, userEntity.PermissionType, userEntity.IsActive);
+           return new UserLoginResponseDTO(userEntity.UserID,userEntity.PersonID, userEntity.Person.FirstName, userEntity.Person.LastName, userEntity.PermissionType, userEntity.IsActive);
      
 
             
