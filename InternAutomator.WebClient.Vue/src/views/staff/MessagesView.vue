@@ -3,10 +3,12 @@ import { ref, computed, nextTick, onMounted } from 'vue'
 import { getAllConversations } from '@/api/conversations'
 import { getAllMessages, addMessage } from '@/api/messages'
 import { getErrorMessages } from '@/api/http'
+import { getLatestAnnouncements } from '@/api/announcements'
 import { getSession } from '@/auth/session'
 import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
 import { formatTime, formatDayLabel } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
+import ReferencePickerModal from '@/components/ReferencePickerModal.vue'
 import '@/assets/css/messages.css'
 
 const session = getSession()
@@ -63,7 +65,8 @@ const REFERENCE_CLASSES = {
   [REFERENCE_PROJECT]: 'ref-project',
   [REFERENCE_TASK]: 'ref-task',
 }
-const getReferenceClass = (message) => REFERENCE_CLASSES[message.referencedContentType] ?? ''
+const getReferenceClassByType = (type) => REFERENCE_CLASSES[type] ?? ''
+const getReferenceClass = (message) => getReferenceClassByType(message.referencedContentType)
 
 // Mesajlar eskiden yeniye gelir; gün değişince ayraç eklenir
 const items = computed(() => {
@@ -113,10 +116,64 @@ async function loadMessages(showLoading = true) {
 function selectConversation(conversationID) {
   if (conversationID === selectedConversationID.value) return
   selectedConversationID.value = conversationID
-  // Yarım yazılan metin başka sohbete gitmesin
+  // Yarım yazılan metin ve referans başka sohbete gitmesin
   draft.value = ''
+  reference.value = null
   sendError.value = []
   loadMessages()
+}
+
+// ---------- Referans seçme (+ menüsü) ----------
+// Mesaja eklenecek içerik: { id, type, title } ya da null. Gönderilene kadar yazma satırının üstünde durur.
+const reference = ref(null)
+
+const isPickerOpen = ref(false)
+const pickerType = ref(REFERENCE_ANNOUNCEMENT)
+const pickerSections = ref([])
+const isPickerLoading = ref(false)
+const pickerErrors = ref([])
+let pickerRequestId = 0
+
+const PICKER_TITLES = { [REFERENCE_ANNOUNCEMENT]: 'Duyuru seç' }
+const PICKER_EMPTY_TEXTS = { [REFERENCE_ANNOUNCEMENT]: 'Henüz duyuru yok.' }
+
+// Duyurular tek bölüm: API'nın verdiği son duyurular, yeniden eskiye
+async function loadAnnouncementSections() {
+  const announcements = await getLatestAnnouncements()
+  return [
+    {
+      items: announcements.map((announcement) => ({
+        id: announcement.announcementID,
+        title: announcement.title,
+        subtitle: formatDayLabel(announcement.createdDate),
+      })),
+    },
+  ]
+}
+
+// Proje ve görev buraya eklenecek: her tür kendi bölümlerini döndürür
+const PICKER_LOADERS = { [REFERENCE_ANNOUNCEMENT]: loadAnnouncementSections }
+
+async function openPicker(type) {
+  const current = ++pickerRequestId
+  pickerType.value = type
+  pickerSections.value = []
+  pickerErrors.value = []
+  isPickerLoading.value = true
+  isPickerOpen.value = true // her açılışta liste güncel gelir
+
+  try {
+    const sections = await PICKER_LOADERS[type]()
+    if (current === pickerRequestId) pickerSections.value = sections
+  } catch (error) {
+    if (current === pickerRequestId) pickerErrors.value = getErrorMessages(error)
+  } finally {
+    if (current === pickerRequestId) isPickerLoading.value = false
+  }
+}
+
+function onReferencePicked(item) {
+  reference.value = { id: item.id, type: pickerType.value, title: item.title }
 }
 
 // ---------- Mesaj gönderme ----------
@@ -145,16 +202,17 @@ async function sendMessage() {
   isSending.value = true
 
   try {
-    // Referans bu adımda yok: 0 / 0 (API'da 0 = referans yok). Tarihi API atar.
+    // Referans yoksa 0 / 0 gönderilir (API'da 0 = referans yok). Tarihi API atar.
     await addMessage({
       personID: session.personID,
       conversationID: selectedConversationID.value,
       content,
       isStaff: true,
-      referencedContentID: 0,
-      referencedContentType: REFERENCE_NONE,
+      referencedContentID: reference.value ? reference.value.id : 0,
+      referencedContentType: reference.value ? reference.value.type : REFERENCE_NONE,
     })
     draft.value = ''
+    reference.value = null
     await loadMessages(false) // ekranda her zaman sunucudaki gerçek hal görünsün
   } catch (error) {
     sendError.value = getErrorMessages(error) // yazılan metin silinmez, tekrar denenebilir
@@ -256,10 +314,34 @@ onMounted(async () => {
         <!-- Gönderme hatası -->
         <AlertMessages v-if="sendError.length" class="m-3 mb-0" :messages="sendError" />
 
+        <!-- Seçilen referans: gönderilene kadar burada durur, istenirse kaldırılır -->
+        <div v-if="reference" class="d-flex align-items-center gap-2 px-3 pt-2">
+          <div class="chat-reference text-break flex-grow-1" :class="getReferenceClassByType(reference.type)">
+            <span class="chat-reference-type">{{ REFERENCE_TYPES[reference.type] }}</span>
+            {{ reference.title }}
+          </div>
+          <button type="button" class="btn-close" aria-label="Referansı kaldır" :disabled="isSending" @click="reference = null"></button>
+        </div>
+
         <!-- Mesaj yazma satırı -->
         <form class="chat-composer border-top" autocomplete="off" novalidate @submit.prevent="sendMessage">
           <div class="dropup">
-            <button type="button" class="btn btn-outline-secondary" aria-label="Ekle" disabled>+</button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              aria-label="Ekle"
+              :disabled="selectedConversationID === null || isSending"
+            >
+              +
+            </button>
+            <ul class="dropdown-menu">
+              <li><h6 class="dropdown-header">Referans ver</h6></li>
+              <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_ANNOUNCEMENT)">Duyuru</button></li>
+              <li><button type="button" class="dropdown-item" disabled>Proje</button></li>
+              <li><button type="button" class="dropdown-item" disabled>Görev</button></li>
+            </ul>
           </div>
           <textarea
             ref="messageInput"
@@ -276,5 +358,15 @@ onMounted(async () => {
         </form>
       </section>
     </div>
+
+    <ReferencePickerModal
+      v-model="isPickerOpen"
+      :title="PICKER_TITLES[pickerType]"
+      :sections="pickerSections"
+      :is-loading="isPickerLoading"
+      :errors="pickerErrors"
+      :empty-text="PICKER_EMPTY_TEXTS[pickerType]"
+      @picked="onReferencePicked"
+    />
   </div>
 </template>
