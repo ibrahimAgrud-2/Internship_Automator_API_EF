@@ -22,11 +22,11 @@ async function submit() {
 
   try {
     const user = await staffLogin(userName.value.trim(), password.value)
-
-    // Şifre hiçbir yerde saklanmaz
+  
     saveSession({
       role: ROLE_STAFF,
       userID: user.userID,
+      personID: user.personID,
       firstName: user.firstName,
       lastName: user.lastName,
       permissionType: user.permissionType,

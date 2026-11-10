@@ -1,12 +1,15 @@
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { getAllConversations } from '@/api/conversations'
-import { getAllMessages } from '@/api/messages'
+import { getAllMessages, addMessage } from '@/api/messages'
 import { getErrorMessages } from '@/api/http'
-import { REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
+import { getSession } from '@/auth/session'
+import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
 import { formatTime, formatDayLabel } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import '@/assets/css/messages.css'
+
+const session = getSession()
 
 const conversations = ref([])
 const isLoading = ref(true)
@@ -79,14 +82,18 @@ const items = computed(() => {
 
 let requestId = 0 // eski bir cevap (önceki sohbetin mesajları) yenisinin üstüne yazmasın
 
-async function loadMessages() {
+// showLoading false ise (mesaj gönderdikten sonra yenileme) liste silinip yükleniyor yazısı çıkmaz
+async function loadMessages(showLoading = true) {
   const conversationID = selectedConversationID.value
   if (conversationID === null) return
 
   const currentRequest = ++requestId
-  messages.value = []
+
+  if (showLoading) {
+    messages.value = []
+    isMessagesLoading.value = true
+  }
   messagesError.value = []
-  isMessagesLoading.value = true
 
   try {
     const result = (await getAllMessages(conversationID)) ?? []
@@ -96,6 +103,7 @@ async function loadMessages() {
     if (messageList.value) messageList.value.scrollTop = messageList.value.scrollHeight // en yeni mesaj görünsün
   } catch (error) {
     if (currentRequest !== requestId) return
+    messages.value = []
     messagesError.value = getErrorMessages(error)
   } finally {
     if (currentRequest === requestId) isMessagesLoading.value = false
@@ -105,7 +113,63 @@ async function loadMessages() {
 function selectConversation(conversationID) {
   if (conversationID === selectedConversationID.value) return
   selectedConversationID.value = conversationID
+  // Yarım yazılan metin başka sohbete gitmesin
+  draft.value = ''
+  sendError.value = []
   loadMessages()
+}
+
+// ---------- Mesaj gönderme ----------
+const draft = ref('')
+const isSending = ref(false)
+const sendError = ref([])
+const messageInput = ref(null)
+
+// Metin boşken ya da istek sürerken Gönder pasif olur
+const canSend = computed(() => !isSending.value && draft.value.trim() !== '')
+
+async function sendMessage() {
+  // İstek sürerken ikinci gönderim (Enter'a art arda basma vb.) yapılmasın
+  if (isSending.value || selectedConversationID.value === null) return
+
+  const content = draft.value.trim()
+  if (!content) return
+
+  // Oturumda personID yoksa (eski oturum) istek hiç atılmaz
+  if (!session?.personID) {
+    sendError.value = ['Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.']
+    return
+  }
+
+  sendError.value = []
+  isSending.value = true
+
+  try {
+    // Referans bu adımda yok: 0 / 0 (API'da 0 = referans yok). Tarihi API atar.
+    await addMessage({
+      personID: session.personID,
+      conversationID: selectedConversationID.value,
+      content,
+      isStaff: true,
+      referencedContentID: 0,
+      referencedContentType: REFERENCE_NONE,
+    })
+    draft.value = ''
+    await loadMessages(false) // ekranda her zaman sunucudaki gerçek hal görünsün
+  } catch (error) {
+    sendError.value = getErrorMessages(error) // yazılan metin silinmez, tekrar denenebilir
+  } finally {
+    isSending.value = false
+    await nextTick() // alan tekrar aktif olduktan sonra odaklanılabilir
+    messageInput.value?.focus()
+  }
+}
+
+// Enter gönderir, Shift+Enter yeni satır ekler
+function onEnter(event) {
+  if (event.shiftKey || event.isComposing) return
+  event.preventDefault()
+  sendMessage()
 }
 
 onMounted(async () => {
@@ -154,8 +218,8 @@ onMounted(async () => {
 
       <!-- Sağ: seçili sohbet -->
       <section class="chat-panel">
-    <div v-if="selectedConversation" class="d-flex align-items-center gap-3 px-3 py-2 border-bottom">
-            <span
+        <div v-if="selectedConversation" class="d-flex align-items-center gap-3 px-3 py-2 border-bottom">
+          <span
             class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
             :class="selectedConversation.isGroup ? 'bg-success' : 'bg-primary'"
           >
@@ -189,13 +253,26 @@ onMounted(async () => {
           {{ isLoading ? 'Sohbetler yükleniyor...' : 'Soldan bir sohbet seçin.' }}
         </div>
 
-        <!-- Mesaj yazma satırı (pasif) -->
-        <form class="chat-composer border-top" autocomplete="off" novalidate @submit.prevent>
+        <!-- Gönderme hatası -->
+        <AlertMessages v-if="sendError.length" class="m-3 mb-0" :messages="sendError" />
+
+        <!-- Mesaj yazma satırı -->
+        <form class="chat-composer border-top" autocomplete="off" novalidate @submit.prevent="sendMessage">
           <div class="dropup">
             <button type="button" class="btn btn-outline-secondary" aria-label="Ekle" disabled>+</button>
           </div>
-          <textarea class="form-control" rows="2" placeholder="Mesajınızı yazın..." aria-label="Mesaj" disabled></textarea>
-          <button type="submit" class="btn btn-outline-primary" disabled>Gönder</button>
+          <textarea
+            ref="messageInput"
+            v-model="draft"
+            class="form-control"
+            rows="2"
+            placeholder="Mesajınızı yazın..."
+            aria-label="Mesaj"
+            :maxlength="MESSAGE_LIMITS.content"
+            :disabled="selectedConversationID === null || isSending"
+            @keydown.enter="onEnter"
+          ></textarea>
+          <button type="submit" class="btn btn-outline-primary" :disabled="!canSend">Gönder</button>
         </form>
       </section>
     </div>
