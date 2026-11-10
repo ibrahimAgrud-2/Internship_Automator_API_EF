@@ -20,9 +20,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
         {
             _Context = context;
         }
-        public List<AnnouncementResponseDTO> GetAll()
+        public List<AnnouncementResponseDTO> GetAll(int topNewest)
         {
-            List<AnnouncementEntity> announcements = _Context.Announcements.OrderBy(a => a.CreatedDate).ToList();
+            List<AnnouncementEntity> announcements = _Context.Announcements.OrderByDescending(m => m.CreatedDate).Take(topNewest).ToList();
 
             List<AnnouncementResponseDTO> announcementDTOs = new List<AnnouncementResponseDTO>();
 

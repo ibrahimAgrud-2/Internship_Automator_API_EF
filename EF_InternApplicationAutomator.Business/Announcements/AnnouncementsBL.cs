@@ -21,9 +21,9 @@ namespace EF_InternApplicationAutomator.Business.Announcements
 
         }
 
-        public List<AnnouncementResponseDTO> GetAll()
+        public List<AnnouncementResponseDTO> GetAll(int topNewest=15)
         {
-            return _AnnouncementData.GetAll();
+            return _AnnouncementData.GetAll(topNewest);
         }
 
         public int AddAnnouncement(AnnouncementCreateDTO announcementCreateDTO)

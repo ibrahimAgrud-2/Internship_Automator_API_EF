@@ -10,6 +10,17 @@
         "tags": [
           "Announcements"
         ],
+        "parameters": [
+          {
+            "name": "topNewest",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 15
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

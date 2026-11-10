@@ -29,13 +29,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
         }
 
 
-        [HttpGet("All")]
+        [HttpGet("All/{topNewest=15}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<AnnouncementResponseDTO>> GetAll()
+        public ActionResult<IEnumerable<AnnouncementResponseDTO>> GetAll(int topNewest=15)
         {
           
            
-            List<AnnouncementResponseDTO> anns = _AnouncementsBL.GetAll();
+            List<AnnouncementResponseDTO> anns = _AnouncementsBL.GetAll(topNewest);
 
             return Ok(anns);
         }
