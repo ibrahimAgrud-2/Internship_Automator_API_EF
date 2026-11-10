@@ -4,7 +4,7 @@ using Shared.Application;
 using Shared.Intern;
 
 
-namespace EF_InternApplicationAutomator.DataAccess.Application
+namespace EF_InternApplicationAutomator.DataAccess.Conversation
 {
     public class ConversationDataAccess
     {
