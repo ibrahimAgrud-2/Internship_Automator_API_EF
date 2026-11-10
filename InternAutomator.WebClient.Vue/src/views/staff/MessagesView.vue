@@ -1,8 +1,44 @@
 <script setup>
+import { ref, computed, onMounted } from 'vue'
+import { getAllConversations } from '@/api/conversations'
+import { getErrorMessages } from '@/api/http'
+import AlertMessages from '@/components/AlertMessages.vue'
 import '@/assets/css/messages.css'
 
-// Mesajlaşma yeniden yazılıyor. Bu sayfa şimdilik sadece iskelet: API çağrısı yok, tüm kontroller pasif.
-// Mesaj balonları, gün ayraçları ve referans kutusu için gereken stiller messages.css içinde duruyor.
+const conversations = ref([])
+const isLoading = ref(true)
+const loadError = ref([])
+const selectedConversationID = ref(null)
+
+const selectedConversation = computed(
+  () => conversations.value.find((conversation) => conversation.conversationID === selectedConversationID.value) ?? null,
+)
+
+// "stajyerler Ortak Grup" -> "SO"
+function getConversationInitials(name) {
+  return (name ?? '')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word.charAt(0))
+    .join('')
+    .toLocaleUpperCase('tr-TR')
+}
+
+async function loadConversations() {
+  isLoading.value = true
+  loadError.value = []
+
+  try {
+    conversations.value = (await getAllConversations()) ?? []
+  } catch (error) {
+    loadError.value = getErrorMessages(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(loadConversations)
 </script>
 
 <template>
@@ -18,14 +54,46 @@ import '@/assets/css/messages.css'
         </div>
 
         <div class="flex-grow-1 overflow-auto">
-          <p class="text-muted small text-center p-3 mb-0">Henüz sohbet yok.</p>
+          <AlertMessages v-if="isLoading" class="m-3" type="info" messages="Sohbetler yükleniyor..." />
+          <AlertMessages v-else-if="loadError.length" class="m-3" :messages="loadError" />
+          <p v-else-if="conversations.length === 0" class="text-muted small text-center p-3 mb-0">Henüz sohbet yok.</p>
+
+          <button
+            v-for="conversation in conversations"
+            :key="conversation.conversationID"
+            type="button"
+            class="chat-list-item"
+            :class="{ active: conversation.conversationID === selectedConversationID }"
+            @click="selectedConversationID = conversation.conversationID"
+          >
+            <span
+              class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
+              :class="conversation.isGroup ? 'bg-success' : 'bg-primary'"
+            >
+              {{ getConversationInitials(conversation.conversationName) }}
+            </span>
+            <span class="chat-list-text">
+              <span class="fw-semibold text-truncate d-block">{{ conversation.conversationName }}</span>
+              <span class="chat-preview d-block small text-muted">{{ conversation.isGroup ? 'Grup sohbeti' : 'Birebir sohbet' }}</span>
+            </span>
+          </button>
         </div>
       </aside>
 
-      <!-- Sağ: sohbet alanı -->
+      <!-- Sağ: seçili sohbet -->
       <section class="chat-panel">
+        <div v-if="selectedConversation" class="d-flex align-items-center gap-3 p-3 border-bottom">
+          <span
+            class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
+            :class="selectedConversation.isGroup ? 'bg-success' : 'bg-primary'"
+          >
+            {{ getConversationInitials(selectedConversation.conversationName) }}
+          </span>
+          <div class="fw-semibold text-break">{{ selectedConversation.conversationName }}</div>
+        </div>
+
         <div class="d-flex flex-grow-1 align-items-center justify-content-center text-muted p-4 text-center">
-          Mesajlaşma yakında burada olacak.
+          {{ selectedConversation ? 'Mesajlar bir sonraki adımda burada görünecek.' : 'Soldan bir sohbet seçin.' }}
         </div>
 
         <!-- Mesaj yazma satırı (pasif) -->

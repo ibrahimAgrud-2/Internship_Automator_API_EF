@@ -459,7 +459,7 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ConversationController",
-    "Method": "GetAllApplication",
+    "Method": "GetAllConversation",
     "RelativePath": "api/Conversation/All",
     "HttpMethod": "GET",
     "IsController": true,
