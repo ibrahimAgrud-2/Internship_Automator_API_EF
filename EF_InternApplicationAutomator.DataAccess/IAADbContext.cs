@@ -27,5 +27,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<OngoingProjectEntity> OngoingProjects { get; set; }
         public DbSet<AnnouncementEntity> Announcements { get; set; }
+        public DbSet<ConversationEntity> Conversation { get; set; }
     }
 }
