@@ -1,3 +1,4 @@
+using EF_InternApplicationAutomator.DataAccess.Conversation;
 using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
 using Shared.Intern;
@@ -13,10 +14,11 @@ namespace EF_InternApplicationAutomator.Business.Intern
         {
             _InternDataAccess = internDataAccess;
             _OngoingProjectDataAccess = ongoingProjectDataAccess;
+
         }
 
-        public enum enStatus { newIntern=1,separated=0};
-        
+        public enum enStatus { newIntern = 1, separated = 0 };
+
 
         public List<InternDetailedResponseDTO> GetDetailedInternRecord()
         {
@@ -27,9 +29,9 @@ namespace EF_InternApplicationAutomator.Business.Intern
         {
             return _InternDataAccess.Find(internID);
         }
-        public InterLoginResponseDTO? FindByPasswordAndEmail(string email,string password)
+        public InterLoginResponseDTO? FindByPasswordAndEmail(string email, string password)
         {
-            return _InternDataAccess.FindByPasswordAndEmail(email,password);
+            return _InternDataAccess.FindByPasswordAndEmail(email, password);
         }
         public InternResponseDTO FindByPersonID(int personID)
         {
@@ -58,12 +60,15 @@ namespace EF_InternApplicationAutomator.Business.Intern
 
         public bool IsInternActive(int internID)
         {
-            return _InternDataAccess.IsInternActive(internID); 
+            return _InternDataAccess.IsInternActive(internID);
         }
 
-        public bool IsProjectAssignedToIntern(int projectID,int internID)
+        public bool IsProjectAssignedToIntern(int projectID, int internID)
         {
             return _OngoingProjectDataAccess.IsProjectAssignedToIntern(projectID, internID);
         }
+
+
+
     }
 }

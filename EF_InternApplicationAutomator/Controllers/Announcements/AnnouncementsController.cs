@@ -15,6 +15,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 
     [Route("api/Announcement")]
     [ApiController]
+  
     public class AnnouncementsController:ControllerBase
     {
 
@@ -38,6 +39,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 
             return Ok(anns);
         }
+
 
 
         [HttpGet("Find/{id}", Name= "FindAnnouncement")]

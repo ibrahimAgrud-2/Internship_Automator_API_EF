@@ -902,6 +902,75 @@
         }
       }
     },
+    "/api/Conversation/AllMessages/{ConversationID}": {
+      "get": {
+        "tags": [
+          "Conversation"
+        ],
+        "parameters": [
+          {
+            "name": "ConversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageDetailedResponseDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageDetailedResponseDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageDetailedResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Intern/All": {
       "get": {
         "tags": [
@@ -4238,6 +4307,57 @@
           "status": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageDetailedResponseDTO": {
+        "required": [
+          "content",
+          "conversationID",
+          "createdDate",
+          "isStaff",
+          "messageID",
+          "personFullName",
+          "referencedContentID",
+          "referencedContentType"
+        ],
+        "type": "object",
+        "properties": {
+          "messageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personFullName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "conversationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isStaff": {
+            "type": "boolean"
+          },
+          "referencedContentID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "referencedContentType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "referencedContentTitle": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

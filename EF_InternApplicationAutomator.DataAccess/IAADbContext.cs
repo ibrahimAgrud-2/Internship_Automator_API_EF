@@ -1,12 +1,13 @@
-﻿using EF_InternApplicationAutomator.DataAccess.Application;
+﻿using EF_InternApplicationAutomator.DataAccess.Announcement;
+using EF_InternApplicationAutomator.DataAccess.Application;
 using EF_InternApplicationAutomator.DataAccess.Intern;
-using EF_InternApplicationAutomator.DataAccess.Project;
+using EF_InternApplicationAutomator.DataAccess.Message;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
+using EF_InternApplicationAutomator.DataAccess.Project;
 using EF_InternApplicationAutomator.DataAccess.Tasks;
 using EF_InternApplicationAutomator.DataAccess.User;
 using Microsoft.EntityFrameworkCore;
 using System;
-using EF_InternApplicationAutomator.DataAccess.Announcement;
 
 namespace EF_InternApplicationAutomator.DataAccess
 {
@@ -28,5 +29,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         public DbSet<OngoingProjectEntity> OngoingProjects { get; set; }
         public DbSet<AnnouncementEntity> Announcements { get; set; }
         public DbSet<ConversationEntity> Conversation { get; set; }
+        public DbSet<vw_MessagesWithContent> vw_MessagesWithContent { get; set; }
     }
 }

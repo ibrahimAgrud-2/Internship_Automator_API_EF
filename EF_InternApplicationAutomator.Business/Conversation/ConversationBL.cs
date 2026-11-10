@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared;
 using Shared.Application;
 using Shared.Intern;
+using Shared.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,9 @@ namespace EF_InternApplicationAutomator.Business.Conversation
         {
             return _ConversationDataAccess.GetAllConversation();
         }
-
+        public List<MessageDetailedResponseDTO> GetAllMessages(int conversationID)
+        {
+            return _ConversationDataAccess.GetAllMessages(conversationID);
+        }
     }
 }

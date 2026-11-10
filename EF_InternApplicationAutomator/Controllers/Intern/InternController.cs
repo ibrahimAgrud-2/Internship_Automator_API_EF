@@ -12,7 +12,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
     {
         private readonly InternBL _Intern;
 
-       
+
 
         public InternController(InternBL intern)
         {
@@ -134,19 +134,19 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<InterLoginResponseDTO> InternLogin(InternLoginDTO internLogin)
         {
-            if (string.IsNullOrEmpty(internLogin.Email)|| string.IsNullOrEmpty(internLogin.Password))
+            if (string.IsNullOrEmpty(internLogin.Email) || string.IsNullOrEmpty(internLogin.Password))
             {
                 return BadRequest($"E-posta ve şifre zorunludur.");
             }
 
-            InterLoginResponseDTO intern = _Intern.FindByPasswordAndEmail(internLogin.Email,internLogin.Password);
-            if(intern==null)
+            InterLoginResponseDTO intern = _Intern.FindByPasswordAndEmail(internLogin.Email, internLogin.Password);
+            if (intern == null)
             {
                 return NotFound("E-posta veya şifre hatalı");
             }
-            else if(intern.Status == (byte)Business.Intern.InternBL.enStatus.separated)
+            else if (intern.Status == (byte)Business.Intern.InternBL.enStatus.separated)
             {
-               return StatusCode(403, new { message = "Stajyer hesabınız aktif değil " });
+                return StatusCode(403, new { message = "Stajyer hesabınız aktif değil " });
             }
 
             return Ok(intern);
@@ -164,11 +164,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             {
                 return BadRequest("Invalid Intern ID ");
             }
-            if(!_Intern.IsInternExists(internID))
+            if (!_Intern.IsInternExists(internID))
             {
                 return NotFound("Intern Does Not Exists");
             }
-            if(_Intern.IsInternActive(internID))
+            if (_Intern.IsInternActive(internID))
             {
                 return Ok();
             }
@@ -176,7 +176,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-          
+
         }
 
     }

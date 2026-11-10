@@ -21,7 +21,6 @@ namespace EF_InternApplicationAutomator.Business.Announcements
 
         }
 
-
         public List<AnnouncementResponseDTO> GetAll()
         {
             return _AnnouncementData.GetAll();

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Application;
 using Shared.Intern;
+using Shared.Message;
 
 
 namespace EF_InternApplicationAutomator.DataAccess.Conversation
@@ -24,72 +25,12 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
                 .ToList();
         }
 
+        public List<MessageDetailedResponseDTO> GetAllMessages(int conversationID)
+        {
+            return _Context.vw_MessagesWithContent.Where(m=>m.ConversationID==conversationID).Select(m => new MessageDetailedResponseDTO(m.MessageID,m.PersonFullName,m.ConversationID,m.Content,m.CreatedDate,m.IsStaff,m.ReferencedContentID,m.ReferencedContentType,m.ReferencedContentTitle))
+           .ToList();
+        }
 
-        //public ApplicationResponseDTO? Find(int appID)
-        //{
-        //    ApplicationEntity? app = _Context.Applications.Find(appID);
-        //    if (app == null)
-        //    {
-        //        //Log
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        return new ApplicationResponseDTO(app.ApplicationID, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status, app.Notes, app.LinkedinURL, app.GithubURL);
-        //    }
-        //}
-        //public int AddApplication(ApplicationCreateDTO app)
-        //{
-
-        //    ApplicationEntity appEntity = new ApplicationEntity(
-        //        0, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status, app.Notes, app.LinkedinURL, app.GithubURL
-        //    );
-
-        //    EntityEntry<ApplicationEntity> pw = _Context.Applications.Add(appEntity);
-
-        //    if (_Context.SaveChanges() > 0)
-        //    {
-        //        return appEntity.ApplicationID;
-        //    }
-
-        //    return -1;
-        //}
-
-        //public int UpdateStatus(int appID, ApplicationStatusUpdateDTO appResponseDTO)
-        //{
-        //    var app = _Context.Applications.Find(appID);
-
-        //    if (app == null || appResponseDTO == null)
-        //    {
-        //        return -1;
-        //    }
-
-        //    //TODO: 2 yerine LOGİN yapmış use'ın ID'sini ver
-        //    app.ReviewedByUserID = 2;
-        //    app.ReviewDate = DateTime.Now.Date;
-        //    app.Status = appResponseDTO.status;
-        //    app.Notes = appResponseDTO.Notes;
-
-
-        //    if (_Context.SaveChanges() > 0)
-        //    {
-        //        return appID;
-        //    }
-
-        //    return -1;
-        //}
-
-        //public bool DeleteApplication(int appID)
-        //{
-        //    return _Context.Applications
-        //            .Where(c => c.ApplicationID == appID)
-        //            .ExecuteDelete() > 0;
-        //}
-
-        //public bool IsApplicationExists(int appID)
-        //{
-        //    return _Context.Applications.Any(app=>app.ApplicationID==appID);
-        //}
 
     }
 }
