@@ -1,7 +1,10 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { getAllConversations } from '@/api/conversations'
+import { getAllMessages } from '@/api/messages'
 import { getErrorMessages } from '@/api/http'
+import { REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
+import { formatTime, formatDayLabel } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import '@/assets/css/messages.css'
 
@@ -38,7 +41,78 @@ async function loadConversations() {
   }
 }
 
-onMounted(loadConversations)
+// ---------- Mesajlar (sağ) ----------
+const messages = ref([])
+const isMessagesLoading = ref(false)
+const messagesError = ref([])
+const messageList = ref(null)
+
+// isStaff true ise mesajı personel yazmıştır (sağda), false ise stajyer (solda)
+const isFromStaff = (message) => message.isStaff === true
+const getSenderLabel = (message) => (isFromStaff(message) ? 'Personel' : message.personFullName || 'Stajyer')
+
+// referencedContentID 0 ise mesaj hiçbir şeyi referans etmiyor: kutu ve başlık hiç gösterilmez
+const hasReference = (message) => Number(message.referencedContentID) > 0
+const getReferenceTypeLabel = (message) => REFERENCE_TYPES[message.referencedContentType] ?? 'İçerik'
+
+const REFERENCE_CLASSES = {
+  [REFERENCE_ANNOUNCEMENT]: 'ref-announcement',
+  [REFERENCE_PROJECT]: 'ref-project',
+  [REFERENCE_TASK]: 'ref-task',
+}
+const getReferenceClass = (message) => REFERENCE_CLASSES[message.referencedContentType] ?? ''
+
+// Mesajlar eskiden yeniye gelir; gün değişince ayraç eklenir
+const items = computed(() => {
+  const result = []
+  let lastDay = null
+  messages.value.forEach((message, index) => {
+    const day = new Date(message.createdDate).toDateString()
+    if (day !== lastDay) {
+      result.push({ type: 'day', key: `day-${index}`, label: formatDayLabel(message.createdDate) })
+      lastDay = day
+    }
+    result.push({ type: 'message', key: `message-${message.messageID ?? index}-${index}`, message })
+  })
+  return result
+})
+
+let requestId = 0 // eski bir cevap (önceki sohbetin mesajları) yenisinin üstüne yazmasın
+
+async function loadMessages() {
+  const conversationID = selectedConversationID.value
+  if (conversationID === null) return
+
+  const currentRequest = ++requestId
+  messages.value = []
+  messagesError.value = []
+  isMessagesLoading.value = true
+
+  try {
+    const result = (await getAllMessages(conversationID)) ?? []
+    if (currentRequest !== requestId) return
+    messages.value = result
+    await nextTick()
+    if (messageList.value) messageList.value.scrollTop = messageList.value.scrollHeight // en yeni mesaj görünsün
+  } catch (error) {
+    if (currentRequest !== requestId) return
+    messagesError.value = getErrorMessages(error)
+  } finally {
+    if (currentRequest === requestId) isMessagesLoading.value = false
+  }
+}
+
+function selectConversation(conversationID) {
+  if (conversationID === selectedConversationID.value) return
+  selectedConversationID.value = conversationID
+  loadMessages()
+}
+
+onMounted(async () => {
+  await loadConversations()
+  // İlk açılışta listenin başındaki sohbet (ortak grup) açılır
+  if (conversations.value.length > 0) selectConversation(conversations.value[0].conversationID)
+})
 </script>
 
 <template>
@@ -64,7 +138,7 @@ onMounted(loadConversations)
             type="button"
             class="chat-list-item"
             :class="{ active: conversation.conversationID === selectedConversationID }"
-            @click="selectedConversationID = conversation.conversationID"
+            @click="selectConversation(conversation.conversationID)"
           >
             <span
               class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
@@ -92,8 +166,29 @@ onMounted(loadConversations)
           <div class="fw-semibold text-break">{{ selectedConversation.conversationName }}</div>
         </div>
 
-        <div class="d-flex flex-grow-1 align-items-center justify-content-center text-muted p-4 text-center">
-          {{ selectedConversation ? 'Mesajlar bir sonraki adımda burada görünecek.' : 'Soldan bir sohbet seçin.' }}
+        <template v-if="selectedConversation">
+          <!-- Yükleniyor / hata mesajı -->
+          <AlertMessages v-if="isMessagesLoading" class="m-3 mb-0" type="info" messages="Mesajlar yükleniyor..." />
+          <AlertMessages v-else-if="messagesError.length" class="m-3 mb-0" :messages="messagesError" />
+
+          <div ref="messageList" class="chat-messages">
+            <template v-for="item in items" :key="item.key">
+              <div v-if="item.type === 'day'" class="chat-day">{{ item.label }}</div>
+              <div v-else class="chat-bubble" :class="isFromStaff(item.message) ? 'from-staff' : 'from-intern'">
+                <div class="chat-sender" :class="isFromStaff(item.message) ? 'text-secondary' : 'text-primary'">{{ getSenderLabel(item.message) }}</div>
+                <div v-if="hasReference(item.message)" class="chat-reference text-break" :class="getReferenceClass(item.message)">
+                  <span class="chat-reference-type">{{ getReferenceTypeLabel(item.message) }}</span>
+                  {{ item.message.referencedContentTitle }}
+                </div>
+                <div class="chat-text text-break">{{ item.message.content }}</div>
+                <div class="chat-time">{{ formatTime(item.message.createdDate) }}</div>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <div v-else class="d-flex flex-grow-1 align-items-center justify-content-center text-muted p-4 text-center">
+          {{ isLoading ? 'Sohbetler yükleniyor...' : 'Soldan bir sohbet seçin.' }}
         </div>
 
         <!-- Mesaj yazma satırı (pasif) -->

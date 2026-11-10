@@ -152,3 +152,25 @@
     text-transform: uppercase;
     color: var(--bs-secondary-color);
 }
+
+/* Referans türüne göre renk: duyuru turuncu, proje mavi, görev mor (yeşil personel balonuna ayrıldı) */
+.chat-reference.ref-announcement {
+    border-left-color: var(--bs-orange);
+}
+    .chat-reference.ref-announcement .chat-reference-type {
+        color: var(--bs-orange);
+    }
+
+.chat-reference.ref-project {
+    border-left-color: var(--bs-primary);
+}
+    .chat-reference.ref-project .chat-reference-type {
+        color: var(--bs-primary);
+    }
+
+.chat-reference.ref-task {
+    border-left-color: var(--bs-purple);
+}
+    .chat-reference.ref-task .chat-reference-type {
+        color: var(--bs-purple);
+    }
