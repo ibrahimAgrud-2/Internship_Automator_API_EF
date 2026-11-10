@@ -2,6 +2,7 @@
 
 namespace Shared.Intern
 {
+    //Conversation response DTO
     public class ConversationResponseDTO
     {
         [Required]
