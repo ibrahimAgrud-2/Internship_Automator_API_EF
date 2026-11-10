@@ -2,7 +2,8 @@
 .chat-layout {
     display: flex;
     flex-direction: row; /* .card varsayılanı column; yan yana olmalı */
-    height: 75vh;
+    /* Ekranın kalanını doldurur: 51px üst çubuk + içeriğin alt/üst boşluğu (2 x 1.5rem) */
+    height: calc(100vh - 51px - 3rem);
     min-height: 460px;
     overflow: hidden;
 }

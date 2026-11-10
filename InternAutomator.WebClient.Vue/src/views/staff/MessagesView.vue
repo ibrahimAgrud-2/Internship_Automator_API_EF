@@ -117,8 +117,6 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h4 class="mb-4">Mesajlar</h4>
-
     <div class="chat-layout card">
       <!-- Sol: sohbet listesi -->
       <aside class="chat-list-panel border-end">
@@ -156,8 +154,8 @@ onMounted(async () => {
 
       <!-- Sağ: seçili sohbet -->
       <section class="chat-panel">
-        <div v-if="selectedConversation" class="d-flex align-items-center gap-3 p-3 border-bottom">
-          <span
+    <div v-if="selectedConversation" class="d-flex align-items-center gap-3 px-3 py-2 border-bottom">
+            <span
             class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
             :class="selectedConversation.isGroup ? 'bg-success' : 'bg-primary'"
           >
