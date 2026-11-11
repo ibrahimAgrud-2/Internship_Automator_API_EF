@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EF_InternApplicationAutomator.DataAccess.Project
 {
-    [Table("Projects")]
+    [Table("ProjectsWithInternCount")]
     public class ProjectEntity
     {
         [Key]
@@ -28,14 +28,15 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
         [MaxLength(100)]
         public string? Technologies { get; set; }
 
-        public ProjectEntity(int projectID, int createdByUserID, string title,string description ,string? technologies)
+        public int TakenByInternCount { get; set; }
+        public ProjectEntity(int projectID, int createdByUserID, string title,string description ,string? technologies, int takenByInternCount)
         {
             ProjectID = projectID;
             CreatedByUserID = createdByUserID;
             Title = title;
             this.Description = description;
             Technologies = technologies;
-         
+            this.TakenByInternCount = takenByInternCount;
           
         }
     }

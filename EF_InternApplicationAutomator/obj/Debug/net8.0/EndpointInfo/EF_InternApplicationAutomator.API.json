@@ -5,7 +5,7 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Announcement/All": {
+    "/api/Announcement/All/{topNewest}": {
       "get": {
         "tags": [
           "Announcements"
@@ -13,7 +13,8 @@
         "parameters": [
           {
             "name": "topNewest",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4745,6 +4746,7 @@
           "createdByUserID",
           "description",
           "projectID",
+          "takenByInternCount",
           "title"
         ],
         "type": "object",
@@ -4775,6 +4777,10 @@
             "maxLength": 100,
             "type": "string",
             "nullable": true
+          },
+          "takenByInternCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

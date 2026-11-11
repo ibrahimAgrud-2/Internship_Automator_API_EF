@@ -23,8 +23,9 @@ namespace Shared.Project
 
         [MaxLength(100)]
         public string? Technologies { get; set; }
-
-        public ProjectListResponseDTO(int projectID, int createdByUserID, string userName, string title,string description, string? technologies)
+        [Required]
+        public int TakenByInternCount { get; set; }
+        public ProjectListResponseDTO(int projectID, int createdByUserID, string userName, string title,string description, string? technologies,int takenByInternCount)
         {
             ProjectID = projectID;
             CreatedByUserID = createdByUserID;
@@ -32,6 +33,7 @@ namespace Shared.Project
             this.UserName = userName;
             Technologies = technologies;
             this.Description = description;
+            this.TakenByInternCount = takenByInternCount;
 
         }
     }

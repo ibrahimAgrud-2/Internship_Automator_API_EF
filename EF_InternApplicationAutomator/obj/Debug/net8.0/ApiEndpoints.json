@@ -37,7 +37,7 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Announcements.AnnouncementsController",
     "Method": "GetAll",
-    "RelativePath": "api/Announcement/All",
+    "RelativePath": "api/Announcement/All/{topNewest}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
