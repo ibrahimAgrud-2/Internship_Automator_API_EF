@@ -6,8 +6,9 @@ import AlertMessages from './AlertMessages.vue'
 // Mesaja eklenecek içeriği (duyuru / proje / görev) seçtirir. Sadece görüntüdür: veriyi çekmez.
 // Sayfa veriyi çekip bölümlere ayırır, bu pencere başlıklı bölümler halinde gösterir.
 //   <ReferencePickerModal v-model="open" title="Duyuru seç" :sections="sections" :is-loading="loading" :errors="errors" empty-text="..." @picked="onPicked" />
-// sections: [{ title?: 'Bölüm başlığı', items: [{ id, title, subtitle? }] }]  (boş bölümler gösterilmez)
-// picked olayı seçilen satırı olduğu gibi gönderir: { id, title, subtitle? }
+// sections: [{ title?: 'Bölüm başlığı', items: [{ id, title, subtitle?, badge?: { text, tone }, muted? }] }]  (boş bölümler gösterilmez)
+//   badge: satırın sağında küçük etiket (tone: Bootstrap rengi, örn. 'primary' / 'secondary'); muted: satır soluk (gri) görünür
+// picked olayı seçilen satırı olduğu gibi gönderir
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
   title: { type: String, default: 'Seç' },
@@ -37,9 +38,19 @@ function pick(item) {
       <div v-for="(section, index) in visibleSections" :key="index" :class="{ 'mt-3': index > 0 }">
         <h6 v-if="section.title" class="text-muted text-uppercase small mb-2">{{ section.title }}</h6>
         <div class="list-group">
-          <button v-for="item in section.items" :key="item.id" type="button" class="list-group-item list-group-item-action text-break" @click="pick(item)">
-            {{ item.title }}
-            <span v-if="item.subtitle" class="d-block small text-muted">{{ item.subtitle }}</span>
+          <button
+            v-for="item in section.items"
+            :key="item.id"
+            type="button"
+            class="list-group-item list-group-item-action text-break d-flex justify-content-between align-items-start gap-2"
+            :class="{ 'text-muted': item.muted }"
+            @click="pick(item)"
+          >
+            <span>
+              {{ item.title }}
+              <span v-if="item.subtitle" class="d-block small text-muted">{{ item.subtitle }}</span>
+            </span>
+            <span v-if="item.badge" class="badge flex-shrink-0" :class="'text-bg-' + item.badge.tone">{{ item.badge.text }}</span>
           </button>
         </div>
       </div>

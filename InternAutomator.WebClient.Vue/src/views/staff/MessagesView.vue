@@ -1,4 +1,6 @@
 <script setup>
+
+import { getAllProjects } from '@/api/projects'
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { getAllConversations } from '@/api/conversations'
 import { getAllMessages, addMessage } from '@/api/messages'
@@ -134,9 +136,8 @@ const isPickerLoading = ref(false)
 const pickerErrors = ref([])
 let pickerRequestId = 0
 
-const PICKER_TITLES = { [REFERENCE_ANNOUNCEMENT]: 'Duyuru seç' }
-const PICKER_EMPTY_TEXTS = { [REFERENCE_ANNOUNCEMENT]: 'Henüz duyuru yok.' }
-
+const PICKER_TITLES = { [REFERENCE_ANNOUNCEMENT]: 'Duyuru seç', [REFERENCE_PROJECT]: 'Proje seç' }
+const PICKER_EMPTY_TEXTS = { [REFERENCE_ANNOUNCEMENT]: 'Henüz duyuru yok.', [REFERENCE_PROJECT]: 'Henüz proje yok.' }
 // Duyurular tek bölüm: API'nın verdiği son duyurular, yeniden eskiye
 async function loadAnnouncementSections() {
   const announcements = await getLatestAnnouncements()
@@ -151,9 +152,31 @@ async function loadAnnouncementSections() {
   ]
 }
 
-// Proje ve görev buraya eklenecek: her tür kendi bölümlerini döndürür
-const PICKER_LOADERS = { [REFERENCE_ANNOUNCEMENT]: loadAnnouncementSections }
+// Projeler tek bölüm: API en çok stajyerin çalıştığından en aza doğru sıralı verir, sıra olduğu gibi korunur.
+// Çalışan stajyeri olan projeler renkli, hiç alınmayanlar gri görünür.
+async function loadProjectSections() {
+  const projects = await getAllProjects()
+  return [
+    {
+      items: projects.map((project) => {
+        const count = Number(project.takenByInternCount) || 0
+        return {
+          id: project.projectID,
+          title: project.title,
+          subtitle: project.technologies,
+          badge: { text: `${count} stajyer`, tone: count > 0 ? 'primary' : 'secondary' },
+          muted: count === 0,
+        }
+      }),
+    },
+  ]
+}
 
+// Görev buraya eklenecek: her tür kendi bölümlerini döndürür
+const PICKER_LOADERS = {
+  [REFERENCE_ANNOUNCEMENT]: loadAnnouncementSections,
+  [REFERENCE_PROJECT]: loadProjectSections,
+}
 async function openPicker(type) {
   const current = ++pickerRequestId
   pickerType.value = type
@@ -339,7 +362,7 @@ onMounted(async () => {
             <ul class="dropdown-menu">
               <li><h6 class="dropdown-header">Referans ver</h6></li>
               <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_ANNOUNCEMENT)">Duyuru</button></li>
-              <li><button type="button" class="dropdown-item" disabled>Proje</button></li>
+              <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_PROJECT)">Proje</button></li>
               <li><button type="button" class="dropdown-item" disabled>Görev</button></li>
             </ul>
           </div>
