@@ -34,6 +34,7 @@ const router = createRouter({
         { path: 'interns', component: () => import('@/views/staff/InternsView.vue'), meta: { title: 'Stajyerler' } },
         { path: 'interns/:internID', component: () => import('@/views/staff/InternDetailView.vue'), meta: { title: 'Stajyer Detayı' } },
         { path: 'projects', component: () => import('@/views/staff/ProjectsView.vue'), meta: { title: 'Projeler' } },
+
         { path: 'announcements', component: () => import('@/views/staff/AnnouncementsView.vue'), meta: { title: 'Duyurular' } },
         { path: 'messages', component: () => import('@/views/staff/MessagesView.vue'), meta: { title: 'Mesajlar' } },
       ],
@@ -44,10 +45,12 @@ const router = createRouter({
       path: '/intern',
       component: AppShell,
       meta: { requiresRole: ROLE_INTERN },
-      children: [
-        { path: '', redirect: '/intern/home' },
-        { path: 'home', component: () => import('@/views/intern/InternHomeView.vue'), meta: { title: 'Stajyer Ana Sayfa' } },
+children: [
+        // Stajyerin ana sayfası Projelerim'dir (eski /intern/home adresi de buraya yönlenir)
+        { path: '', redirect: '/intern/projects' },
+        { path: 'home', redirect: '/intern/projects' },
         { path: 'projects', component: () => import('@/views/intern/InternProjectsView.vue'), meta: { title: 'Projelerim' } },
+       { path: 'announcements', component: () => import('@/views/intern/InternAnnouncementsView.vue'), meta: { title: 'Duyurular' } },
       ],
     },
 
@@ -58,8 +61,7 @@ const router = createRouter({
 
 // Rol -> giriş sayfası ve girişten sonra açılacak sayfa
 const LOGIN_PAGE = { [ROLE_STAFF]: '/staff/login', [ROLE_INTERN]: '/intern/login' }
-const HOME_PAGE = { [ROLE_STAFF]: '/staff/applications', [ROLE_INTERN]: '/intern/home' }
-
+const HOME_PAGE = { [ROLE_STAFF]: '/staff/applications', [ROLE_INTERN]: '/intern/projects' }
 // Rota koruması: her sayfa geçişinden önce tek yerde çalışır
 router.beforeEach((to) => {
   const session = getSession()

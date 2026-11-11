@@ -4,18 +4,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { getSession, clearSession, ROLE_STAFF } from '@/auth/session'
 import '@/assets/css/shell.css'
 
-// Ortak iskelet: üst çubuk + sol menü. Menüler TEK yerde tanımlıdır.
-// to: null olan satır henüz hazır olmayan bölümdür ("Yakında"). Sayfa hazır olunca sadece adresini yaz.
 const INTERN_MENU = [
-  { text: 'Ana sayfa', to: '/intern/home' },
-  { text: 'Duyurular', to: null },
   { text: 'Projelerim', to: '/intern/projects' },
-  { text: 'Mesaj', to: null },
-  { text: 'SSS', to: null },
+  { text: 'Görevlerim', to: null },
+   { text: 'Mesajlar', to: null },
+ { text: 'Duyurular', to: '/intern/announcements' }
+ 
 ]
 
 const STAFF_MENU = [
-  { text: 'Başvurular', to: '/staff/applications' },
+  { text: 'Başvurular', to: '/staff/applications' },  
   { text: 'Stajyerler', to: '/staff/interns' },
   { text: 'Projeler', to: '/staff/projects' },
   { text: 'Duyurular', to: '/staff/announcements' },

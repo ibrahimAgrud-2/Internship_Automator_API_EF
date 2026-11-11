@@ -2,7 +2,6 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import {
   getAllProjects,
-  getProjectAssignedInternCount,
   createProject,
   updateProject,
   deleteProject,
@@ -23,6 +22,9 @@ const session = getSession()
 
 // Veritabanından açıklama sonunda boşluklarla dolu gelebiliyor; gösterirken kırpılır
 const getDescription = (project) => (project.description ?? '').trim()
+
+// Projeyi kaç stajyerin aldığı (listede gelir); yoksa 0 sayılır
+const getTakenCount = (project) => Number(project.takenByInternCount) || 0
 
 // ---------- Liste ve arama ----------
 const projects = ref([])
@@ -60,35 +62,6 @@ async function loadProjects() {
     loadErrors.value = getErrorMessages(error)
   } finally {
     isLoading.value = false
-  }
-}
-
-// ---------- Detay penceresi ----------
-const isDetailsOpen = ref(false)
-const detailProject = ref(null)
-const detailCount = ref('')
-const detailError = ref([])
-let detailsRequestId = 0 // eski bir isteğin cevabı yeni açılan pencereyi bozmasın diye
-
-async function openDetails(project) {
-  const requestId = ++detailsRequestId
-
-  detailProject.value = project
-  detailCount.value = 'Yükleniyor...'
-  detailError.value = []
-  isDetailsOpen.value = true
-
-  // Atanan stajyer sayısı listede gelmediği için pencere açılınca tek proje için istenir
-  try {
-    const count = await getProjectAssignedInternCount(project.projectID)
-    if (requestId !== detailsRequestId) return
-
-    detailCount.value = String(count)
-  } catch (error) {
-    if (requestId !== detailsRequestId) return
-
-    detailCount.value = '-'
-    detailError.value = getErrorMessages(error)
   }
 }
 
@@ -259,34 +232,28 @@ onMounted(loadProjects)
 
     <div class="project-grid">
       <div v-for="project in filteredProjects" :key="project.projectID" class="card project-card">
+        <!-- Sağ üst köşe: projeyi alan stajyer sayısı (0 ise gri) -->
+        <span
+          class="project-count rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white"
+          :class="getTakenCount(project) > 0 ? 'bg-primary' : 'bg-secondary'"
+          :title="`${getTakenCount(project)} stajyer çalışıyor`"
+          :aria-label="`${getTakenCount(project)} stajyer çalışıyor`"
+        >
+          {{ getTakenCount(project) }}
+        </span>
+
         <div class="card-body">
-          <h5 class="card-title text-break">{{ project.title }}</h5>
+          <h5 class="card-title text-break project-title">{{ project.title }}</h5>
           <TechnologyBadges :technologies="project.technologies" class="mb-3" />
-          <p v-if="getDescription(project)" class="small text-muted text-break mb-0 project-description">{{ getDescription(project) }}</p>
+          <p v-if="getDescription(project)" class="small text-muted text-break mb-0">{{ getDescription(project) }}</p>
         </div>
 
         <div class="card-footer bg-transparent border-0 pb-3">
-          <button type="button" class="btn btn-sm btn-outline-primary" @click="openDetails(project)">Detaylar</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary ms-2" @click="openEdit(project)">Düzenle</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" @click="openEdit(project)">Düzenle</button>
           <button type="button" class="btn btn-sm btn-outline-danger ms-2" @click="openDelete(project)">Sil</button>
         </div>
       </div>
     </div>
-
-    <!-- Proje detay penceresi -->
-    <BaseModal v-model="isDetailsOpen" :title="detailProject?.title ?? ''" :static-backdrop="false" closable>
-      <p class="text-break" style="white-space: pre-line">{{ detailProject ? getDescription(detailProject) || 'Açıklama yok.' : '' }}</p>
-      <TechnologyBadges :technologies="detailProject?.technologies" class="mb-3" />
-
-      <div class="small"><span class="text-muted">Oluşturan: </span><span>{{ detailProject?.userName || '-' }}</span></div>
-      <div class="small"><span class="text-muted">Atanan stajyer sayısı: </span><span>{{ detailCount }}</span></div>
-
-      <AlertMessages v-if="detailError.length" :messages="detailError" class="mt-3" />
-
-      <template #footer>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-      </template>
-    </BaseModal>
 
     <!-- Ekleme / düzenleme penceresi -->
     <BaseModal

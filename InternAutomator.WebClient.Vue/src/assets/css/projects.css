@@ -15,12 +15,18 @@
         box-shadow: -10px 16px 24px rgba(0, 0, 0, 0.15);
     }
 
-/* Açıklama en fazla 3 satır görünür; tamamı detay penceresinde */
-.project-description {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+/* Sağ üst köşedeki stajyer sayısı dairesi; başlık altına girmesin diye başlığa sağdan boşluk bırakılır */
+.project-count {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.85rem;
+}
+
+.project-title {
+    padding-right: 2.25rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

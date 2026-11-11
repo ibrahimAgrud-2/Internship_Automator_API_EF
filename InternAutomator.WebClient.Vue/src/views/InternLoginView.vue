@@ -34,7 +34,7 @@ async function submit() {
       status: intern.status,
     })
 
-    await router.replace('/intern/home')
+   await router.replace('/intern/projects')
   } catch (error) {
     password.value = ''
     errors.value = getErrorMessages(error)

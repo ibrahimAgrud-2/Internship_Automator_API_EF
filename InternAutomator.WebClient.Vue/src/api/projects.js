@@ -7,10 +7,6 @@ export async function getAllProjects() {
   return Array.isArray(projects) ? projects : []
 }
 
-// Projenin kaç stajyere atandığı (liste cevabında yok; detay penceresi açılınca tek tek istenir)
-export async function getProjectAssignedInternCount(projectID) {
-  return Number(await apiGet(`Projects/AssignedInternCount?projectID=${encodeURIComponent(projectID)}`))
-}
 
 export function createProject(project) {
   return apiPost('Projects', project)

@@ -7,7 +7,9 @@ import { formatDate } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import TechnologyBadges from '@/components/TechnologyBadges.vue'
 
+// Rota koruması sayesinde bu sayfaya oturum olmadan gelinmez
 const session = getSession()
+const fullName = `${session.firstName} ${session.lastName}`.trim()
 
 const projects = ref([])
 const isLoading = ref(true)
@@ -32,7 +34,17 @@ onMounted(loadProjects)
 
 <template>
   <div>
-    <h4 class="mb-4">Projelerim</h4>
+   
+
+    <!-- Staj tarihleri -->
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-lg-4">
+
+      </div>
+    
+    </div>
+
+    <h5 class="mb-3">Projelerim</h5>
 
     <!-- Yükleniyor / hata / boş liste: aynı anda yalnızca biri çizilir -->
     <AlertMessages v-if="isLoading" type="info" messages="Projeler yükleniyor..." />
