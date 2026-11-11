@@ -34,7 +34,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             }
             if(!_Intern.IsInternExists(internID))
             {
-                return BadRequest("Such intern Does not exist. ");
+                return BadRequest($"Verilen ID'de ({internID}) Stajyer bulunmamaktadır");
             }
             List<TaskResponseDTO> tasks = _Tasks.GetAllTasks(internID);
             return Ok(tasks);

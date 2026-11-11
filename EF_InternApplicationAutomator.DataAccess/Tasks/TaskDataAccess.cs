@@ -12,9 +12,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             _Context = context;
         }
 
-        public List<TaskResponseDTO> GetAllInternTasks(int internID)
+        public List<TaskResponseDTO> ListTasksByInternID(int internID)
         {
-            List<TaskEntity> tasks = _Context.Tasks.Include(t => t.OngoingProject).Where(t => t.OngoingProject.InternID == internID).ToList();
+            List<TaskEntity> tasks = _Context.Tasks.Include(t => t.OngoingProject).Where(t => t.OngoingProject.InternID == internID).OrderBy(t=>t.DueDate).ToList();
             List<TaskResponseDTO> taskDTOs = new List<TaskResponseDTO>();
 
             foreach (var task in tasks)
@@ -102,14 +102,12 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             return new TaskResponseDTO(task.TaskID,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,task.AssignedDate,task.DueDate,task.Completed,task.CompletedDate);
         }
         
-
-
-        
         public bool DeleteTask(int taskID)
         {
             return _Context.Tasks
                 .Where(task => task.TaskID == taskID)
                 .ExecuteDelete() > 0;
         }
+
     }
 }
