@@ -50,7 +50,9 @@ children: [
         { path: '', redirect: '/intern/projects' },
         { path: 'home', redirect: '/intern/projects' },
         { path: 'projects', component: () => import('@/views/intern/InternProjectsView.vue'), meta: { title: 'Projelerim' } },
+        { path: 'tasks', component: () => import('@/views/intern/InternTasksView.vue'), meta: { title: 'Görevlerim' } },
        { path: 'announcements', component: () => import('@/views/intern/InternAnnouncementsView.vue'), meta: { title: 'Duyurular' } },
+       
       ],
     },
 
