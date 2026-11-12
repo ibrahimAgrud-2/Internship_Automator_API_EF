@@ -1,5 +1,6 @@
 ﻿using EF_InternApplicationAutomator.DataAccess.Announcement;
 using EF_InternApplicationAutomator.DataAccess.Application;
+using EF_InternApplicationAutomator.DataAccess.ConversationIntern;
 using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.Message;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
@@ -31,5 +32,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         public DbSet<ConversationEntity> Conversations { get; set; }
         public DbSet<vw_MessagesWithContent> vw_MessagesWithContent { get; set; }
         public DbSet<MessageEntity> Messages { get; set; }
+        public DbSet<ConversationInternEntity> ConversationIntern { get; set; }
     }
 }

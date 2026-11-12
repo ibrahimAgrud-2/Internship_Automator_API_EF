@@ -21,7 +21,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             {
                 taskDTOs.Add(ToResponseDTO(task));
             }
-
             return taskDTOs;
         }
 

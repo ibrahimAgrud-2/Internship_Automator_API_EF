@@ -1083,6 +1083,75 @@
         }
       }
     },
+    "/api/ConversationIntern/AllConversation/{internID}": {
+      "get": {
+        "tags": [
+          "ConversationIntern"
+        ],
+        "parameters": [
+          {
+            "name": "internID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationInternResponseDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationInternResponseDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationInternResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Intern/All": {
       "get": {
         "tags": [
@@ -4180,6 +4249,33 @@
           "notes": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConversationInternResponseDTO": {
+        "required": [
+          "conversationID",
+          "conversationName",
+          "internID",
+          "isGroup"
+        ],
+        "type": "object",
+        "properties": {
+          "conversationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "internID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conversationName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "isGroup": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
