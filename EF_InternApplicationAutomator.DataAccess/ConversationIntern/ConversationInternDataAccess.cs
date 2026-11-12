@@ -29,6 +29,8 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
                 .AsNoTracking().Where(c => c.InternID == internID)
                 .Select(c => new ConversationInternResponseDTO(c.ConversationID,c.InternID,c.ConversationName,c.IsGroup))
                 .ToList();
+
+
         }
 
        

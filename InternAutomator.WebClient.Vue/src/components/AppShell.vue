@@ -7,7 +7,7 @@ import '@/assets/css/shell.css'
 const INTERN_MENU = [
   { text: 'Projelerim', to: '/intern/projects' },
   { text: 'Görevlerim', to: '/intern/tasks' },
-   { text: 'Mesajlar', to: null },
+    { text: 'Mesaj', to: '/intern/messages' },
  { text: 'Duyurular', to: '/intern/announcements' }
  
 ]
