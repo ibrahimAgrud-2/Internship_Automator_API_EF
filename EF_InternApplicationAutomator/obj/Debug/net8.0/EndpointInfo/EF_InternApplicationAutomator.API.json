@@ -1697,17 +1697,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserLoginResponseDTO"
+                  "$ref": "#/components/schemas/LoginResponseDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserLoginResponseDTO"
+                  "$ref": "#/components/schemas/LoginResponseDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserLoginResponseDTO"
+                  "$ref": "#/components/schemas/LoginResponseDTO"
                 }
               }
             }
@@ -3453,6 +3453,28 @@
         },
         "additionalProperties": false
       },
+      "LoginResponseDTO": {
+        "type": "object",
+        "properties": {
+          "personID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MessageCreateDTO": {
         "required": [
           "content",
@@ -3899,38 +3921,6 @@
           "createdDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "isActive": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserLoginResponseDTO": {
-        "required": [
-          "firstName",
-          "isActive",
-          "lastName",
-          "personID",
-          "userID"
-        ],
-        "type": "object",
-        "properties": {
-          "userID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "personID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "firstName": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "lastName": {
-            "minLength": 1,
-            "type": "string"
           },
           "isActive": {
             "type": "boolean"

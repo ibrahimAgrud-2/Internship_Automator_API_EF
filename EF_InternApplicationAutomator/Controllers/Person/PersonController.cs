@@ -116,7 +116,7 @@ namespace EF_InternApplicationAutomator.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<UserLoginResponseDTO> Login(LoginDTO loginDTO)
+        public ActionResult<LoginResponseDTO> Login(LoginDTO loginDTO)
         {
             if (loginDTO==null||string.IsNullOrEmpty(loginDTO.Email) || string.IsNullOrEmpty(loginDTO.Password))
             {
@@ -133,7 +133,7 @@ namespace EF_InternApplicationAutomator.API.Controllers
                 return StatusCode(403, new { message = "Hesabınız aktif değil" });
             }
 
-            return Ok(person);
+            return Ok(new LoginResponseDTO(person.PersonID,person.Email,person.FirstName,person.LastName,person.Role));
         }
     }
 

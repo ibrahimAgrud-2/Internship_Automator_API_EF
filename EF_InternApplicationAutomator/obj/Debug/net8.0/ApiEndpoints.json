@@ -917,7 +917,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Shared.User.UserLoginResponseDTO",
+        "Type": "Shared.LoginResponseDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
