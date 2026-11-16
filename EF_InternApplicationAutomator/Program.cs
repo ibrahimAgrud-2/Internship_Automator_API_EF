@@ -1,9 +1,14 @@
+﻿using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.DataAccess;
 using EF_InternApplicationAutomator.DataAccess.Data;
 using EF_InternApplicationAutomator.DataAccess.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Shared.Common;
 using System;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +16,35 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // Swagger'a "bu API Bearer token (JWT) kullanıyor" diyoruz
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Giriş yaptıktan sonra dönen token'ı yapıştır (başına 'Bearer' yazma)."
+    });
+
+    // ... ve bu şemayı isteklere uygula
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddCors(options =>
 {
@@ -64,6 +97,38 @@ var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailS
 builder.Services.AddSingleton(emailSettings);
 builder.Services.AddScoped<EmailService>();
 
+builder.Services.AddScoped<TokenService>();
+
+
+// JWT doğrulama ayarları
+string jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("Jwt:Key ayarı bulunamadı (user-secrets).");
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // 1) İmza: token bizim anahtarımızla mı imzalanmış?
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+
+            // 2) Bileti bizim sistemimiz mi verdi?
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
+            // 3) Bilet bizim API için mi yazılmış?
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+
+            // 4) Süresi dolmuş mu?
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+
 
 var app = builder.Build();
 
@@ -75,7 +140,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("WebClient");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

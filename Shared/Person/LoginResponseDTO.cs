@@ -10,7 +10,7 @@ namespace Shared
     //personID, firstName, lastName, role
     public class LoginResponseDTO
     {
-
+        public string Token { get; set; }
         public int PersonID { get; set; }
 
 
@@ -24,7 +24,9 @@ namespace Shared
 
         public string Role { get; set; }
 
-        public LoginResponseDTO(int ID,string email, string firstName, string lastName, string role,int? internID,int? userID)
+       
+
+        public LoginResponseDTO(string token, int ID,string email, string firstName, string lastName, string role,int? internID,int? userID)
         {
             this.FirstName = firstName;
             LastName = lastName;
@@ -32,6 +34,7 @@ namespace Shared
             this.Role = role;
             this.UserID = userID;
             this.InternID = internID;
+            this.Token = token;
         }
     }
 }

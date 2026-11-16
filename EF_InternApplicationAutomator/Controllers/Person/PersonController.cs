@@ -1,11 +1,14 @@
 ﻿
+using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business;
 using EF_InternApplicationAutomator.DataAccess;
-using Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 using Shared;
 using Shared.User;
 using System;
+using System.Security.Claims;
 using static EF_InternApplicationAutomator.Business.PersonBL;
 
 namespace EF_InternApplicationAutomator.API.Controllers
@@ -18,9 +21,11 @@ namespace EF_InternApplicationAutomator.API.Controllers
     {
         //PL ile BL Arasında iletişimi obje üzerine sağlayabilmek için objeyi const ile dolduruyoruz.
         PersonBL _person;
-        public PersonController(PersonBL p)
+        TokenService _TokenService;
+        public PersonController(PersonBL p, TokenService tokenService)
         {
             _person = p;
+            _TokenService = tokenService;
         }
 
 
@@ -147,9 +152,24 @@ namespace EF_InternApplicationAutomator.API.Controllers
             {
                 return NotFound("Hesabiniza erişilemedi");
             }
-                return Ok(new LoginResponseDTO(person.PersonID, person.Email, person.FirstName, person.LastName, person.Role, person.InternID, person.UserID));
+
+            string token = _TokenService.CreateToken(person.PersonID.ToString(),person.Role,person.UserID.ToString(),person.InternID.ToString());
+
+
+                return Ok(new LoginResponseDTO(token, person.PersonID, person.Email, person.FirstName, person.LastName, person.Role, person.InternID, person.UserID));
         }
+
+
+        [Authorize]
+        [HttpGet("test")]
+        public ActionResult<string> Test()
+        {
+            string? idText = User.FindFirstValue(ClaimTypes.NameIdentifier);
+          
+                return Ok($"okuna ID{idText}");
+            
+        }
+
+
     }
-
-
 }
