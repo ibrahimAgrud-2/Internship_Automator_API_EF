@@ -17,10 +17,11 @@ const errors = ref([])
 // Rol ile ilgili ID tutarsızsa null döner, oturum yazılmaz.
 function createSession(person) {
   const apiRole = String(person.role ?? '').toLowerCase()
-  const base = {
+const base = {
     personID: person.personID,
     firstName: person.firstName,
     lastName: person.lastName,
+    token: person.token,
   }
 
   if (apiRole === 'intern' && person.internID >= 1) {
