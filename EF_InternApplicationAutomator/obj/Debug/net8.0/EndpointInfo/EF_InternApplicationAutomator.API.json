@@ -1128,26 +1128,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
           }
         }
       }
@@ -4307,12 +4287,17 @@
           "firstName",
           "internID",
           "lastName",
+          "personID",
           "startDate",
           "status"
         ],
         "type": "object",
         "properties": {
           "internID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personID": {
             "type": "integer",
             "format": "int32"
           },

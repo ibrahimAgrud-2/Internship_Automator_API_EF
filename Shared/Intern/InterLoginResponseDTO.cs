@@ -13,6 +13,9 @@ namespace Shared.Intern
         public int InternID { get; set; }
 
         [Required]
+        public int PersonID { get; set; }
+
+        [Required]
         public string FirstName { get; set; }
 
         [Required]
@@ -26,9 +29,10 @@ namespace Shared.Intern
         [Required]
         public byte Status { get; set; }
 
-        public InterLoginResponseDTO(string name, string lastName, int internID,DateTime startDate, DateTime? endDate,byte status)
+        public InterLoginResponseDTO(string name, string lastName, int internID,int personID,DateTime startDate, DateTime? endDate,byte status)
         {
             this.InternID = internID;
+            this.PersonID = personID;
             this.StartDate = startDate;
             this.EndDate = EndDate;
             this.FirstName = name;

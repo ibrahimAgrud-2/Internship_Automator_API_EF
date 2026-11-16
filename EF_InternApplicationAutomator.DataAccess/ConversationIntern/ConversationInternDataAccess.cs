@@ -1,4 +1,5 @@
 ﻿using EF_InternApplicationAutomator.DataAccess.Application;
+using EF_InternApplicationAutomator.DataAccess.Data;
 using EF_InternApplicationAutomator.DataAccess.Message;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

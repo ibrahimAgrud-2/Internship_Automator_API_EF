@@ -27,6 +27,7 @@ async function submit() {
     saveSession({
       role: ROLE_INTERN,
       internID: intern.internID,
+            personID: intern.personID,
       firstName: intern.firstName,
       lastName: intern.lastName,
       startDate: intern.startDate,

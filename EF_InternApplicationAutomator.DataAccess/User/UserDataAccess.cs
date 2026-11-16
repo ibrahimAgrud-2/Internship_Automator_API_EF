@@ -1,4 +1,5 @@
-﻿using EF_InternApplicationAutomator.DataAccess.Intern;
+﻿using EF_InternApplicationAutomator.DataAccess.Data;
+using EF_InternApplicationAutomator.DataAccess.Intern;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;

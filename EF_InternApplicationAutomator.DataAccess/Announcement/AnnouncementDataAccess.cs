@@ -1,4 +1,5 @@
-﻿using MailKit.Search;
+﻿using EF_InternApplicationAutomator.DataAccess.Data;
+using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;

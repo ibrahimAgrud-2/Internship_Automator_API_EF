@@ -7,4 +7,4 @@ export const getAllConversations = () => apiGet('Conversation/All')
 
 // Stajyer: sadece dahil olduğu sohbetler
 // GET ConversationIntern/AllConversation/{internID} -> [{ conversationID, internID, conversationName, isGroup }]
-export const getInternConversations = (internID) => apiGet(`ConversationIntern/AllConversation/${internID}`)
+export const getInternConversations = (internID) => apiGet(`ConversationIntern/AllConversation/${internID}`)    

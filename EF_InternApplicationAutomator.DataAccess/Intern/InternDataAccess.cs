@@ -1,4 +1,5 @@
-﻿using EF_InternApplicationAutomator.DataAccess.Intern;
+﻿using EF_InternApplicationAutomator.DataAccess.Data;
+using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.OngoingProjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -40,7 +41,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
                 {
                     return null;
                 }
-                return new InterLoginResponseDTO(internEntity.Person.FirstName, internEntity.Person.LastName, internEntity.InternID, internEntity.StartDate, internEntity.EndDate, internEntity.Status);
+                return new InterLoginResponseDTO(internEntity.Person.FirstName, internEntity.Person.LastName, internEntity.InternID,internEntity.PersonID, internEntity.StartDate, internEntity.EndDate, internEntity.Status);
             }
             return null;
         }

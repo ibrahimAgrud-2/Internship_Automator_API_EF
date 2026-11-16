@@ -1,3 +1,4 @@
+using EF_InternApplicationAutomator.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Project;
