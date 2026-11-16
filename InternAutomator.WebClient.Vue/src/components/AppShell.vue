@@ -35,7 +35,7 @@ const isCollapsed = ref(window.innerWidth < 768)
 
 function logout() {
   clearSession()
-  router.replace(role === ROLE_STAFF ? '/staff/login' : '/intern/login')
+  router.replace('/login')
 }
 </script>
 

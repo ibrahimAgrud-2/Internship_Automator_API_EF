@@ -10,17 +10,13 @@ const router = createRouter({
     { path: '/', component: () => import('@/views/HomeView.vue'), meta: { title: 'Staj Otomasyonu' } },
     { path: '/apply', component: () => import('@/views/ApplyView.vue'), meta: { title: 'Staj Başvurusu' } },
 
-    // meta.loginOf: bu rolün giriş sayfası (zaten girişliyse gösterilmez)
+  // Tek giriş sayfası: zaten girişliyse gösterilmez (beforeEach'te yönlendirilir)
     {
-      path: '/staff/login',
-      component: () => import('@/views/StaffLoginView.vue'),
-      meta: { loginOf: ROLE_STAFF, title: 'Personel Girişi' },
+      path: '/login',
+      component: () => import('@/views/LoginView.vue'),
+      meta: { isLoginPage: true, title: 'Giriş' },
     },
-    {
-      path: '/intern/login',
-      component: () => import('@/views/InternLoginView.vue'),
-      meta: { loginOf: ROLE_INTERN, title: 'Stajyer Girişi' },
-    },
+
 
     // ---- Personel: iskelet (AppShell) + sayfalar ----
     // meta.requiresRole: bu bölümü sadece o rol görebilir (alt sayfalar da bu kuralı devralır)
@@ -63,7 +59,7 @@ children: [
 })
 
 // Rol -> giriş sayfası ve girişten sonra açılacak sayfa
-const LOGIN_PAGE = { [ROLE_STAFF]: '/staff/login', [ROLE_INTERN]: '/intern/login' }
+const LOGIN_PAGE = { [ROLE_STAFF]: '/login', [ROLE_INTERN]: '/login' }
 const HOME_PAGE = { [ROLE_STAFF]: '/staff/applications', [ROLE_INTERN]: '/intern/projects' }
 // Rota koruması: her sayfa geçişinden önce tek yerde çalışır
 router.beforeEach((to) => {
@@ -75,9 +71,9 @@ router.beforeEach((to) => {
     return LOGIN_PAGE[requiredRole]
   }
 
-  // Zaten girişliyken giriş sayfasını gösterme
-  if (to.meta.loginOf && session?.role === to.meta.loginOf) {
-    return HOME_PAGE[to.meta.loginOf]
+    // Zaten girişliyken giriş sayfasını gösterme
+  if (to.meta.isLoginPage && session?.role) {
+    return HOME_PAGE[session.role]
   }
 })
 

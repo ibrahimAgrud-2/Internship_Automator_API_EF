@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { internLogin } from '@/api/auth'
+import { login } from '@/api/auth'
 import { getErrorMessages } from '@/api/http'
-import { saveSession, ROLE_INTERN } from '@/auth/session'
+import { saveSession, ROLE_INTERN, ROLE_STAFF } from '@/auth/session'
 import AlertMessages from '@/components/AlertMessages.vue'
 
 const router = useRouter()
@@ -13,6 +13,25 @@ const password = ref('')
 const isSubmitting = ref(false)
 const errors = ref([])
 
+// API rolünü (küçük harfe çevirerek) oturum rolüne eşler.
+// Rol ile ilgili ID tutarsızsa null döner, oturum yazılmaz.
+function createSession(person) {
+  const apiRole = String(person.role ?? '').toLowerCase()
+  const base = {
+    personID: person.personID,
+    firstName: person.firstName,
+    lastName: person.lastName,
+  }
+
+  if (apiRole === 'intern' && person.internID >= 1) {
+    return { session: { ...base, role: ROLE_INTERN, internID: person.internID }, home: '/intern/projects' }
+  }
+  if (apiRole === 'user' && person.userID >= 1) {
+    return { session: { ...base, role: ROLE_STAFF, userID: person.userID }, home: '/staff/applications' }
+  }
+  return null
+}
+
 async function submit() {
   // İstek sürerken ikinci gönderim yapılmasın
   if (isSubmitting.value) return
@@ -21,21 +40,18 @@ async function submit() {
   isSubmitting.value = true
 
   try {
-    const intern = await internLogin(email.value.trim(), password.value)
+    const person = await login(email.value.trim(), password.value)
+    const result = createSession(person)
+
+    if (!result) {
+      password.value = ''
+      errors.value = ['Hesabınıza erişilemedi']
+      return
+    }
 
     // Şifre hiçbir yerde saklanmaz
-    saveSession({
-      role: ROLE_INTERN,
-      internID: intern.internID,
-            personID: intern.personID,
-      firstName: intern.firstName,
-      lastName: intern.lastName,
-      startDate: intern.startDate,
-      endDate: intern.endDate,
-      status: intern.status,
-    })
-
-   await router.replace('/intern/projects')
+    saveSession(result.session)
+    await router.replace(result.home)
   } catch (error) {
     password.value = ''
     errors.value = getErrorMessages(error)
@@ -47,7 +63,7 @@ async function submit() {
 
 <template>
   <main class="container py-5" style="max-width: 420px">
-    <h3 class="mb-4 text-center">Stajyer Girişi</h3>
+    <h3 class="mb-4 text-center">Giriş</h3>
 
     <form @submit.prevent="submit">
       <div class="mb-3">
