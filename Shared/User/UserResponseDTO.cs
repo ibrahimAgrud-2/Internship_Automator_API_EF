@@ -19,20 +19,15 @@ namespace Shared.User
         public int PersonID { get; set; }
 
         [Required]
-        public int PermissionType { get; set; }
-
-
-        [Required]
         public DateTime CreatedDate { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
 
-        public UserResponseDTO(int userID, int personID, string userName, int permissionType, DateTime createdDate, bool isActive)
+        public UserResponseDTO(int userID, int personID, string userName, DateTime createdDate, bool isActive)
         {
 
             PersonID = personID;
-            PermissionType = permissionType;
             CreatedDate = createdDate;
             IsActive = isActive;
            

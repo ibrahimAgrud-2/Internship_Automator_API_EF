@@ -28,7 +28,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
             //mapping
             foreach (var user in userList)
             {
-                userDTOs.Add(new UserResponseDTO(user.UserID,user.PersonID,user.UserName,user.PermissionType,user.CreatedDate,user.IsActive));
+                userDTOs.Add(new UserResponseDTO(user.UserID,user.PersonID,user.UserName,user.CreatedDate,user.IsActive));
             }
             return userDTOs;
         }
@@ -44,7 +44,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
             }
             else
             {
-                return new UserResponseDTO(user.UserID, user.PersonID, user.UserName, user.PermissionType, user.CreatedDate, user.IsActive);
+                return new UserResponseDTO(user.UserID, user.PersonID, user.UserName,  user.CreatedDate, user.IsActive);
             }
         }
         public UserLoginResponseDTO? FindByPasswordAndUserName(string userName, string password)
@@ -57,7 +57,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
 
                 return null;
             }
-           return new UserLoginResponseDTO(userEntity.UserID,userEntity.PersonID, userEntity.Person.FirstName, userEntity.Person.LastName, userEntity.PermissionType, userEntity.IsActive);
+           return new UserLoginResponseDTO(userEntity.UserID,userEntity.PersonID, userEntity.Person.FirstName, userEntity.Person.LastName, userEntity.IsActive);
      
 
             
@@ -73,7 +73,6 @@ namespace EF_InternApplicationAutomator.DataAccess.User
             user.UserName = userDTO.UserName;
             user.PersonID = userDTO.PersonID;
             user.PasswordHash = userDTO.PasswordHash;
-            user.PermissionType = userDTO.PermissionType;
             user.IsActive = userDTO.IsActive;
             user.CreatedDate = userDTO.CreatedDate;
 
@@ -87,7 +86,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         }
         public int AddUser(UserCreateDTO user)
         {
-            UserEntity userEntity = new UserEntity(0,user.PersonID,user.UserName,user.PasswordHash,user.PermissionType,user.CreatedDate,user.IsActive);
+            UserEntity userEntity = new UserEntity(0,user.PersonID,user.UserName,user.PasswordHash,user.CreatedDate,user.IsActive);
             EntityEntry<UserEntity> pw = _Context.Users.Add(userEntity);
 
             if (_Context.SaveChanges() > 0)

@@ -24,19 +24,15 @@ namespace Shared.User
         public string lastName { get; set; }
 
         [Required]
-        public int PermissionType { get; set; }
-
-        [Required]
         public bool IsActive { get; set; }
 
 
-        public UserLoginResponseDTO(int userID, int personID, string firstName,string lastName, int permissionType,bool isActive)
+        public UserLoginResponseDTO(int userID, int personID, string firstName,string lastName,bool isActive)
         {
             this.PersonID = personID;
             this.UserID = userID;
             this.firstName = firstName;
             this.lastName = lastName;
-            this.PermissionType = permissionType;
             this.IsActive = isActive;
         
         }
