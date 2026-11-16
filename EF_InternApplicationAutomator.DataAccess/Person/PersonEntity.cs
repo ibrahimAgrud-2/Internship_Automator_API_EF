@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,10 +37,18 @@ namespace EF_InternApplicationAutomator.DataAccess
         public string ImagePath { get; set; }
 
 
+        [Required]
+        public bool IsActive { get; set; }
+
+        [Required]
+        public string PasswordHash { get; set; }
+
+
+
         [MaxLength(10)]
         public string Role { get; set; }
 
-        public PersonEntity(int personID, string firstName, string lastName, string email, string phone, string address, string imagePath,string role)
+        public PersonEntity(int personID, string firstName, string lastName, string email, string phone, string address, string imagePath,string role,bool isActive,string passwordHash)
         {
             PersonID = personID;
             FirstName = firstName;
@@ -49,6 +58,8 @@ namespace EF_InternApplicationAutomator.DataAccess
             Address = address;
             ImagePath = imagePath;
             this.Role = role;
+            this.IsActive = isActive;
+            this.PasswordHash = passwordHash;
         }
     }
 }

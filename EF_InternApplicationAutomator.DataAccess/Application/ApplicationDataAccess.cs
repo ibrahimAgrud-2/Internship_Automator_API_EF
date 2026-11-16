@@ -17,16 +17,17 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         }
 
 
-        public List<ApplicationListDTO> GetAllApplication()
-        {
+        //public List<ApplicationListDTO> GetAllApplication()
+        //{
  
 
 
-            return _Context.Applications
-                .AsNoTracking()
-                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.FirstName, a.Person.LastName, a.Person.Email, a.Person.Phone, a.Person.Address, a.Person.ImagePath),a.ApplicationID,a.Status,a.ApplicationDate,a.University,a.Department,a.ClassYear))
-                .ToList();
-        }
+        //    return _Context.Applications
+        //        .AsNoTracking()
+        //        .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.FirstName, a.Person.LastName, a.Person.Email, a.Person.Phone, a.Person.Address, a.Person.ImagePath),a.ApplicationID,a.Status,a.ApplicationDate,a.University,a.Department,a.ClassYear))
+        //        .ToList();
+        //}
+     
         public ApplicationResponseDTO? Find(int appID)
         {
             ApplicationEntity? app = _Context.Applications.Find(appID);

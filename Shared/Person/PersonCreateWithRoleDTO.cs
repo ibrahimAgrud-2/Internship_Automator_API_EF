@@ -13,7 +13,7 @@ namespace Shared
         [Required]
         public string Role { get; set; }
         public PersonCreateWithRoleDTO(string firstName, string lastName, string email,
-                string phone, string address, string imagePath,string rol):base(firstName,lastName,email,phone,address,imagePath)
+                string phone, string address, string imagePath,string rol,string passwordHash):base(firstName,lastName,email,phone,address,imagePath, passwordHash)
         {
             this.Role = rol;
          

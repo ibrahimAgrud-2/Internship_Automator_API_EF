@@ -24,10 +24,14 @@ namespace Shared
         [Required]
         public string Address { get; set; }
 
+
         public string ImagePath { get; set; }
 
+        [Required]
+        public string passwordHash { get; set; }
+
         public PersonCreateSDTO(string firstName, string lastName, string email,
-                string phone, string address, string imagePath)
+                string phone, string address, string imagePath, string passwordHash)
         {
 
             FirstName = firstName;
@@ -36,8 +40,7 @@ namespace Shared
             this.Phone = phone;
             Address = address;
             ImagePath = imagePath;
-
-
+            this.passwordHash = passwordHash;
         }
     }
 }
