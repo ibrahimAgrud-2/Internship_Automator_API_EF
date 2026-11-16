@@ -39,7 +39,7 @@ namespace EF_InternApplicationAutomator.Business
             return _PersonDataAccess.UpdatePerson(personID,personCreateSDTO);
         }
 
-        public int AddPerson(PersonCreateSDTO newPerson)
+        public int AddPerson(PersonCreateWithRoleDTO newPerson)
         {
             return _PersonDataAccess.AddPerson(newPerson);
         }

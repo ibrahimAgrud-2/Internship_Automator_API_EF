@@ -24,10 +24,12 @@ namespace Shared
         public string Address { get; set; }
 
         public string ImagePath { get; set; }
+        public string Role { get; set; }
         public PersonResponseSDTO(int personID,string firstName, string lastName, string email,
-                string phone, string address, string imagePath)
+                string phone, string address, string imagePath,string role)
         {
             this.PersonID = personID;
+            this.Role = role;
             FirstName = firstName;
             LastName = lastName;
             Email = email;

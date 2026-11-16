@@ -22,7 +22,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
 
             return _Context.Applications
                 .AsNoTracking()
-                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.FirstName,a.Person.LastName,a.Person.Email,a.Person.Phone,a.Person.Address,a.Person.ImagePath),a.ApplicationID, a.Status,a.ApplicationDate, a.University,a.Department,a.ClassYear,a.Notes,a.LinkedinURL,a.GithubURL
+                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.FirstName,a.Person.LastName,a.Person.Email,a.Person.Phone,a.Person.Address,a.Person.ImagePath,a.Person.Role),a.ApplicationID, a.Status,a.ApplicationDate, a.University,a.Department,a.ClassYear,a.Notes,a.LinkedinURL,a.GithubURL
                 ))
                 .ToList();
         }

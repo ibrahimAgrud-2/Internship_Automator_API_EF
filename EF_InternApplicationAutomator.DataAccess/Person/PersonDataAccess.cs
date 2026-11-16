@@ -30,7 +30,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             //mapping
             foreach (var Person in personList)
             {
-                personDTOs.Add(new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath));
+                personDTOs.Add(new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath, Person.Role));
             }
             return personDTOs;
         }
@@ -46,7 +46,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
             else
             {
-                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath);
+                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role);
             }
         }
 
@@ -60,7 +60,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
             else
             {
-                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath);
+                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role);
             }
         }
         public int UpdatePerson(int personID, PersonCreateSDTO personCreateDTO)
@@ -87,9 +87,9 @@ namespace EF_InternApplicationAutomator.DataAccess
             return -1;
         }
        
-        public int AddPerson(PersonCreateSDTO person)
+        public int AddPerson(PersonCreateWithRoleDTO person)
         {
-            PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath);
+            PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath,person.Role);
             /*personID identity olduğu için değeri 0 olarark verilmeli. Çünkü
             //EF, eğer ID değeri sıfırsa yani defaul değerde eşitse, o değerin 
             //DB tarafından verileceğini biliyor. Bu yüzden PersonID 0 olmlı.

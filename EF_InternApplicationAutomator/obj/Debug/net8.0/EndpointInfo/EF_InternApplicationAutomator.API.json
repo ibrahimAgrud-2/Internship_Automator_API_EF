@@ -4719,6 +4719,10 @@
           "imagePath": {
             "type": "string",
             "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4759,6 +4763,10 @@
             "type": "string"
           },
           "imagePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
             "type": "string",
             "nullable": true
           }
@@ -5009,7 +5017,6 @@
           "createdDate",
           "isActive",
           "passwordHash",
-          "permissionType",
           "personID",
           "userName"
         ],
@@ -5020,10 +5027,6 @@
             "type": "string"
           },
           "personID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "permissionType": {
             "type": "integer",
             "format": "int32"
           },
@@ -5066,7 +5069,6 @@
           "firstName",
           "isActive",
           "lastName",
-          "permissionType",
           "personID",
           "userID"
         ],
@@ -5088,10 +5090,6 @@
             "minLength": 1,
             "type": "string"
           },
-          "permissionType": {
-            "type": "integer",
-            "format": "int32"
-          },
           "isActive": {
             "type": "boolean"
           }
@@ -5102,7 +5100,6 @@
         "required": [
           "createdDate",
           "isActive",
-          "permissionType",
           "personID",
           "userID",
           "userName"
@@ -5118,10 +5115,6 @@
             "type": "string"
           },
           "personID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "permissionType": {
             "type": "integer",
             "format": "int32"
           },

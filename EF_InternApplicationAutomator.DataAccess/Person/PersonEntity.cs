@@ -35,7 +35,11 @@ namespace EF_InternApplicationAutomator.DataAccess
         [MaxLength(250)]
         public string ImagePath { get; set; }
 
-        public PersonEntity(int personID, string firstName, string lastName, string email, string phone, string address, string imagePath)
+
+        [MaxLength(10)]
+        public string Role { get; set; }
+
+        public PersonEntity(int personID, string firstName, string lastName, string email, string phone, string address, string imagePath,string role)
         {
             PersonID = personID;
             FirstName = firstName;
@@ -44,6 +48,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             Phone = phone;
             Address = address;
             ImagePath = imagePath;
+            this.Role = role;
         }
     }
 }

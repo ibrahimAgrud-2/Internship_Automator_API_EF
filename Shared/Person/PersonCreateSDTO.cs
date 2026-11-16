@@ -25,6 +25,7 @@ namespace Shared
         public string Address { get; set; }
 
         public string ImagePath { get; set; }
+
         public PersonCreateSDTO(string firstName, string lastName, string email,
                 string phone, string address, string imagePath)
         {
@@ -35,6 +36,8 @@ namespace Shared
             this.Phone = phone;
             Address = address;
             ImagePath = imagePath;
+
+
         }
     }
 }
