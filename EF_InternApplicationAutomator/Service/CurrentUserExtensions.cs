@@ -26,5 +26,9 @@ namespace EF_InternApplicationAutomator.API.Service
             return int.TryParse(value, out int id) ? id : null;
         }
 
+        //user'ın rölü staff mı
+        public static bool IsStaff(this ClaimsPrincipal user)
+           => user.IsInRole("User");
+
     }
 }
