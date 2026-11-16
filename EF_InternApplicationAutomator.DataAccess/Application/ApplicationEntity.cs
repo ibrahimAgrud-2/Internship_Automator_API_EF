@@ -41,19 +41,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         [Required]
         public byte Status { get; set; }
 
-        [MaxLength(150)]
-        public string Notes { get; set; }
 
-
-
-        [MaxLength(50)]
-        public string LinkedinURL { get; set; }
-
-        [MaxLength(50)]
-        public string GithubURL { get; set; }
 
       
-        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate,string university, string department, short classYear, byte status, string notes, string linkedinURL, string githubURL)
+        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate,string university, string department, short classYear, byte status)
         {
             ApplicationID = applicationID;
             PersonID = personID;
@@ -64,9 +55,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             Department = department;
             ClassYear = classYear;
             Status = status;
-            Notes = notes;
-            LinkedinURL = linkedinURL;
-            GithubURL = githubURL;
+
         }
     }
 }

@@ -10,13 +10,11 @@ namespace Shared.Application
     {
         public int ApplicationID { get; set; }
         public byte status { get; set; }
-        public string Notes { get; set; }
 
-        public ApplicationStatusUpdateDTO(int applicationID,byte status,string notes)
+        public ApplicationStatusUpdateDTO(int applicationID,byte status)
         {
             this.ApplicationID = applicationID;
             this.status = status;
-            this.Notes = notes;
         }
         
 

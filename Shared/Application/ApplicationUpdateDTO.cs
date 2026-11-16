@@ -38,20 +38,10 @@ namespace Shared.Application
         [Required]
         public byte Status { get; set; }
 
-        [MaxLength(150)]
-        public string Notes { get; set; }
-
-
-
-        [MaxLength(50)]
-        public string LinkedinURL { get; set; }
-
-        [MaxLength(50)]
-        public string GithubURL { get; set; }
 
         public ApplicationUpdateDTO( int personID, int? reviewedByUserID,
             DateTime? reviewDate, DateTime applicationDate, string university, string department,
-            short classYear, byte status, string notes, string linkedinURL, string githubURL)
+            short classYear, byte status)
         {
             
             this.PersonID = personID;
@@ -62,10 +52,6 @@ namespace Shared.Application
             this.Department = department;
             this.ClassYear = classYear;
             this.Status = status;
-            this.Notes = notes;
-        
-            this.LinkedinURL = linkedinURL;
-            this.GithubURL = githubURL;
         }
     }
 }

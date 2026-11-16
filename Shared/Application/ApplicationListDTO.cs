@@ -30,17 +30,9 @@ namespace Shared.Application
         [Required]
         public short ClassYear { get; set; }
 
-        [MaxLength(150)]
-        public string Notes { get; set; }
-
-        [MaxLength(50)]
-        public string LinkedinURL { get; set; }
-
-        [MaxLength(50)]
-        public string GithubURL { get; set; }
 
         public ApplicationListDTO(PersonCreateSDTO PersonInfo,int applicationID, short status,DateTime applicationDate, string university, string department,
-            short classYear, string notes, string linkedinURL, string githubURL)
+            short classYear)
         {
 
 
@@ -48,9 +40,6 @@ namespace Shared.Application
             this.University = university;
             this.Department = department;
             this.ClassYear = classYear;
-            this.Notes = notes;
-            this.LinkedinURL = linkedinURL;
-            this.GithubURL = githubURL;
             this.ApplicationID = applicationID;
             this.ApplicationDate = applicationDate;
             this.Status = status;

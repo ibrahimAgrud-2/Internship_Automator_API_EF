@@ -19,11 +19,12 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
 
         public List<ApplicationListDTO> GetAllApplication()
         {
+ 
+
 
             return _Context.Applications
                 .AsNoTracking()
-                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.FirstName,a.Person.LastName,a.Person.Email,a.Person.Phone,a.Person.Address,a.Person.ImagePath,a.Person.Role),a.ApplicationID, a.Status,a.ApplicationDate, a.University,a.Department,a.ClassYear,a.Notes,a.LinkedinURL,a.GithubURL
-                ))
+                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.FirstName, a.Person.LastName, a.Person.Email, a.Person.Phone, a.Person.Address, a.Person.ImagePath),a.ApplicationID,a.Status,a.ApplicationDate,a.University,a.Department,a.ClassYear))
                 .ToList();
         }
         public ApplicationResponseDTO? Find(int appID)
@@ -36,14 +37,14 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             }
             else
             {
-                return new ApplicationResponseDTO(app.ApplicationID, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status, app.Notes, app.LinkedinURL, app.GithubURL);
+                return new ApplicationResponseDTO(app.ApplicationID, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status);
             }
         }
         public int AddApplication(ApplicationCreateDTO app)
         {
 
             ApplicationEntity appEntity = new ApplicationEntity(
-                0, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status, app.Notes, app.LinkedinURL, app.GithubURL
+                0, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status
             );
 
             EntityEntry<ApplicationEntity> pw = _Context.Applications.Add(appEntity);
@@ -69,8 +70,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             app.ReviewedByUserID = 2;
             app.ReviewDate = DateTime.Now.Date;
             app.Status = appResponseDTO.status;
-            app.Notes = appResponseDTO.Notes;
-
 
             if (_Context.SaveChanges() > 0)
             {

@@ -114,7 +114,7 @@ namespace EF_InternApplicationAutomator.Business.Application
           
             //mapping
             //TODO: sistemde aktif user kimse onun ID'sini alsın
-            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,2,null,DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear,(byte)enStatus.newApp, newApplicationDTO.Notes, newApplicationDTO.LinkedinURL, newApplicationDTO.GithubURL);
+            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,2,null,DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear,(byte)enStatus.newApp);
 
 
 
