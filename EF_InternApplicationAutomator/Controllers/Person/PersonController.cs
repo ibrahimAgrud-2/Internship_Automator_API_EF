@@ -1,6 +1,7 @@
 ﻿
 using EF_InternApplicationAutomator.Business;
 using EF_InternApplicationAutomator.DataAccess;
+using Shared;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.User;
@@ -123,8 +124,12 @@ namespace EF_InternApplicationAutomator.API.Controllers
                 return BadRequest($"email  ve şifre zorunludur");
             }
 
-            PersonResponseSDTO person = _person.FindByEmail(loginDTO.Email);
+            PersonResponseWithIDsDTO? person = _person.FindByEmail(loginDTO.Email);
             if (person == null)
+            {
+                return NotFound("email  veya şifre hatalı");
+            }
+            else if(Shared.Common.CommonTools.ComputeHash(loginDTO.Password) !=person.Password)
             {
                 return NotFound("email  veya şifre hatalı");
             }
@@ -133,7 +138,16 @@ namespace EF_InternApplicationAutomator.API.Controllers
                 return StatusCode(403, new { message = "Hesabınız aktif değil" });
             }
 
-            return Ok(new LoginResponseDTO(person.PersonID,person.Email,person.FirstName,person.LastName,person.Role));
+
+            if (person.Role.ToLower()=="user"&& person.UserID<1)
+            {
+                return NotFound("Hesabiniza erişilemedi");
+            }
+            else if (person.Role.ToLower() == "intern"&&person.InternID < 1)
+            {
+                return NotFound("Hesabiniza erişilemedi");
+            }
+                return Ok(new LoginResponseDTO(person.PersonID, person.Email, person.FirstName, person.LastName, person.Role, person.InternID, person.UserID));
         }
     }
 

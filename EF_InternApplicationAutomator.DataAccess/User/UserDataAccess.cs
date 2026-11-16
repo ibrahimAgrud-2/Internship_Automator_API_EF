@@ -108,7 +108,15 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         {
            return _Context.Users.Any(u => u.UserID == userID);
         }
+        public int GetUserIDByPersonID(int personID)
+        {
+            int internId = _Context.Users
+                .Where(i => i.PersonID == personID)
+                .Select(i => i.UserID)
+                .FirstOrDefault();
+            return internId;
 
+        }
 
     }
 }

@@ -26,8 +26,15 @@ namespace Shared
         public string ImagePath { get; set; }
         public bool IsActive { get; set; }
         public string Role { get; set; }
+
+
+
+
+
+        [Required]
+        public string Password { get; set; }
         public PersonResponseSDTO(int personID,string firstName, string lastName, string email,
-                string phone, string address, string imagePath,string role,bool isActive)
+                string phone, string address, string imagePath,string role,bool isActive,string passwordHash)
         {
             this.PersonID = personID;
             this.Role = role;
@@ -38,6 +45,7 @@ namespace Shared
             Address = address;
             ImagePath = imagePath;
             this.IsActive = isActive;
+            this.Password = passwordHash;
         }
     }
 }

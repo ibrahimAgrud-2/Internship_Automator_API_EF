@@ -19,21 +19,6 @@ namespace EF_InternApplicationAutomator.DataAccess
         }
 
 
-        public List<PersonResponseSDTO> GetAllPeople()
-        {
-            List<PersonEntity> personList = _Context.People.ToList();
-
-            List<PersonResponseSDTO> personDTOs = new List<PersonResponseSDTO>();
-
-
-
-            //mapping
-            foreach (var Person in personList)
-            {
-                personDTOs.Add(new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath, Person.Role, Person.IsActive));
-            }
-            return personDTOs;
-        }
 
 
         public PersonResponseSDTO? Find(int personID)
@@ -46,7 +31,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
             else
             {
-                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role ,Person.IsActive);
+                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role ,Person.IsActive, Person.PasswordHash);
             }
         }
 
@@ -60,7 +45,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
             else
             {
-                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role,Person.IsActive);
+                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role,Person.IsActive,Person.PasswordHash);
             }
         }
         public int UpdatePerson(int personID, PersonCreateSDTO personCreateDTO)

@@ -17,17 +17,21 @@ namespace Shared
         public string FirstName { get; set; }
 
 
+        public int? InternID { get; set; }
+        public int? UserID { get; set; }
+
         public string LastName { get; set; }
 
         public string Role { get; set; }
 
-        public LoginResponseDTO(int ID,string email, string firstName, string lastName, string role)
+        public LoginResponseDTO(int ID,string email, string firstName, string lastName, string role,int? internID,int? userID)
         {
             this.FirstName = firstName;
             LastName = lastName;
             this.PersonID = ID;
             this.Role = role;
-
+            this.UserID = userID;
+            this.InternID = internID;
         }
     }
 }

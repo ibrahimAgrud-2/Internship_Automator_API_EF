@@ -135,5 +135,16 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
 
             return _Context.SaveChanges() > 0;
         }
+
+
+        public int GetInternIDByPersonID(int personID)
+        {
+            int internId = _Context.Interns
+                .Where(i => i.PersonID == personID)
+                .Select(i => i.InternID)
+                .FirstOrDefault();
+                     return internId;
+
+        }
     }
 }

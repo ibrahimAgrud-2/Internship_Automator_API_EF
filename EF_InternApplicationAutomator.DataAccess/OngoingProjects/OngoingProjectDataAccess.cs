@@ -1,6 +1,8 @@
 using EF_InternApplicationAutomator.DataAccess.Data;
+using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Application;
 using Shared.OngoingProjects;
 using Shared.Tasks;
@@ -122,5 +124,7 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
                 ongoingProject.StartDate,
                 ongoingProject.DueDate);
         }
+
+     
     }
 }

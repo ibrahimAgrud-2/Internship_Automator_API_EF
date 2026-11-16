@@ -68,7 +68,10 @@ namespace EF_InternApplicationAutomator.Business.Intern
             return _OngoingProjectDataAccess.IsProjectAssignedToIntern(projectID, internID);
         }
 
-
+        public int GetInternIDByPersonID(int personID)
+        {
+            return _InternDataAccess.GetInternIDByPersonID(personID);
+        }
 
     }
 }
