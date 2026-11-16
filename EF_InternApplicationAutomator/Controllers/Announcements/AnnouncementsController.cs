@@ -1,7 +1,8 @@
 ﻿using EF_InternApplicationAutomator.Business.Announcements;
 using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
-using EF_InternApplicationAutomator.Business.Project;
+using EF_InternApplicationAutomator.API.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Announcement;
 using Shared.Application;
@@ -28,7 +29,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
            
         }
 
-
+        [Authorize]
         [HttpGet("All/{topNewest=15}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<AnnouncementResponseDTO>> GetAll(int topNewest=15)
@@ -66,19 +67,28 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 
 
 
-
+        [Authorize(Roles = "User")]
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<AnnouncementResponseDTO> AddNewAnnouncement( AnnouncementCreateDTO announcementCreateDTO)
+        public ActionResult<AnnouncementResponseDTO> AddNewAnnouncement(AnnouncementCreateDTO announcementCreateDTO)
         {
             if (announcementCreateDTO == null)
             {
                 return BadRequest("Girilen veri formatı yanlış");
             }
+
+            // Kimlik token'dan alınır, istemcinin gönderdiği değer yok sayılır
+            int? userID = User.GetUserID();
+            if (userID == null)
+            {
+                return Unauthorized();
+            }
+
+            announcementCreateDTO.CreatedByUserID = userID.Value;
             announcementCreateDTO.CreatedDate = DateTime.Now.Date;
             int insertedID = _AnouncementsBL.AddAnnouncement(announcementCreateDTO);
-           
+
             if (insertedID > 0)
             {
                 return CreatedAtRoute(
@@ -90,7 +100,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
         }
 
 
-
+        [Authorize(Roles = "User")]
         [HttpPut("Update/{ID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -119,6 +129,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 
 
         //here we use HttpDelete method
+        [Authorize(Roles = "User")]
         [HttpDelete("Delete/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
