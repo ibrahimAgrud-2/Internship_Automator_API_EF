@@ -5,7 +5,7 @@ import { getAllMessages, addMessage } from '@/api/messages'
 import { getErrorMessages } from '@/api/http'
 import { getLatestAnnouncements } from '@/api/announcements'
 import { getAllProjects } from '@/api/projects'
-import { getInternTasks } from '@/api/tasks'
+import { getMyTasks } from '@/api/tasks'
 import { getSession } from '@/auth/session'
 import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
 import { formatTime, formatDate, formatDayLabel } from '@/utils/format'
@@ -185,8 +185,8 @@ async function loadProjectSections() {
 // Görevler: sadece bu stajyerin görevleri. Bekleyenler üstte, tamamlananlar ayrı bölümde ve soluk.
 // Her bölümün kendi içindeki sıra API'dan geldiği gibi kalır.
 async function loadTaskSections() {
-  const tasks = await getInternTasks(session.internID)
-  const toItem = (task) => ({
+  const tasks = await getMyTasks()
+    const toItem = (task) => ({
     id: task.taskID,
     title: task.title,
     subtitle: `Son tarih: ${formatDate(task.dueDate)}`,

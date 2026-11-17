@@ -1,14 +1,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getInternTasks } from '@/api/tasks'
+import { getMyTasks } from '@/api/tasks'
 import { getErrorMessages } from '@/api/http'
-import { getSession } from '@/auth/session'
 import { formatDate, formatDateTime } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import '@/assets/css/intern-tasks.css'
 
-// Rota koruması sayesinde bu sayfaya oturum olmadan gelinmez
-const session = getSession()
+
 
 const tasks = ref([])
 const isLoading = ref(true)
@@ -29,7 +27,7 @@ async function loadTasks() {
   tasks.value = []
 
   try {
-    tasks.value = await getInternTasks(session.internID)
+    tasks.value = await getMyTasks()
   } catch (error) {
     loadErrors.value = getErrorMessages(error)
   } finally {

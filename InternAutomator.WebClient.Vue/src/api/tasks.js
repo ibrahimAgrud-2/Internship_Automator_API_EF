@@ -5,6 +5,12 @@ export async function getInternTasks(internID) {
 
   return Array.isArray(tasks) ? tasks : []
 }
+// Stajyer: kendi görevleri (internID token'dan okunur)
+export async function getMyTasks() {
+  const tasks = await apiGet('Tasks/All')
+
+  return Array.isArray(tasks) ? tasks : []
+}
 
 export function addTask(task) {
   return apiPost('Tasks/Add', task)
