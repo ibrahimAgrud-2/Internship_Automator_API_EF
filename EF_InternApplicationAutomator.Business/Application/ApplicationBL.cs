@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared;
 using Shared.Application;
+using Shared.Common;
 using Shared.Intern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.Business.Application
 {
@@ -36,6 +38,7 @@ namespace EF_InternApplicationAutomator.Business.Application
             return _ApplicationDataAccess.GetAllApplication();
         }
 
+     
         public ApplicationResponseDTO Find(int appID)
         {
             return _ApplicationDataAccess.Find(appID);
@@ -46,22 +49,22 @@ namespace EF_InternApplicationAutomator.Business.Application
 
             return _ApplicationDataAccess.UpdateStatus(applicationStatus.ApplicationID, applicationStatus);
         }
-        public string[] ApplicationAccepted(ApplicationStatusUpdateDTO applicationStatus)
+        public bool ApplicationAccepted(int  ID)
         {
-            if (applicationStatus.status == (byte)enStatus.Accepted)
+            ApplicationResponseDTO application =Find(ID);
+            if (application.Status == (byte)enStatus.Accepted)
             {
-                ApplicationResponseDTO app = Find(applicationStatus.ApplicationID);
-                PersonResponseSDTO person = _person.Find(app.PersonID);
+                PersonResponseSDTO? person = _person.Find(application.PersonID);
                 if (person == null || UpdateStatus(applicationStatus) == -1)
                 {
-                    return null;
+                    return false;
                 }
                 string password = Shared.Common.CommonTools.GenerateRandomPassword(8);
                 if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now, 0)) != -1)
                 {
                     if (SendEmail(person.PersonID))
                     {
-                        return [password, person.Email];
+                        return true
                     }
                     else
                     {
@@ -72,7 +75,7 @@ namespace EF_InternApplicationAutomator.Business.Application
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
             return null;
@@ -102,7 +105,7 @@ namespace EF_InternApplicationAutomator.Business.Application
             PersonResponseSDTO? personCreateSDTO = _person.Find(newApplicationDTO.PersonInfo.Email);
             if (personCreateSDTO == null)
             {
-                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath, "Intern",newApplicationDTO.PersonInfo.passwordHash);
+                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"intern",CommonTools.GenerateRandomPassword(11));
                 personID = _person.AddPerson(personCreate);
 
             }

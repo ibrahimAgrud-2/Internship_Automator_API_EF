@@ -547,8 +547,8 @@
               }
             }
           },
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -4285,7 +4285,6 @@
           "email",
           "firstName",
           "lastName",
-          "passwordHash",
           "phone"
         ],
         "type": "object",
@@ -4313,10 +4312,6 @@
           "imagePath": {
             "type": "string",
             "nullable": true
-          },
-          "passwordHash": {
-            "minLength": 1,
-            "type": "string"
           }
         },
         "additionalProperties": false

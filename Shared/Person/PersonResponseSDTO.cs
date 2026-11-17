@@ -27,10 +27,6 @@ namespace Shared
         public bool IsActive { get; set; }
         public string Role { get; set; }
 
-
-
-
-
         [Required]
         public string Password { get; set; }
         public PersonResponseSDTO(int personID,string firstName, string lastName, string email,

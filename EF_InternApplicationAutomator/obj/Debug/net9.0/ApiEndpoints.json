@@ -220,7 +220,7 @@
           "application/json",
           "text/json"
         ],
-        "StatusCode": 201
+        "StatusCode": 200
       }
     ]
   },

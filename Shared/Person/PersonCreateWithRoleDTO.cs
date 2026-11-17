@@ -12,11 +12,15 @@ namespace Shared
     {
         [Required]
         public string Role { get; set; }
+        [Required]
+        public string PasswordHash { get; set; }
         public PersonCreateWithRoleDTO(string firstName, string lastName, string email,
-                string phone, string address, string imagePath,string rol,string passwordHash):base(firstName,lastName,email,phone,address,imagePath, passwordHash)
+                string phone, string address, string imagePath,string rol,string passwordHash):base(firstName,lastName,email,phone,address,imagePath)
         {
             this.Role = rol;
-         
+            this.PasswordHash = passwordHash;
+
+
         }
     }
 }

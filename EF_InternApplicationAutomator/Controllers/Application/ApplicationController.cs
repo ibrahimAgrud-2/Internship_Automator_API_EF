@@ -18,6 +18,27 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             _application = application;
         }
 
+        //add herkese açık
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<bool> AddNewApplication(ApplicationCreateSecure newApplicationDTO)
+        {
+            if (newApplicationDTO == null || newApplicationDTO.PersonInfo == null)
+            {
+                return BadRequest("Invalid Application data.");
+            }
+
+            int ID = _application.AddApplication(newApplicationDTO);
+
+            if (ID < 1)
+            {
+                return BadRequest("sistemden kaynaklana bir sorundan ötürü başvuru eklenemedi");
+            }
+
+            return Ok(true);
+        }
+
 
 
         [Authorize(Roles ="User")]
@@ -62,27 +83,6 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
 
 
-        //add herkese açık
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<bool> AddNewApplication(ApplicationCreateSecure newApplicationDTO)
-        {
-            if (newApplicationDTO == null || newApplicationDTO.PersonInfo == null)
-            {
-                return BadRequest("Invalid Application data.");
-            }
-
-            int ID = _application.AddApplication(newApplicationDTO);
-
-            if (ID < 1)
-            {
-                return BadRequest("sistemden kaynaklana bir sorundan ötürü başvuru eklenemedi");
-            }
-
-            return Ok(true);
-        }
-
 
 
         //sadece status upadte edilebilir
@@ -113,14 +113,20 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<string> Accepted(ApplicationStatusUpdateDTO updatedApplication)
+        public ActionResult<string> Accepted(int applicationID)
         {
-            if (updatedApplication == null || updatedApplication.ApplicationID < 1)
+           ApplicationResponseDTO application= _application.Find(applicationID);
+            if (application==null)
             {
-                return BadRequest("Invalid Application data");
+                return BadRequest("başvuru bulunamadı");
             }
+            if(application.Status==(int)ApplicationBL.enStatus.Accepted)
+            {
+                return BadRequest("başvuru zaten kabul edilmiş");
 
-            string[] InsertedPassword = _application.ApplicationAccepted(updatedApplication);
+            }
+          
+            string[] InsertedPassword = _application.ApplicationAccepted(applicationID);
             if (InsertedPassword.Count() != 0)
             {
                 return Ok();
@@ -135,7 +141,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
         [Authorize(Roles = "User")]
         [HttpDelete("{id}", Name = "DeleteApplication")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteApplication(int id)

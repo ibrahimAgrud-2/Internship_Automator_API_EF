@@ -74,12 +74,9 @@ namespace EF_InternApplicationAutomator.DataAccess
        
         public int AddPerson(PersonCreateWithRoleDTO person)
         {
-            PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath,person.Role,true,person.passwordHash);
-            /*personID identity olduğu için değeri 0 olarark verilmeli. Çünkü
-            //EF, eğer ID değeri sıfırsa yani defaul değerde eşitse, o değerin 
-            //DB tarafından verileceğini biliyor. Bu yüzden PersonID 0 olmlı.
-            //personEntity.PersonID = 0;
-            //defaul değer zaten sıfır olduğu için tekrar = 0 dememize gerek yok*/
+            PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath,person.Role,true,person.PasswordHash);
+
+
             EntityEntry<PersonEntity> pw = _Context.People.Add(personEntity);
 
             if (_Context.SaveChanges() > 0)
