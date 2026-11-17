@@ -7,6 +7,11 @@ export async function getInternProjects(internID) {
   return Array.isArray(projects) ? projects : []
 }
 
+export async function getMyProjects() {
+  const projects = await apiGet('OngoingProjects/MyProjects')
+  return Array.isArray(projects) ? projects : []
+}
+
 export function assignProjectToIntern(internID, projectID, dueDate) {
   return apiPost('OngoingProjects/Add', { internID, projectID, dueDate })
 }

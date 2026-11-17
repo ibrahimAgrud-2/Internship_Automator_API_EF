@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getInternProjects } from '@/api/ongoingProjects'
+import { getMyProjects } from '@/api/ongoingProjects'
 import { getErrorMessages } from '@/api/http'
 import { getSession } from '@/auth/session'
 import { formatDate } from '@/utils/format'
@@ -21,7 +21,7 @@ async function loadProjects() {
   projects.value = []
 
   try {
-    projects.value = await getInternProjects(session.internID)
+    projects.value = await getMyProjects()
   } catch (error) {
     loadErrors.value = getErrorMessages(error)
   } finally {

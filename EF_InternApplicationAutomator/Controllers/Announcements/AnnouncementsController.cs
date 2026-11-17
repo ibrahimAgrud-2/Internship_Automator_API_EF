@@ -34,15 +34,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<AnnouncementResponseDTO>> GetAll(int topNewest=15)
         {
-          
-           
             List<AnnouncementResponseDTO> anns = _AnouncementsBL.GetAll(topNewest);
-
             return Ok(anns);
         }
 
 
 
+        [Authorize]
         [HttpGet("Find/{id}", Name= "FindAnnouncement")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -93,7 +91,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             {
                 return CreatedAtRoute(
                    "FindAnnouncement",
-                   new { id = insertedID }, new AnnouncementResponseDTO(0,
+                   new { id = insertedID }, new AnnouncementResponseDTO(insertedID,
                                      announcementCreateDTO.Title, announcementCreateDTO.Content, announcementCreateDTO.CreatedDate, announcementCreateDTO.CreatedByUserID));
             }
             return StatusCode(StatusCodes.Status500InternalServerError);
@@ -128,17 +126,16 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 
 
 
-        //here we use HttpDelete method
+       
         [Authorize(Roles = "User")]
         [HttpDelete("Delete/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteAnnouncement(int id)
         {
             if (id < 1)
             {
-                return BadRequest($"Not accepted ID {id}");
+                return BadRequest($"ID geçerli değil!!");
             }
 
        

@@ -1,6 +1,8 @@
-﻿using EF_InternApplicationAutomator.Business.Intern;
+﻿using EF_InternApplicationAutomator.API.Service;
+using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Project;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
 using Shared.Tasks;
@@ -23,21 +25,46 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             _Project = project ;
         }
 
+
+        [Authorize(Roles ="User")]
         [HttpGet("InternProjects")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<OngoingInternProjectResponseDTO>> GetAllInternProjects(int internID)
         {
-            if (internID <= 0)
+           
+            if (internID <=0)
             {
-                return BadRequest($"Intern ID {internID} Is Not Valid");
+                return BadRequest("Intern ID geçerli değil");
             }
             if (!_Intern.IsInternExists(internID))
             {
-                return BadRequest("Such intern Does not exist. ");
+                return NotFound("Stajyer bulunamadı!");
             }
             List<OngoingInternProjectResponseDTO> tasks = _OngoingProjects.GetInternOngoingProjects(internID);
+
+            return Ok(tasks);
+        }
+
+        [Authorize(Roles = "Intern")]
+        [HttpGet("MyProjects")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<OngoingInternProjectResponseDTO>> MyProjects()
+        {
+
+            int? internID = User.GetInternID();
+            if(internID==null)
+            {
+                return Unauthorized();
+            }
+            if (!_Intern.IsInternExists(internID.Value))
+            {
+                return NotFound("Stajyer bulunamadı!");
+            }
+            List<OngoingInternProjectResponseDTO> tasks = _OngoingProjects.GetInternOngoingProjects(internID.Value);
 
             return Ok(tasks);
         }
@@ -45,6 +72,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
 
 
 
+        [Authorize(Roles = "User")]
         [HttpGet("{id}", Name = "FindOngoingProject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,20 +81,21 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         {
             if (id < 1)
             {
-                return BadRequest($"Not Accepted ID {id}");
+                return BadRequest($"ID geçersiz");
             }
 
             OngoingProjectResponseDTO? ongoingProject = _OngoingProjects.Find(id);
             if (ongoingProject == null)
             {
-                return NotFound($"No Ongoing Project With ID {id}");
+                return NotFound($"Proje bulunamadi");
             }
 
             return Ok(ongoingProject);
         }
 
-      
-        
+
+
+        [Authorize(Roles = "User")]
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -107,7 +136,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         }
 
 
-
+        [Authorize(Roles = "User")]
         [HttpPut("Update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -115,7 +144,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<OngoingProjectResponseDTO> UpdateOngoingProject( int id,  OngoingProjectCreateDTO ongoingProjectDTO)
         {
-            if (id < 1||ongoingProjectDTO.DueDate<DateTime.Now.Date|| ongoingProjectDTO == null)
+            if ( ongoingProjectDTO == null||id < 1||ongoingProjectDTO.DueDate<DateTime.Now.Date)
             {
                 return BadRequest("Girilen veri formatı yanlış");
             }
@@ -124,11 +153,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
             {
                 return BadRequest($"Ayrıla veya olmayan Stajyere proje atanamaz");
             }
-            if(!_Project.IsProjectExists(ongoingProjectDTO.ProjectID))
+            if(!_OngoingProjects.IsOngoingProjectExists(id)||!_Project.IsProjectExists(ongoingProjectDTO.ProjectID))
             {
                 return BadRequest($"Atamak istediğiniz proje kayıtlı değil. Önce projeyi kayıt edin");
             }
-            if (_OngoingProjects.UpdateOngoingProject(id, ongoingProjectDTO) > 0)
+            if (_OngoingProjects.UpdateOngoingProject(id, ongoingProjectDTO))
             {
                 return Ok(new OngoingProjectResponseDTO(
                     id,
@@ -138,11 +167,12 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
                     ongoingProjectDTO.DueDate));
             }
 
+
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-     
-        
+
+        [Authorize(Roles = "User")]
         [HttpDelete("Delete/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -156,13 +186,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
           
             if (!_OngoingProjects.IsOngoingProjectExists(id))
             {
-                return BadRequest($"No Ongoing Project With ID {id}");
+                return NotFound($"No Ongoing Project With ID {id}");
             }
             OngoingProjectResponseDTO ongoingProject = _OngoingProjects.Find(id);
 
             if (ongoingProject==null)
             {
-                return BadRequest($"No Ongoing Project With ID {id}");
+                return NotFound($"No Ongoing Project With ID {id}");
             }
             if (!_Intern.IsInternActive(ongoingProject.InternID))
             {
@@ -173,13 +203,14 @@ namespace EF_InternApplicationAutomator.API.Controllers.OngoingProjects
                 return NoContent();
             }
 
-            return NotFound("Delete Process terminated. No rows deleted!");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
         }
 
 
 
 
-
+        [Authorize(Roles = "User")]
         [HttpGet("exists/{ongoingProjectID}")]
         public bool IsOngoingProjectExists(int ongoingProjectID)
         {

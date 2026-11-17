@@ -160,15 +160,6 @@ namespace EF_InternApplicationAutomator.API.Controllers
         }
 
 
-        [Authorize]
-        [HttpGet("test")]
-        public ActionResult<string> Test()
-        {
-            string? idText = User.FindFirstValue(ClaimTypes.NameIdentifier);
-          
-                return Ok($"okuna ID{idText}");
-            
-        }
 
 
     }

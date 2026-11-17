@@ -74,12 +74,12 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
         }
 
 
-        public int UpdateOngoingProject(int ongoingProjectID, OngoingProjectCreateDTO ongoingProjectDTO)
+        public bool UpdateOngoingProject(int ongoingProjectID, OngoingProjectCreateDTO ongoingProjectDTO)
         {
             OngoingProjectEntity? ongoingProject = _Context.OngoingProjects.Find(ongoingProjectID);
             if (ongoingProject == null || ongoingProjectDTO == null)
             {
-                return -1;
+                return false;
             }
 
             ongoingProject.InternID = ongoingProjectDTO.InternID;
@@ -89,10 +89,10 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
 
             if (_Context.SaveChanges() > 0)
             {
-                return ongoingProjectID;
+                return true;
             }
 
-            return -1;
+            return false;
         }
 
         public bool DeleteOngoingProject(int ongoingProjectID)

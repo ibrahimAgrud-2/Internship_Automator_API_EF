@@ -22,7 +22,7 @@ namespace EF_InternApplicationAutomator.Business.OngoingProjects
             return _OngoingProjectDataAccess.Find(ongoingProjectID);
         }
 
-        public int UpdateOngoingProject(
+        public bool UpdateOngoingProject(
             int ongoingProjectID,
             OngoingProjectCreateDTO ongoingProjectCreateDTO)
         {
