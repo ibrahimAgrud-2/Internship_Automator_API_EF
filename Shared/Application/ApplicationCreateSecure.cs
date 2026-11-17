@@ -1,9 +1,12 @@
 ﻿
+using Org.BouncyCastle.Utilities;
 using System.ComponentModel.DataAnnotations;
 
 
 namespace Shared.Application
 {
+
+    //normalde Add app yaparlen personID dışardan gelmemeli. işte bu dışardan creat bilgileri için önemli.
     public class ApplicationCreateSecure
     {
 
@@ -22,10 +25,18 @@ namespace Shared.Application
         [Required]
         public short ClassYear { get; set; }
 
+        [MaxLength(150)]
+        public string Notes { get; set; }
+
+        [MaxLength(50)]
+        public string LinkedinURL { get; set; }
+
+        [MaxLength(50)]
+        public string GithubURL { get; set; }
 
 
         public ApplicationCreateSecure(PersonCreateSDTO PersonInfo, string university, string department,
-            short classYear)
+            short classYear, string notes, string linkedinURL, string githubURL)
         {
             
 
@@ -33,7 +44,9 @@ namespace Shared.Application
             this.University = university;
             this.Department = department;
             this.ClassYear = classYear;
-;
+             this.Notes = notes;
+            this.LinkedinURL = linkedinURL;
+            this.GithubURL = githubURL;
         }
     }
 }

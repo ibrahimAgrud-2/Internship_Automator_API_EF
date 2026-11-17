@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Shared.Application
 {
+
+    //Bu create dışarı için değil, sadece program için create yapmak için kullanoılır
     public class ApplicationCreateDTO
     {
 
@@ -31,12 +33,20 @@ namespace Shared.Application
         [Required]
         public byte Status { get; set; }
 
-       
-        public ApplicationCreateDTO(int personID,PersonCreateSDTO PersonInfo, int? reviewedByUserID,
+        [MaxLength(150)]
+        public string Notes { get; set; }
+
+        [MaxLength(50)]
+        public string LinkedinURL { get; set; }
+
+        [MaxLength(50)]
+        public string GithubURL { get; set; }
+
+        public ApplicationCreateDTO(int personID, PersonCreateSDTO PersonInfo, int? reviewedByUserID,
             DateTime? reviewDate, DateTime applicationDate, string university, string department,
-            short classYear, byte status)
+            short classYear, byte status, string notes, string linkedinURL, string githubURL)
         {
-            
+
 
             this.PersonID = personID;
             this.PersonInfo = PersonInfo;
@@ -47,6 +57,9 @@ namespace Shared.Application
             this.Department = department;
             this.ClassYear = classYear;
             this.Status = status;
+            this.Notes = notes;
+            this.LinkedinURL = linkedinURL;
+            this.GithubURL = githubURL;
         }
     }
 }

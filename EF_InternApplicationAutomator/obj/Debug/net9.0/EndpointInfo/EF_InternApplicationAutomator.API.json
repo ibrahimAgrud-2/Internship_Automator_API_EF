@@ -552,23 +552,20 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationResponseDTO"
+                  "type": "boolean"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationResponseDTO"
+                  "type": "boolean"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationResponseDTO"
+                  "type": "boolean"
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -3693,6 +3690,21 @@
           "classYear": {
             "type": "integer",
             "format": "int32"
+          },
+          "notes": {
+            "maxLength": 150,
+            "type": "string",
+            "nullable": true
+          },
+          "linkedinURL": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "githubURL": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

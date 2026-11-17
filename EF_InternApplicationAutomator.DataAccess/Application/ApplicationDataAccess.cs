@@ -20,10 +20,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         public List<ApplicationDetailedListDTO> GetAllApplication()
         {
 
-            return _Context.vw_ApplicationsWithProfiles
-                .AsNoTracking()
-                .Select(a => new ApplicationDetailedListDTO(a.ApplicationID,a.Status,a.ApplicationDate,a.University,a.Department,a.ClassYear,a.LinkedInUrl,a.GitHubUrl))
-                .ToList();
+            return _Context.Applications
+              .AsNoTracking()
+              .Select(a => new ApplicationDetailedListDTO(a.ApplicationID, a.Status, a.ApplicationDate, a.University, a.Department, a.ClassYear, a.Notes, a.LinkedInUrl, a.GitHubUrl))
+              .ToList();
         }
 
         public ApplicationResponseDTO? Find(int appID)
@@ -43,7 +43,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         {
 
             ApplicationEntity appEntity = new ApplicationEntity(
-                0, app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status
+                0,app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status,app.Notes,app.LinkedinURL,app.GithubURL
             );
 
             EntityEntry<ApplicationEntity> pw = _Context.Applications.Add(appEntity);

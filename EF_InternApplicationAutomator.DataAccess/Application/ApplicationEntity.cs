@@ -17,9 +17,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         [Required]
         public int PersonID { get; set; }
 
-        [ForeignKey(nameof(PersonID))]
-        public PersonEntity Person { get; set; }
-
         public int? ReviewedByUserID { get; set; }
 
         public DateTime? ReviewDate { get; set; }
@@ -43,8 +40,18 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
 
 
 
-      
-        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate,string university, string department, short classYear, byte status)
+        [Required]
+        public string Notes { get; set; }
+
+
+        [Required]
+        public string LinkedInUrl { get; set; }
+
+
+        [Required]
+        public string GitHubUrl { get; set; }
+
+        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate, string university, string department, short classYear, byte status, string notes, string linkedInUrl, string gitHubUrl)
         {
             ApplicationID = applicationID;
             PersonID = personID;
@@ -55,6 +62,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             Department = department;
             ClassYear = classYear;
             Status = status;
+            this.GitHubUrl = gitHubUrl;
+            this.LinkedInUrl = linkedInUrl;
+            this.Notes = notes;
 
         }
     }

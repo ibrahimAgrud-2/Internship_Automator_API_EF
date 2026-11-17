@@ -214,18 +214,13 @@
         "StatusCode": 400
       },
       {
-        "Type": "Shared.Application.ApplicationResponseDTO",
+        "Type": "System.Boolean",
         "MediaTypes": [
           "text/plain",
           "application/json",
           "text/json"
         ],
         "StatusCode": 201
-      },
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 500
       }
     ]
   },

@@ -41,7 +41,7 @@ namespace Shared.Application
         public string GitHubURL { get; set; }
 
 
-        public ApplicationDetailedListDTO(int applicationID, short status,DateTime applicationDate, string university, string department,short classYear,string linkedinURL,string gitHubURL)
+        public ApplicationDetailedListDTO(int applicationID, short status,DateTime applicationDate, string university, string department,short classYear,string notes,string linkedinURL,string gitHubURL)
         {
 
             this.University = university;
@@ -52,6 +52,7 @@ namespace Shared.Application
             this.Status = status;
             this.LinkedinURL = linkedinURL;
             this.GitHubURL = gitHubURL;
+            this.Notes = notes;
 
 
         }

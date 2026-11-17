@@ -65,25 +65,22 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         //add herkese açık
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ApplicationResponseDTO> AddNewApplication(ApplicationCreateSecure newApplicationDTO)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<bool> AddNewApplication(ApplicationCreateSecure newApplicationDTO)
         {
             if (newApplicationDTO == null || newApplicationDTO.PersonInfo == null)
             {
                 return BadRequest("Invalid Application data.");
             }
 
-
-
             int ID = _application.AddApplication(newApplicationDTO);
 
             if (ID < 1)
             {
-                return BadRequest("başvuru eklenemedi");
+                return BadRequest("sistemden kaynaklana bir sorundan ötürü başvuru eklenemedi");
             }
 
-            return CreatedAtRoute("FindApplication", new { id = ID }, newApplicationDTO);
+            return Ok(true);
         }
 
 
