@@ -117,6 +117,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
 
 
 
+        [Authorize(Roles = "User")]
         [HttpGet("FindTask/{id}", Name = "FindTask")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -138,7 +139,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         }
 
 
-
+        [Authorize(Roles = "User")]
         [HttpPut("Complete/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -148,19 +149,24 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         {
             if (id < 1)
             {
-                return BadRequest($"Not Accepted ID {id}");
+                return BadRequest($"Güncelleme için verilen ID geçerli değil");
             }
 
             TaskResponseDTO? task = _Tasks.Find(id);
             if (task == null)
             {
-                return NotFound($"No Task With ID {id}");
+                return NotFound($"Görev bulunamadı");
             }
             if (task.Completed)
             {
-                return BadRequest("Görev zaten tamamlanmış.");
+                return BadRequest("Görev zaten tamamlanmış");
             }
-            if (_Tasks.CompleteTask(id))
+            int? userID = User.GetUserID();
+            if(userID==null)
+            {
+                return Unauthorized();
+            }
+            if (_Tasks.CompleteTask(id, userID.Value))
             {
                 return Ok(true);
             }
@@ -169,54 +175,66 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         }
 
 
-
+        [Authorize(Roles = "User")]
         [HttpDelete("Delete/{ID}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult DeleteTask(int ID)
         {
             if (ID < 1)
             {
-                return BadRequest($"Not Accepted ID {ID}");
+                return BadRequest($"Verilen ID geçersiz");
             }
 
             if (!_Tasks.IsTaskExists(ID))
             {
-                return NotFound($"No Taks With ID {ID}");
+                return NotFound($"Görev Bulunamadi");
             }
             if (_Tasks.DeleteTask(ID))
             {
                 return NoContent();
             }
 
-            return NotFound("Delete Process terminated. No rows deleted!");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
 
-
+        [Authorize(Roles ="User")]
         [HttpPut("Update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<bool> UpdateTask(int id, TaskUpdateDTO taskDTO)
         {
             if (id < 1 || taskDTO == null)
             {
-                return BadRequest("Invalid Task data.");
+                return BadRequest("Görev ID'si geçersiz");
             }
 
             if (!_Tasks.IsTaskExists(id))
             {
-                return NotFound($"No Task With ID {id}");
+                return NotFound($"task bulunamadı");
             }
 
+            int? updatedByUserID = User.GetUserID();
+            if(updatedByUserID==null)
+            {
+                return Unauthorized();
+            }
+            if (!_User.IsUserExists(updatedByUserID.Value))
+            {
+                return BadRequest("Hesabınıza erişilemediği için Görev güncellenemedi!");
+            }
+            taskDTO.LastUpdatedByUserID = updatedByUserID.Value;
             if (_Tasks.UpdateTask(id, taskDTO))
             {
                 return Ok(true);
             }
 
-            return BadRequest("Could Not Update Task");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
 

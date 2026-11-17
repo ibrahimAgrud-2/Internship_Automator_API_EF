@@ -40,19 +40,11 @@ namespace EF_InternApplicationAutomator.Business.Tasks
             return _TaskDataAccess.DeleteTask(taskID);
         }
         //TODO: normlade bu ID almamaı gerekirdi. BL yani bu sınıf propertyleri olurdu. Sen ID'i this.ID şekilde veridir. Dışardan da task.CompleteTask(); şekilnde kullanmalıydın.
-        public bool CompleteTask(int taskID)
+        public bool CompleteTask(int taskID,int completedByUserID)
         {
-            return _TaskDataAccess.CompleteTask(taskID);
+            return _TaskDataAccess.CompleteTask(taskID, completedByUserID);
         }
 
-        //public int UpdateTask(int taskID, TaskCreateDTO taskCreateDTO)
-        //{
-        //    return _TaskDataAccess.UpdateTask(taskID, taskCreateDTO);
-        //}
-
-        //public bool IsTaskExists(int taskID)
-        //{
-        //    return _TaskDataAccess.IsTaskExists(taskID);
-        //}
+      
     }
 }

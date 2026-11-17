@@ -50,7 +50,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             return task == null ? null : ToResponseDTO(task);
         }
 
-        public bool CompleteTask(int taskID)
+        public bool CompleteTask(int taskID,int completedByUserID)
         {
 
             TaskEntity taskEntity = _Context.Tasks.Find(taskID);
@@ -61,6 +61,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
             }
             taskEntity.Completed = true;
             taskEntity.CompletedDate = DateTime.Now.Date;
+            taskEntity.lastModifiedByUserID = completedByUserID;
             if (_Context.SaveChanges() > 0)
             {
                 return true;

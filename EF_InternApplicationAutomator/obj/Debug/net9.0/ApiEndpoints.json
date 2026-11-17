@@ -1396,6 +1396,11 @@
         "StatusCode": 400
       },
       {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
+      },
+      {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
         "MediaTypes": [
           "text/plain",
@@ -1497,6 +1502,11 @@
           "text/json"
         ],
         "StatusCode": 404
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
       }
     ]
   },
