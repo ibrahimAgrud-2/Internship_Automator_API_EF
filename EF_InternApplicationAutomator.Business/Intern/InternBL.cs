@@ -29,15 +29,12 @@ namespace EF_InternApplicationAutomator.Business.Intern
         {
             return _InternDataAccess.Find(internID);
         }
-        public InterLoginResponseDTO? FindByPasswordAndEmail(string email, string password)
-        {
-            return _InternDataAccess.FindByPasswordAndEmail(email, password);
-        }
+
         public InternResponseDTO FindByPersonID(int personID)
         {
             return _InternDataAccess.FindByPersonID(personID);
         }
-        public int UpdateIntern(int internID, InternCreateDTO internCreateDTO)
+        public bool UpdateIntern(int internID, InternUpdateDTO internCreateDTO)
         {
             return _InternDataAccess.UpdateIntern(internID, internCreateDTO);
         }

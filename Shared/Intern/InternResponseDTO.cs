@@ -21,17 +21,17 @@ namespace Shared.Intern
         public DateTime CreatedDate { get; set; }
 
         [Required]
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
 
         public InternResponseDTO(int internID, int personID,
-            DateTime startDate, DateTime? endDate, DateTime createdDate, byte status)
+            DateTime startDate, DateTime? endDate, DateTime createdDate, bool isActive)
         {
             InternID = internID;
             PersonID = personID;
             StartDate = startDate;
             EndDate = endDate;
             CreatedDate = createdDate;
-            Status = status;
+            IsActive = isActive;
         }
     }
 }

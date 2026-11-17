@@ -20,17 +20,17 @@ namespace Shared.Intern
         public DateTime CreatedDate { get; set; }
 
         [Required]
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
 
         public InternCreateDTO(int personID, string passwordHash, DateTime startDate,
-            DateTime? endDate, DateTime createdDate, byte status)
+            DateTime? endDate, DateTime createdDate, bool isActive)
         {
             PersonID = personID;
             PasswordHash = passwordHash;
             StartDate = startDate;
             EndDate = endDate;
             CreatedDate = createdDate;
-            Status = status;
+            IsActive = isActive;
         }
     }
 }

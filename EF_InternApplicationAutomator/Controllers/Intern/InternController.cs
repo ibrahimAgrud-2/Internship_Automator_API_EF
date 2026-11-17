@@ -48,26 +48,28 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             return Ok(intern);
         }
 
-        [Authorize(Roles = "User")]
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<InternCreateDTO> AddNewIntern(InternCreateDTO newIntern)
-        {
-            if (newIntern == null)
-            {
-                return BadRequest("Invalid Intern data.");
-            }
 
-            int ID = _Intern.AddIntern(newIntern);
-            if (ID < 1)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-            newIntern.CreatedDate = DateTime.Now;
-            return CreatedAtRoute("FindIntern", new { id = ID }, newIntern);
-        }
+        //add ıntern sadece application accepted olunca otomatik eklenir. 
+        //[Authorize(Roles = "User")]
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public ActionResult<InternCreateDTO> AddNewIntern(InternCreateDTO newIntern)
+        //{
+        //    if (newIntern == null)
+        //    {
+        //        return BadRequest("Invalid Intern data.");
+        //    }
+
+        //    int ID = _Intern.AddIntern(newIntern);
+        //    if (ID < 1)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError);
+        //    }
+        //    newIntern.CreatedDate = DateTime.Now;
+        //    return CreatedAtRoute("FindIntern", new { id = ID }, newIntern);
+        //}
 
 
 
@@ -77,7 +79,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-         public ActionResult<InternResponseDTO> UpdateIntern(int id, InternCreateDTO internDTO)
+         public ActionResult<InternResponseDTO> UpdateIntern(int id, InternUpdateDTO internDTO)
         {
             if (id < 1 || internDTO == null)
             {
@@ -89,7 +91,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
                 return NotFound($"No Intern With ID {id}");
             }
 
-            if (_Intern.UpdateIntern(id, internDTO) > 0)
+            if (_Intern.UpdateIntern(id, internDTO))
             {
                 return Ok(internDTO);
             }
@@ -137,6 +139,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
 
             return _Intern.IsInternExists(internID);
         }
+
+
 
         [Authorize(Roles = "User")]
         [HttpPut("Separate/{internID}")]

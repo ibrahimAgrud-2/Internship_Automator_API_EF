@@ -15,7 +15,7 @@ namespace Shared.Intern
         public string Phone { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
 
         public InternCardResponseDTO(
             int internID,
@@ -25,7 +25,7 @@ namespace Shared.Intern
             string phone,
             DateTime startDate,
             DateTime? endDate,
-            byte status)
+            bool isActive)
         {
             InternID = internID;
             FirstName = firstName;
@@ -34,7 +34,7 @@ namespace Shared.Intern
             Phone = phone;
             StartDate = startDate;
             EndDate = endDate;
-            Status = status;
+            IsActive = isActive;
           
         }
 

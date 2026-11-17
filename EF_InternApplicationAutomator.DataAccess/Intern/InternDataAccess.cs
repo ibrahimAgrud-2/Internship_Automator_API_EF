@@ -31,20 +31,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             return _Context.Database
                 .SqlQuery<InternDetailedResponseDTO>(formattableString).ToList();
         }
-        public InterLoginResponseDTO? FindByPasswordAndEmail(string email, string password)
-        {
-
-            InternEntity internEntity = _Context.Interns.AsNoTracking().Where(i => i.Person.Email == email && i.PasswordHash == Shared.Common.CommonTools.ComputeHash(password)).Include(i => i.Person).FirstOrDefault();
-            if (internEntity != null)
-            {
-                if (internEntity.Person == null)
-                {
-                    return null;
-                }
-                return new InterLoginResponseDTO(internEntity.Person.FirstName, internEntity.Person.LastName, internEntity.InternID,internEntity.PersonID, internEntity.StartDate, internEntity.EndDate, internEntity.Status);
-            }
-            return null;
-        }
+       
         public InternCardResponseDTO Find(int internID)
         {
             InternEntity intern = _Context.Interns.Include(i => i.Person).FirstOrDefault(i => i.InternID == internID);
@@ -53,7 +40,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
                 return null;
             }
 
-            return new InternCardResponseDTO(intern.InternID, intern.Person.FirstName, intern.Person.LastName, intern.Person.Email, intern.Person.Phone, intern.StartDate, intern.EndDate, intern.Status);
+            return new InternCardResponseDTO(intern.InternID, intern.Person.FirstName, intern.Person.LastName, intern.Person.Email, intern.Person.Phone, intern.StartDate, intern.EndDate, intern.IsActive);
         }
 
         public InternResponseDTO FindByPersonID(int personID)
@@ -66,12 +53,12 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
 
             return new InternResponseDTO(intern.InternID, intern.PersonID,
                 intern.StartDate, intern.EndDate,
-                intern.CreatedDate, intern.Status);
+                intern.CreatedDate, intern.IsActive);
         }
 
         public int AddIntern(InternCreateDTO intern)
         {
-            //Status 1 means the intern is active/new meanwhile 0 means separated
+            //IsActive 1 means the intern is active/new meanwhile 0 means separated
             InternEntity internEntity = new InternEntity(0, intern.PersonID,
                 Shared.Common.CommonTools.ComputeHash(intern.PasswordHash), intern.StartDate, intern.EndDate,
                 intern.CreatedDate, 1);
@@ -85,27 +72,26 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             return -1;
         }
 
-        public int UpdateIntern(int internID, InternCreateDTO internDTO)
+        public bool UpdateIntern(int internID, InternUpdateDTO internDTO)
         {
             var intern = _Context.Interns.Find(internID);
             if (intern == null || internDTO == null)
             {
-                return -1;
+                return false;
             }
 
             intern.PersonID = internDTO.PersonID;
-            intern.PasswordHash = internDTO.PasswordHash;
             intern.StartDate = internDTO.StartDate;
             intern.EndDate = internDTO.EndDate;
             intern.CreatedDate = internDTO.CreatedDate;
-
+            
 
             if (_Context.SaveChanges() > 0)
             {
-                return internID;
+                return true;
             }
 
-            return -1;
+            return false;
         }
 
         public bool DeleteIntern(int internID)
@@ -121,7 +107,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         }
         public bool IsInternActive(int internID)
         {
-            return _Context.Interns.Any(intern => intern.InternID == internID && intern.Status == 1);
+            return _Context.Interns.Any(intern => intern.InternID == internID && intern.IsActive);
         }
         public bool SeparateIntern(int internID)
         {
@@ -130,7 +116,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
             {
                 return false;
             }
-            intern.Status = 0;
+            intern.IsActive = false;
             intern.EndDate = DateTime.Now.Date;
 
             return _Context.SaveChanges() > 0;

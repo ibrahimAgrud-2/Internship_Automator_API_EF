@@ -51,34 +51,34 @@ namespace EF_InternApplicationAutomator.Business.Application
         }
         public bool ApplicationAccepted(int  ID)
         {
-            ApplicationResponseDTO application =Find(ID);
-            if (application.Status == (byte)enStatus.Accepted)
-            {
-                PersonResponseSDTO? person = _person.Find(application.PersonID);
-                if (person == null || UpdateStatus(applicationStatus) == -1)
-                {
-                    return false;
-                }
-                string password = Shared.Common.CommonTools.GenerateRandomPassword(8);
-                if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now, 0)) != -1)
-                {
-                    if (SendEmail(person.PersonID))
-                    {
-                        return true
-                    }
-                    else
-                    {
-                        app.Status = 0;
-                        UpdateStatus(applicationStatus);
-                    }
+            //ApplicationResponseDTO application =Find(ID);
+            //if (application.IsActive == (byte)enStatus.Accepted)
+            //{
+            //    PersonResponseSDTO? person = _person.Find(application.PersonID);
+            //    if (person == null || UpdateStatus(applicationStatus) == -1)
+            //    {
+            //        return false;
+            //    }
+            //    string password = Shared.Common.CommonTools.GenerateRandomPassword(8);
+            //    if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now, 0)) != -1)
+            //    {
+            //        if (SendEmail(person.PersonID))
+            //        {
+            //            return true
+            //        }
+            //        else
+            //        {
+            //            app.IsActive = 0;
+            //            UpdateStatus(applicationStatus);
+            //        }
 
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return null;
+            //    }
+            //    else
+            //    {
+            //        return false;
+            //    }
+            //}
+            return false;
         }
         public bool SendEmail(int personID)
         {
@@ -115,7 +115,7 @@ namespace EF_InternApplicationAutomator.Business.Application
             }
 
             //mapping
-            //applicaiton ilk Add yapıldığında reviewed değildir. Status new'dır yani review edilmeyi bekli
+            //applicaiton ilk Add yapıldığında reviewed değildir. IsActive new'dır yani review edilmeyi bekli
             ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,null, null, DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear, (byte)enStatus.newApp,newApplicationDTO.Notes,newApplicationDTO.LinkedinURL,newApplicationDTO.GithubURL);
 
 

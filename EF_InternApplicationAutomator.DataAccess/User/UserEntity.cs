@@ -28,23 +28,17 @@ namespace EF_InternApplicationAutomator.DataAccess.User
 
 
         [Required]
-        [MaxLength(20)]
-        public string PasswordHash { get; set; }
-
-
-        [Required]
         public DateTime CreatedDate { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
 
-        public UserEntity(int UserID, int personID, string userName, string passwordHash, DateTime createdDate, bool isActive)
+        public UserEntity(int UserID, int personID, string userName, DateTime createdDate, bool isActive)
         {
             this.UserID = UserID;
             PersonID = personID;
             CreatedDate = createdDate;
             IsActive = isActive;
-            PasswordHash = passwordHash;
             UserName = userName;
         }
     }

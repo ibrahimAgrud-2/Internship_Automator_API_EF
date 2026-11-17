@@ -15,9 +15,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         [ForeignKey(nameof(PersonID))]
         public PersonEntity Person { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string PasswordHash { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -28,18 +25,17 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         public DateTime CreatedDate { get; set; }
 
         [Required]
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
 
         public InternEntity(int internID, int personID, string passwordHash,
-            DateTime startDate, DateTime? endDate, DateTime createdDate, byte status)
+            DateTime startDate, DateTime? endDate, DateTime createdDate, byte isActive)
         {
             InternID = internID;
             PersonID = personID;
-            PasswordHash = passwordHash;
             StartDate = startDate;
             EndDate = endDate;
             CreatedDate = createdDate;
-            Status = status;
+            IsActive = isActive;
            
         }
     }

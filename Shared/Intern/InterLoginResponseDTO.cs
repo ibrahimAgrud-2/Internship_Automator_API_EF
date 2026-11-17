@@ -27,9 +27,9 @@ namespace Shared.Intern
         public DateTime? EndDate { get; set; }
 
         [Required]
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
 
-        public InterLoginResponseDTO(string name, string lastName, int internID,int personID,DateTime startDate, DateTime? endDate,byte status)
+        public InterLoginResponseDTO(string name, string lastName, int internID,int personID,DateTime startDate, DateTime? endDate,bool isActive)
         {
             this.InternID = internID;
             this.PersonID = personID;
@@ -37,7 +37,7 @@ namespace Shared.Intern
             this.EndDate = EndDate;
             this.FirstName = name;
             this.LastName = lastName;
-            this.Status = status;
+            this.IsActive = isActive;
         }
 
     }

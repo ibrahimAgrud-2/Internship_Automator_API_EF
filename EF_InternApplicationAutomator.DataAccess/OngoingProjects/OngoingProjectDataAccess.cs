@@ -25,7 +25,7 @@ namespace EF_InternApplicationAutomator.DataAccess.OngoingProjects
              
                  return _Context.Applications
                 .AsNoTracking()
-                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.ConversationName,a.Person.LastName,a.Person.Email,a.Person.Phone,a.Person.Address,a.Person.ImagePath),a.ApplicationID, a.Status,a.ApplicationDate, a.University,a.Department,a.ClassYear,a.Notes,a.LinkedInUrl,a.GithubURL
+                .Select(a => new ApplicationListDTO(new Shared.PersonCreateSDTO(a.Person.ConversationName,a.Person.LastName,a.Person.Email,a.Person.Phone,a.Person.Address,a.Person.ImagePath),a.ApplicationID, a.IsActive,a.ApplicationDate, a.University,a.Department,a.ClassYear,a.Notes,a.LinkedInUrl,a.GithubURL
                 ))
                 .ToList();
              */

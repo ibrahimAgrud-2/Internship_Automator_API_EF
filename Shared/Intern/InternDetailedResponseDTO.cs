@@ -16,7 +16,7 @@ namespace Shared.Intern
         public string Phone { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public byte Status { get; set; }
+        public bool IsActive { get; set; }
         public int ActiveProjectCount { get; set; }
 
         public InternDetailedResponseDTO(
@@ -27,7 +27,7 @@ namespace Shared.Intern
             string? phone,
             DateTime startDate,
             DateTime? endDate,
-            byte status,
+            bool isActive,
             int activeProjectCount)
         {
             InternID = internID;
@@ -37,7 +37,7 @@ namespace Shared.Intern
             Phone = phone;
             StartDate = startDate;
             EndDate = endDate;
-            Status = status;
+            IsActive = isActive;
             ActiveProjectCount = activeProjectCount;
         }
     }
