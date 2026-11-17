@@ -44,6 +44,7 @@ namespace EF_InternApplicationAutomator.Business.Intern
 
         public int AddIntern(InternCreateDTO newIntern)
         {
+            newIntern.CreatedDate = DateTime.Now;
             return _InternDataAccess.AddIntern(newIntern);
         }
 
@@ -71,6 +72,11 @@ namespace EF_InternApplicationAutomator.Business.Intern
         public int GetInternIDByPersonID(int personID)
         {
             return _InternDataAccess.GetInternIDByPersonID(personID);
+        }
+
+        public bool SeparateIntern(int internID)
+        {
+            return _InternDataAccess.SeparateIntern(internID);
         }
 
     }

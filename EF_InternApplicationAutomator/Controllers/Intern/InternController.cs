@@ -1,9 +1,7 @@
 ﻿using EF_InternApplicationAutomator.Business.Intern;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Application;
 using Shared.Intern;
-using static System.Net.Mime.MediaTypeNames;
-
 namespace EF_InternApplicationAutomator.API.Controllers.Intern
 {
     [Route("api/Intern")]
@@ -19,6 +17,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             _Intern = intern;
         }
 
+        [Authorize(Roles ="User")]
         [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<InternDetailedResponseDTO>> GetAllInterns()
@@ -27,6 +26,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             return Ok(internList);
         }
 
+
+        [Authorize(Roles = "User")]
         [HttpGet("{ID}", Name = "FindIntern")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,7 +36,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
         {
             if (ID < 1)
             {
-                return BadRequest($"Not Accepted ID {ID}");
+                return BadRequest($"Verilen ID {ID} geçerli değil");
             }
 
             InternCardResponseDTO intern = _Intern.Find(ID);
@@ -47,11 +48,12 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             return Ok(intern);
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<InternResponseDTO> AddNewIntern(InternCreateDTO newIntern)
+        public ActionResult<InternCreateDTO> AddNewIntern(InternCreateDTO newIntern)
         {
             if (newIntern == null)
             {
@@ -61,17 +63,21 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             int ID = _Intern.AddIntern(newIntern);
             if (ID < 1)
             {
-                return BadRequest("Could Not Add Intern");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
+            newIntern.CreatedDate = DateTime.Now;
             return CreatedAtRoute("FindIntern", new { id = ID }, newIntern);
         }
 
+
+
+        [Authorize(Roles = "User")]
         [HttpPut("{id}", Name = "UpdateIntern")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<InternResponseDTO> UpdateIntern(int id, InternCreateDTO internDTO)
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+         public ActionResult<InternResponseDTO> UpdateIntern(int id, InternCreateDTO internDTO)
         {
             if (id < 1 || internDTO == null)
             {
@@ -88,13 +94,17 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
                 return Ok(internDTO);
             }
 
-            return BadRequest("Could Not Update Intern");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
+
+
+        [Authorize(Roles = "User")]
         [HttpDelete("{id}", Name = "DeleteIntern")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult DeleteIntern(int id)
         {
             if (id < 1)
@@ -112,9 +122,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
                 return NoContent();
             }
 
-            return NotFound("Delete Process terminated. No rows deleted!");
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
+
+        [Authorize(Roles = "User")]
         [HttpGet("exists/{internID}")]
         public bool IsInternExists(int internID)
         {
@@ -126,33 +138,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             return _Intern.IsInternExists(internID);
         }
 
-
-        [HttpPost("InternLogin")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<InterLoginResponseDTO> InternLogin(InternLoginDTO internLogin)
-        {
-            if (string.IsNullOrEmpty(internLogin.Email) || string.IsNullOrEmpty(internLogin.Password))
-            {
-                return BadRequest($"E-posta ve şifre zorunludur.");
-            }
-
-            InterLoginResponseDTO intern = _Intern.FindByPasswordAndEmail(internLogin.Email, internLogin.Password);
-            if (intern == null)
-            {
-                return NotFound("E-posta veya şifre hatalı");
-            }
-            else if (intern.Status == (byte)Business.Intern.InternBL.enStatus.separated)
-            {
-                return StatusCode(403, new { message = "Stajyer hesabınız aktif değil " });
-            }
-
-            return Ok(intern);
-        }
-
-
+        [Authorize(Roles = "User")]
         [HttpPut("Separate/{internID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -168,14 +154,15 @@ namespace EF_InternApplicationAutomator.API.Controllers.Intern
             {
                 return NotFound("Intern Does Not Exists");
             }
-            if (_Intern.IsInternActive(internID))
+            if (!_Intern.IsInternActive(internID))
+            {
+                return BadRequest("İntern Zaten ayrılmış");
+            }
+            if(_Intern.SeparateIntern(internID))
             {
                 return Ok();
             }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            return StatusCode(StatusCodes.Status500InternalServerError);
 
         }
 
