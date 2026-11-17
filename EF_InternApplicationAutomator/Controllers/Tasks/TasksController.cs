@@ -2,6 +2,7 @@
 using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Tasks;
+using EF_InternApplicationAutomator.Business.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
@@ -15,13 +16,15 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
     {
         private readonly TasksBL _Tasks;
         private readonly Business.Intern.InternBL _Intern;
+        private readonly Business.User.UserBL _User;
         private readonly Business.OngoingProjects.OngoingProjectsBL _OngoingProjects;
 
-        public TasksController(TasksBL tasks, InternBL intern, OngoingProjectsBL ongoingProjects)
+        public TasksController(TasksBL tasks, InternBL intern, OngoingProjectsBL ongoingProjects, UserBL user)
         {
             _Tasks = tasks;
             _Intern = intern;
             _OngoingProjects = ongoingProjects;
+            _User = user;
         }
 
         [Authorize(Roles = "Intern")]
@@ -68,6 +71,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         }
 
 
+        [Authorize(Roles = "User")]
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -76,12 +80,22 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
 
             if (newTask == null || newTask.DueDate < DateTime.Now)
             {
-                return BadRequest("Invalid Task data.");
+                return BadRequest("Girilen Task verileri geçersiz");
             }
             if (!_OngoingProjects.IsOngoingProjectExists(newTask.OngoingProjectID))
             {
                 return BadRequest("Bu devam projeye görev atanamaz.");
             }
+            int? createdByUserID = User.GetUserID();
+            if (createdByUserID == null)
+            {
+                return Unauthorized();
+            }
+            if (!_User.IsUserExists(createdByUserID.Value))
+            {
+                return BadRequest("Kullanici Hesabınız bulunamadığı için görev eklenemedi");
+            }
+            newTask.CreatedByUserID = createdByUserID.Value;
             int taskID = _Tasks.AddTask(newTask);
             if (taskID < 1)
             {
@@ -93,11 +107,14 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
+            //TODO: daha iyi bir yol kullanılabilir (sonra)
             var createdTask = new TaskResponseDTO(taskID, insertedTask.CreatedByUserID, insertedTask.OngoingProjectID, insertedTask.Title, insertedTask.Description, insertedTask.AssignedDate, insertedTask.DueDate, insertedTask.Completed, insertedTask.CompletedDate);
 
             return CreatedAtRoute("FindTask", new { id = taskID }, createdTask);
         }
+
+
+
 
 
         [HttpGet("FindTask/{id}", Name = "FindTask")]
@@ -151,6 +168,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
+
+
         [HttpDelete("Delete/{ID}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -173,7 +192,6 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
 
             return NotFound("Delete Process terminated. No rows deleted!");
         }
-
 
 
 
