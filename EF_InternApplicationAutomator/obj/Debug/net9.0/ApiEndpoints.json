@@ -219,7 +219,7 @@
         "StatusCode": 400
       },
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.Message.MessageDetailedResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Boolean",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -310,17 +310,11 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ConversationIntern",
     "Method": "GetAllInternConversation",
-    "RelativePath": "api/ConversationIntern/AllConversation/{internID}",
+    "RelativePath": "api/ConversationIntern/AllConversation",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "internID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[Shared.Intern.ConversationIntern.ConversationInternResponseDTO, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",

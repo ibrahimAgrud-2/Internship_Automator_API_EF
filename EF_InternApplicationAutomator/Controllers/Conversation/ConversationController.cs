@@ -77,31 +77,24 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                 return NotFound("Mesaj eklemek istediğiniz Sohbet bulunamadı.");
             }
             //personID'i DTO'dan değil, token'dan okusun
+            // Kimlik ve rol token'dan alınır, gövdedeki değerler kullanılmaz
             int? personID = User.GetPersonID();
-            //mesajo gönderen kişi personel (user) mi değil mi
-            //ayrıca isStaff bilgisini token'dan okusun
+            if (personID == null)
+            {
+                return Unauthorized();
+            }
+
+            message.PersonID = personID.Value;
             bool isStaff = User.IsInRole("User");
-        
-            if (int.TryParse(personID.ToString(),out int result))
+
+            int ID = _Conversation.AddMessage(message, isStaff);
+
+            if (ID < 1)
             {
-                message.PersonID = result;
-                int ID = _Conversation.AddMessage(message, isStaff);
-
-                if (ID < 1)
-                {
-                    return BadRequest("Mesaj Eklenemedi");
-                }
-                else
-                {
-                    return Ok(true);
-                }
-
+                return BadRequest("Mesaj Eklenemedi");
             }
-            else
-            {
-                return NotFound("Sistemde Kaydınız olmadığı için mesaj gönderemezsiniz");
 
-            }
+            return Ok(true);
         }
     
     

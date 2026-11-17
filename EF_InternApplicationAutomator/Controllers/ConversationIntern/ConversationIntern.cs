@@ -1,5 +1,9 @@
 ﻿
+using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business.ConversationIntern;
+using Microsoft.AspNetCore.Authorization;
+using EF_InternApplicationAutomator.API.Service;
+
 using Microsoft.AspNetCore.Mvc;
 using Shared.Application;
 using Shared.Intern;
@@ -22,16 +26,20 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             _ConversationInternBL = conversationInternBL;
         }
 
-        [HttpGet("AllConversation/{internID}")]
+        [Authorize(Roles ="Intern")]
+        [HttpGet("AllConversation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ConversationInternResponseDTO>> GetAllInternConversation(int internID)
+        public ActionResult<IEnumerable<ConversationInternResponseDTO>> GetAllInternConversation()
         {
-            List<ConversationInternResponseDTO> conversationIntern = _ConversationInternBL.GetAllInternConversation(internID);
 
-            if (conversationIntern.Count == 0)
+            int? internID= User.GetInternID();
+
+            if(internID==null)
             {
-                return Ok("kayıt Bulunamadı");
+              return Unauthorized();
             }
+            
+            List<ConversationInternResponseDTO> conversationIntern = _ConversationInternBL.GetAllInternConversation(internID.Value);
 
             return Ok(conversationIntern);
         }

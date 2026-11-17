@@ -46,8 +46,7 @@ async function loadConversations() {
   loadError.value = []
 
   try {
-    conversations.value = (await getInternConversations(session.internID)) ?? []
-  } catch (error) {
+    conversations.value = (await getInternConversations()) ?? []  } catch (error) {
     loadError.value = getErrorMessages(error)
   } finally {
     isLoading.value = false
