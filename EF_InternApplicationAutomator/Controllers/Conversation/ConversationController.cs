@@ -1,16 +1,11 @@
 ﻿
 using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business;
-using EF_InternApplicationAutomator.Business.Application;
 using EF_InternApplicationAutomator.Business.Conversation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Application;
 using Shared.Intern;
 using Shared.Message;
-using System;
-using System.Collections.Generic;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
 {
@@ -27,7 +22,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             _People = people;
         }
 
-       
+
+        [Authorize(Roles ="User")]
         [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -43,19 +39,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             return Ok(applicationList);
         }
 
-        
+
+        [Authorize]
         [HttpGet("AllMessages/{ConversationID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<MessageDetailedResponseDTO>> GetAllMessages(int ConversationID)
         {
             List<MessageDetailedResponseDTO> messageList = _Conversation.GetAllMessages(ConversationID);
-
-            if (messageList.Count == 0)
-            {
-                return NotFound("Bu sohbette mesaj bulunmamaktadır");
-            }
-
             return Ok(messageList);
         }
 

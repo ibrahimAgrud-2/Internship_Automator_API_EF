@@ -2,16 +2,8 @@
 using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business.ConversationIntern;
 using Microsoft.AspNetCore.Authorization;
-using EF_InternApplicationAutomator.API.Service;
-
 using Microsoft.AspNetCore.Mvc;
-using Shared.Application;
-using Shared.Intern;
 using Shared.Intern.ConversationIntern;
-using Shared.Message;
-using System;
-using System.Collections.Generic;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
 {
@@ -26,6 +18,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             _ConversationInternBL = conversationInternBL;
         }
 
+        //bu sadee intern için dahil olduğı sohbetleri listelemek için
+        //personel kısmında ise GetALlConversations var
         [Authorize(Roles ="Intern")]
         [HttpGet("AllConversation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
