@@ -129,7 +129,7 @@ namespace EF_InternApplicationAutomator.API.Controllers
                 return BadRequest($"email  ve şifre zorunludur");
             }
 
-            PersonResponseWithIDsDTO? person = _person.FindByEmail(loginDTO.Email);
+            PersonResponseWithIDsDTO? person = _person.Find(loginDTO.Email);
             if (person == null)
             {
                 return NotFound("email  veya şifre hatalı");

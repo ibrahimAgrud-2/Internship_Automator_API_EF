@@ -2,9 +2,6 @@
 using EF_InternApplicationAutomator.Business.User;
 using EF_InternApplicationAutomator.DataAccess;
 using Shared;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace EF_InternApplicationAutomator.Business
 {
@@ -25,14 +22,12 @@ namespace EF_InternApplicationAutomator.Business
             _User = user;
 
         }
-
-
-        public PersonResponseWithIDsDTO? FindByEmail(string email)
+        public PersonResponseWithIDsDTO? Find(string email)
         {
 
 
-            PersonResponseSDTO? p= _PersonDataAccess.FindByEmail(email);
-            if(p==null)
+            PersonResponseSDTO? p = _PersonDataAccess.FindByEmail(email);
+            if (p == null)
             {
                 return null;
             }
@@ -40,15 +35,27 @@ namespace EF_InternApplicationAutomator.Business
             int internID = _Intern.GetInternIDByPersonID(p.PersonID); ;
             int userID = _User.GetUserIDByPersonID(p.PersonID);
 
-            return new PersonResponseWithIDsDTO(p.PersonID,p.FirstName,p.LastName,p.Email,p.Phone,p.Address,p.ImagePath,p.Role,p.IsActive,p.Password,internID,userID);
+            return new PersonResponseWithIDsDTO(p.PersonID, p.FirstName, p.LastName, p.Email, p.Phone, p.Address, p.ImagePath, p.Role, p.IsActive, p.Password, internID, userID);
+        }
+        public PersonResponseSDTO? Find(int ID)
+        {
+
+
+            PersonResponseSDTO? p = _PersonDataAccess.Find(ID);
+            if (p == null)
+            {
+                return null;
+            }
+
+            int internID = _Intern.GetInternIDByPersonID(p.PersonID); ;
+            int userID = _User.GetUserIDByPersonID(p.PersonID);
+
+            return p;
         }
 
-
-
-
-        public bool IsPersonExistByID(int ID)
+        public int AddPerson(PersonCreateWithRoleDTO person)
         {
-            return _PersonDataAccess.IsPersonExistByID(ID);
+            return _PersonDataAccess.AddPerson(person);
         }
     }
 }
