@@ -1,6 +1,8 @@
-﻿using EF_InternApplicationAutomator.Business.Intern;
+﻿using EF_InternApplicationAutomator.API.Service;
+using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.OngoingProjects;
 using Shared.Tasks;
@@ -22,21 +24,25 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             _OngoingProjects = ongoingProjects;
         }
 
+        [Authorize]
         [HttpGet("AllInternTasks")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<TaskResponseDTO>> GetAllInternTasks(int internID)
+        public ActionResult<IEnumerable<TaskResponseDTO>> GetAllInternTasks()
         {
-            if(internID<=0)
+
+            int? internID = User.GetInternID();
+
+            if ((internID ?? 0) <= 0)
             {
-                return BadRequest($"Intern ID {internID} Is Not Valid");
+                return BadRequest($"{internID} Geçerli bir ID değil");
             }
-            if(!_Intern.IsInternExists(internID))
+            if(!_Intern.IsInternExists(internID.Value))
             {
-                return BadRequest($"Verilen ID'de ({internID}) Stajyer bulunmamaktadır");
+                return NotFound($"Verilen ID'de ({internID}) Stajyer bulunmamaktadır");
             }
-            List<TaskResponseDTO> tasks = _Tasks.GetAllTasks(internID);
+            List<TaskResponseDTO> tasks = _Tasks.GetAllTasks(internID.Value);
             return Ok(tasks);
         }
 
