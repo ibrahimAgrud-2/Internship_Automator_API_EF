@@ -24,25 +24,46 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             _OngoingProjects = ongoingProjects;
         }
 
-        [Authorize]
-        [HttpGet("AllInternTasks")]
+        [Authorize(Roles = "Intern")]
+        [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<TaskResponseDTO>> GetAllInternTasks()
+        public ActionResult<IEnumerable<TaskResponseDTO>> GetAll()
         {
 
             int? internID = User.GetInternID();
 
             if ((internID ?? 0) <= 0)
             {
-                return BadRequest($"{internID} Geçerli bir ID değil");
+                return Unauthorized($"{internID} Geçerli bir ID değil");
             }
-            if(!_Intern.IsInternExists(internID.Value))
+            if (!_Intern.IsInternExists(internID.Value))
             {
                 return NotFound($"Verilen ID'de ({internID}) Stajyer bulunmamaktadır");
             }
             List<TaskResponseDTO> tasks = _Tasks.GetAllTasks(internID.Value);
+            return Ok(tasks);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("AllInternTasks")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<TaskResponseDTO>> GetAllInternTasks(int internID)
+        {
+
+
+            if (internID <= 0)
+            {
+                return Unauthorized();
+            }
+            if (!_Intern.IsInternExists(internID))
+            {
+                return NotFound($"Verilen ID'de ({internID}) Stajyer bulunmamaktadır");
+            }
+            List<TaskResponseDTO> tasks = _Tasks.GetAllTasks(internID);
             return Ok(tasks);
         }
 
@@ -53,22 +74,22 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         public ActionResult<TaskResponseDTO> AddNewTask(TaskCreateDTO newTask)
         {
 
-            if (newTask == null|| newTask.DueDate<DateTime.Now)
+            if (newTask == null || newTask.DueDate < DateTime.Now)
             {
                 return BadRequest("Invalid Task data.");
             }
-            if(!_OngoingProjects.IsOngoingProjectExists(newTask.OngoingProjectID))
+            if (!_OngoingProjects.IsOngoingProjectExists(newTask.OngoingProjectID))
             {
                 return BadRequest("Bu devam projeye görev atanamaz.");
             }
-             int taskID = _Tasks.AddTask(newTask);
+            int taskID = _Tasks.AddTask(newTask);
             if (taskID < 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             TaskResponseDTO insertedTask = _Tasks.Find(taskID);
-            if(insertedTask==null)
+            if (insertedTask == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
@@ -79,7 +100,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         }
 
 
-        [HttpGet("FindTask/{id}",Name = "FindTask")]
+        [HttpGet("FindTask/{id}", Name = "FindTask")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -118,11 +139,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return NotFound($"No Task With ID {id}");
             }
-            if(task.Completed)
+            if (task.Completed)
             {
                 return BadRequest("Görev zaten tamamlanmış.");
             }
-            if(_Tasks.CompleteTask(id))
+            if (_Tasks.CompleteTask(id))
             {
                 return Ok(true);
             }
