@@ -19,6 +19,7 @@ function createSession(person) {
   const apiRole = String(person.role ?? '').toLowerCase()
 const base = {
     personID: person.personID,
+mustChangePassword: person.mustChangePassword === true,
     firstName: person.firstName,
     lastName: person.lastName,
     token: person.token,
@@ -52,7 +53,11 @@ async function submit() {
 
     // Şifre hiçbir yerde saklanmaz
     saveSession(result.session)
-    await router.replace(result.home)
+    await router.replace(
+  result.session.mustChangePassword
+    ? '/change-password'
+    : result.home
+)
   } catch (error) {
     password.value = ''
     errors.value = getErrorMessages(error)

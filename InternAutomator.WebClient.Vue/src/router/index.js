@@ -10,6 +10,12 @@ const router = createRouter({
     { path: '/', component: () => import('@/views/HomeView.vue'), meta: { title: 'Staj Otomasyonu' } },
     { path: '/apply', component: () => import('@/views/ApplyView.vue'), meta: { title: 'Staj Başvurusu' } },
 
+{
+  path: '/change-password',
+  component: () => import('@/views/ChangePasswordView.vue'),
+  meta: { title: 'Şifremi Güncelle' }
+},
+
   // Tek giriş sayfası: zaten girişliyse gösterilmez (beforeEach'te yönlendirilir)
     {
       path: '/login',

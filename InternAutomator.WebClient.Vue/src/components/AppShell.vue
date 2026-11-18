@@ -91,11 +91,14 @@ function logout() {
             <li><hr class="dropdown-divider" /></li>
 
             <!-- Şifre sayfası ve API hazır olduğunda etkinleştirilecek. -->
-            <li>
-              <button type="button" class="dropdown-item" disabled aria-disabled="true">
-                Şifremi Güncelle
-              </button>
-            </li>
+              <li>
+            <RouterLink
+              class="dropdown-item"
+              to="/change-password"
+            >
+              Şifremi Güncelle
+            </RouterLink>
+          </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
               <button type="button" class="dropdown-item" @click="logout">Çıkış</button>
