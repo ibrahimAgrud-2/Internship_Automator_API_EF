@@ -159,6 +159,45 @@ namespace EF_InternApplicationAutomator.API.Controllers
                 return Ok(new LoginResponseDTO(token, person.PersonID, person.Email, person.FirstName, person.LastName, person.Role, person.InternID, person.UserID,person.MustChangePassword));
         }
 
+        [Authorize]
+        [HttpPost("ChangePassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<bool> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+       
+           if(changePasswordDTO == null||string.IsNullOrEmpty(changePasswordDTO.NewPassword)|| string.IsNullOrEmpty(changePasswordDTO.OldPassword))
+            {
+                return BadRequest("Verilen bilgiler geçersiz");
+            }
+            int? personID = User.GetPersonID();
+
+            if(personID==null)
+            {
+                return Unauthorized();
+            }
+            if(!_person.IsPersonExists(personID.Value))
+            {
+                return NotFound("Bu hesap sistemde bulunmadığı için şifre değiştirilemez");
+            }
+            if (!_person.IsPersonActive(personID.Value))
+            {
+                return NotFound("Bu hesap aktif olmadı için şifre değiştirilemez");
+            }
+            if (!_person.IsPersonExistsByIDAndPassword(personID.Value,changePasswordDTO.OldPassword))
+            {
+                return NotFound("Verdiğiniz eski şifre doğru değil");
+            }
+
+            if (_person.ChangePassword(personID.Value,changePasswordDTO.NewPassword))
+            {
+                return Ok(true);
+            }
+
+              return   StatusCode(StatusCodes.Status500InternalServerError);
+        }
 
 
 

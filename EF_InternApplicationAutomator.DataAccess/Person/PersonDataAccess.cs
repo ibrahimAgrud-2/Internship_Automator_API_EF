@@ -104,9 +104,26 @@ namespace EF_InternApplicationAutomator.DataAccess
         {
             return _Context.People.Any(p => p.PersonID == ID);
         }
+        public bool IsPersonExistsByIDAndPassword(int ID, string password)
+        {
+            return _Context.People.Any(p => p.PersonID == ID&&p.PasswordHash==password);
+        }
         public bool IsPersonActive(int ID)
         {
             return _Context.People.Any(p => p.PersonID == ID && p.IsActive);
+        }
+        public bool ChangePassword(int ID,string newPassword)
+        {
+            var person = _Context.People.Find(ID);
+            if(person==null)
+            {
+                return false;
+            }
+            person.MustChangePassword = false;
+            person.PasswordHash = newPassword;
+
+            return _Context.SaveChanges() > 0;
+
         }
     }
 }

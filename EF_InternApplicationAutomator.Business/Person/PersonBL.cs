@@ -2,6 +2,7 @@
 using EF_InternApplicationAutomator.Business.User;
 using EF_InternApplicationAutomator.DataAccess;
 using Shared;
+using Shared.Common;
 using System;
 
 namespace EF_InternApplicationAutomator.Business
@@ -62,9 +63,20 @@ namespace EF_InternApplicationAutomator.Business
         {
             return _PersonDataAccess.IsPersonExist(personID);
         }
+        public bool IsPersonExistsByIDAndPassword(int personID,string password)
+        {
+            password = CommonTools.ComputeHash(password);
+            return _PersonDataAccess.IsPersonExistsByIDAndPassword(personID, password);
+        }
         public bool IsPersonActive(int personID)
         {
             return _PersonDataAccess.IsPersonActive(personID);
+        }
+
+        public bool ChangePassword(int personID,string newPassword)
+        {
+            newPassword = CommonTools.ComputeHash(newPassword);
+            return _PersonDataAccess.ChangePassword(personID, newPassword);
         }
     }
 }
