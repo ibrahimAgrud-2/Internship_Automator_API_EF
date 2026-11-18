@@ -951,6 +951,26 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -3102,8 +3122,6 @@
       "AnnouncementCreateDTO": {
         "required": [
           "content",
-          "createdByUserID",
-          "createdDate",
           "title"
         ],
         "type": "object",
@@ -3116,14 +3134,6 @@
           "content": {
             "minLength": 1,
             "type": "string"
-          },
-          "createdByUserID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
           }
         },
         "additionalProperties": false

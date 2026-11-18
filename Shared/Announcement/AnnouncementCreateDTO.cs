@@ -17,20 +17,13 @@ namespace Shared.Announcement
         [Required]
         public string Content { get; set; }
 
-        [Required]
-        public int CreatedByUserID { get; set; }
 
-        [Required]
-        public DateTime CreatedDate { get; set; }
-
-        public AnnouncementCreateDTO( string title, string content, int createdByUserID, DateTime createdDate)
+        public AnnouncementCreateDTO( string title, string content)
         {
 
             Title = title;
             Content = content;
-            CreatedByUserID = createdByUserID;
-            CreatedDate = createdDate;
- 
+   
         }
     }
 }

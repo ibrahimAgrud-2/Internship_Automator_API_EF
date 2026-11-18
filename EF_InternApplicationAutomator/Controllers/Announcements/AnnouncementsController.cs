@@ -10,6 +10,7 @@ using Shared.OngoingProjects;
 using Shared.Tasks;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using EF_InternApplicationAutomator.Business.User;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 {
@@ -22,11 +23,13 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
 
         private readonly AnnouncementsBL _AnouncementsBL;
 
+        private readonly UserBL _User;
 
-        public AnnouncementsController(AnnouncementsBL anouncementsBL)
+
+        public AnnouncementsController(AnnouncementsBL anouncementsBL,UserBL user)
         {
             _AnouncementsBL = anouncementsBL;
-           
+            _User = user;
         }
 
         [Authorize]
@@ -82,20 +85,25 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             {
                 return Unauthorized();
             }
-
-            announcementCreateDTO.CreatedByUserID = userID.Value;
-            announcementCreateDTO.CreatedDate = DateTime.Now.Date;
-            int insertedID = _AnouncementsBL.AddAnnouncement(announcementCreateDTO);
+            if(!_User.IsUserExists(userID.Value))
+            {
+                return BadRequest("Hesabınız bulunamadığı için duyuru yapamazsınız");
+            }
+           
+          
+            int insertedID = _AnouncementsBL.AddAnnouncement(announcementCreateDTO, userID.Value);
 
             if (insertedID > 0)
             {
                 return CreatedAtRoute(
                    "FindAnnouncement",
                    new { id = insertedID }, new AnnouncementResponseDTO(insertedID,
-                                     announcementCreateDTO.Title, announcementCreateDTO.Content, announcementCreateDTO.CreatedDate, announcementCreateDTO.CreatedByUserID));
+                                     announcementCreateDTO.Title, announcementCreateDTO.Content, DateTime.Now, userID.Value));
             }
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+
 
 
         [Authorize(Roles = "User")]
@@ -113,7 +121,17 @@ namespace EF_InternApplicationAutomator.API.Controllers.Announcements
             {
                 return NotFound("Güncellemen istediğiniz duyuru bulunamadı. Silinmiş olabilir");
             }
-            if (_AnouncementsBL.UpdateAnnouncement(ID,updatedAnnouncement))
+            // Kimlik token'dan alınır, istemcinin gönderdiği değer yok sayılır
+            int? userID = User.GetUserID();
+            if (userID == null)
+            {
+                return Unauthorized();
+            }
+            if (!_User.IsUserExists(userID.Value))
+            {
+                return BadRequest("Hesabınız bulunamadığı için duyuru güncelleyemezsiniz");
+            }
+            if (_AnouncementsBL.UpdateAnnouncement(ID, userID.Value, updatedAnnouncement))
             {
                 return Ok(true);
             }

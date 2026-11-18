@@ -43,9 +43,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
             return (an == null) ? null :new AnnouncementResponseDTO(an.AnnouncementID,an.Title,an.Content,an.CreatedDate,an.CreatedByUserID);
         }
 
-        public int AddAnnouncements(AnnouncementCreateDTO aDTO)
+        public int AddAnnouncements(AnnouncementCreateDTO aDTO,int createdByUserID)
         {
-            AnnouncementEntity announcement = new AnnouncementEntity(0,aDTO.Title,aDTO.Content,aDTO.CreatedByUserID,aDTO.CreatedDate,aDTO.CreatedByUserID,DateTime.Now.Date);
+            AnnouncementEntity announcement = new AnnouncementEntity(0,aDTO.Title,aDTO.Content,createdByUserID,DateTime.Now,createdByUserID,DateTime.Now);
             EntityEntry<AnnouncementEntity> pw = _Context.Announcements.Add(announcement);
 
             if (_Context.SaveChanges() > 0)
@@ -63,7 +63,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
                     .ExecuteDelete() > 0;
         }
 
-        public bool UpdateAnnouncement(int announcementID, AnnouncementUpdateDTO update)
+        public bool UpdateAnnouncement(int announcementID, int updatedByUserID,AnnouncementUpdateDTO update)
         {
             var app = _Context.Announcements.Find(announcementID);
 
@@ -72,10 +72,11 @@ namespace EF_InternApplicationAutomator.DataAccess.Announcement
                 return false;
             }
 
-            //TODO: 2 yerine LOGİN yapmış use'ın ID'sini ver
+           
             app.Title = update.Title;
             app.Content = update.Content;
-
+            app.LastUpdateDate = DateTime.Now;
+            app.LastUpdatedByUserID = updatedByUserID;
 
             if (_Context.SaveChanges() > 0)
             {

@@ -26,13 +26,13 @@ namespace EF_InternApplicationAutomator.Business.Announcements
             return _AnnouncementData.GetAll(topNewest);
         }
 
-        public int AddAnnouncement(AnnouncementCreateDTO announcementCreateDTO)
+        public int AddAnnouncement(AnnouncementCreateDTO announcementCreateDTO, int CreatedByuserID)
         {
-            return _AnnouncementData.AddAnnouncements(announcementCreateDTO);
+            return _AnnouncementData.AddAnnouncements(announcementCreateDTO, CreatedByuserID);
         }
-        public bool UpdateAnnouncement(int ID,AnnouncementUpdateDTO update)
+        public bool UpdateAnnouncement(int ID,int updatedByUserID,AnnouncementUpdateDTO update)
         {
-            return _AnnouncementData.UpdateAnnouncement(ID,update);
+            return _AnnouncementData.UpdateAnnouncement(ID,updatedByUserID,update);
         }
 
         public AnnouncementResponseDTO Find(int ID)

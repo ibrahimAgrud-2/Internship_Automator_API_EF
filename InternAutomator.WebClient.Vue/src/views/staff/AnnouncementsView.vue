@@ -2,7 +2,6 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { getAllAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '@/api/announcements'
 import { ApiError, getErrorMessages } from '@/api/http'
-import { getSession } from '@/auth/session'
 import { ANNOUNCEMENT_LIMITS } from '@/constants'
 import { formatDateTime } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
@@ -11,7 +10,6 @@ import BaseModal from '@/components/BaseModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import '@/assets/css/announcements.css'
 
-const session = getSession()
 
 // Renk sayısı announcements.css içindeki announcement-color-N sınıflarıyla aynı olmalı
 const ANNOUNCEMENT_COLOR_COUNT = 5
@@ -122,18 +120,14 @@ async function submitForm() {
     return
   }
 
-  // Oturumda kullanıcı numarası yoksa istek hiç atılmaz
-  if (!session.userID) {
-    formErrors.value = ['Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.']
-    return
-  }
+ 
 
   formErrors.value = []
   isSaving.value = true
 
   try {
     // Yayın tarihini API belirler; istemci göndermez
-    await createAnnouncement({ createdByUserID: session.userID, title, content })
+    await createAnnouncement({ title, content })
 
     isFormOpen.value = false
     pushNotice(`"${title}" duyurusu yayınlandı.`)
