@@ -63,10 +63,10 @@ namespace EF_InternApplicationAutomator.Business.Conversation
         /// Ana Bu özellikse intern için lazım. Bir itnern sadece dahil olduğu chatlara mesaj atabilir
         /// </summary>
         /// <returns></returns>
-        public bool CanInternAddMessageToConversation(int internID,int conversationID)
+        public bool IsInternExistsInConversations(int internID,int conversationID)
         {
            
-            return _ConversationDataAccess.CanInternAddMessageToConversation(internID,conversationID);
+            return _ConversationDataAccess.IsInternExistsInConversations(internID,conversationID);
         }
     }
 }

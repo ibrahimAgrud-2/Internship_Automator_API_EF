@@ -906,14 +906,14 @@
         }
       }
     },
-    "/api/Conversation/AllMessages/{ConversationID}": {
+    "/api/Conversation/AllMessages/{conversationID}": {
       "get": {
         "tags": [
           "Conversation"
         ],
         "parameters": [
           {
-            "name": "ConversationID",
+            "name": "conversationID",
             "in": "path",
             "required": true,
             "schema": {

@@ -41,11 +41,34 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
 
         [Authorize]
-        [HttpGet("AllMessages/{ConversationID}")]
+        [HttpGet("AllMessages/{conversationID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<MessageDetailedResponseDTO>> GetAllMessages(int ConversationID)
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public ActionResult<IEnumerable<MessageDetailedResponseDTO>> GetAllMessages(int conversationID)
         {
-            List<MessageDetailedResponseDTO> messageList = _Conversation.GetAllMessages(ConversationID);
+            if(!_Conversation.IsConversationExists(conversationID))
+            {
+                return Ok();
+            }
+            bool isIntern = User.IsInRole("Intern");
+            if (isIntern)
+            {
+                int? internID = User.GetInternID();
+
+                if (internID == null)
+                {
+                    return Unauthorized();
+                }
+
+                if (!_Conversation.IsInternExistsInConversations(
+                    internID.Value, conversationID))
+                {
+                    return Forbid();
+                }
+
+            }
+
+                List<MessageDetailedResponseDTO> messageList = _Conversation.GetAllMessages(conversationID);
             return Ok(messageList);
         }
 
@@ -84,7 +107,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                     return Unauthorized();
                 }
 
-                if (!_Conversation.CanInternAddMessageToConversation(
+                if (!_Conversation.IsInternExistsInConversations(
                     internID.Value, message.ConversationID))
                 {
                     return Forbid();

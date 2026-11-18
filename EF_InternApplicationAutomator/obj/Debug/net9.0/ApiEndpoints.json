@@ -539,13 +539,13 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ConversationController",
     "Method": "GetAllMessages",
-    "RelativePath": "api/Conversation/AllMessages/{ConversationID}",
+    "RelativePath": "api/Conversation/AllMessages/{conversationID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ConversationID",
+        "Name": "conversationID",
         "Type": "System.Int32",
         "IsRequired": true
       }
