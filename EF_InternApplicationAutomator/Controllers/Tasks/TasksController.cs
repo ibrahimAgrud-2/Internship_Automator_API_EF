@@ -27,6 +27,10 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             _User = user;
         }
 
+        /// <summary>
+        /// intern kımında  görevleri sadece ilgili intern için (token'dan internID okuyarak) listelemek
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Intern")]
         [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -49,6 +53,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             return Ok(tasks);
         }
 
+        //user tarafında herhangi bir intern'in tüm görevlerini listelelemek
         [Authorize(Roles = "User")]
         [HttpGet("AllInternTasks")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,7 +65,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
 
             if (internID <= 0)
             {
-                return Unauthorized();
+                return BadRequest();
             }
             if (!_Intern.IsInternExists(internID))
             {
