@@ -73,10 +73,25 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             {
                 return Unauthorized();
             }
-
-            message.PersonID = personID.Value;
+            //intern mesaj ekleyebilir mi? Personel için bir kontrole gerek yok
             bool isStaff = User.IsInRole("User");
+            if (!isStaff)
+            {
+                int? internID = User.GetInternID();
 
+                if (internID == null)
+                {
+                    return Unauthorized();
+                }
+
+                if (!_Conversation.CanInternAddMessageToConversation(
+                    internID.Value, message.ConversationID))
+                {
+                    return Forbid();
+                }
+            }
+            message.PersonID = personID.Value;
+          
             int ID = _Conversation.AddMessage(message, isStaff);
 
             if (ID < 1)

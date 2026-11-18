@@ -48,9 +48,25 @@ namespace EF_InternApplicationAutomator.Business.Conversation
         {
             return _MessagesDataAccess.AddMessage(message, isStaff);
         }
-        public bool IsConversationExists(int conversationID)
+
+
+
+        public bool IsConversationExists( int conversationID)
         {
-            return true;
+
+            return _ConversationDataAccess.IsConversationExists(conversationID);
+        }
+
+        /// <summary>
+        /// Bir person verilen sohbete mesaj ekleyebilir mi ekleyemez mi kontrolü yapar
+        /// Personel için şu anlık bu kontrol gererk yok çünkü onlar tüm chatlara erişebilir
+        /// Ana Bu özellikse intern için lazım. Bir itnern sadece dahil olduğu chatlara mesaj atabilir
+        /// </summary>
+        /// <returns></returns>
+        public bool CanInternAddMessageToConversation(int internID,int conversationID)
+        {
+           
+            return _ConversationDataAccess.CanInternAddMessageToConversation(internID,conversationID);
         }
     }
 }

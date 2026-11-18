@@ -48,9 +48,18 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
            .ToList();
         }
 
+        public bool CanInternAddMessageToConversation(int internID, int conversationID)
+        {
+            return _Context.ConversationIntern.Any(c => c.InternID == internID && c.ConversationID == conversationID);
 
 
-        
+        }
+
+        public bool IsConversationExists(int conversationID)
+        {
+            return _Context.Conversations.Any(c => c.ConversationID == conversationID);
+        }
+
 
     }
 }
