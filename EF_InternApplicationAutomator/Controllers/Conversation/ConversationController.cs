@@ -32,10 +32,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         {
             List<ConversationResponseDTO> applicationList = _Conversation.GetAllConversation();
 
-            if (applicationList.Count == 0)
-            {
-                return NotFound("Kayıt Bulunamadı");
-            }
+    
 
             return Ok(applicationList);
         }
