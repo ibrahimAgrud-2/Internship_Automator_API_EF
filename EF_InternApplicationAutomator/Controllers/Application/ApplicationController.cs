@@ -61,22 +61,22 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
 
         [Authorize(Roles = "User")]
-        [HttpGet("{ID}", Name = "FindApplication")]
+        [HttpGet("{ApplicationID}", Name = "FindApplication")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<ApplicationResponseDTO> Find(int ID)
+        public ActionResult<ApplicationResponseDTO> Find(int ApplicationID)
         {
-            if (ID < 1)
+            if (ApplicationID < 1)
             {
-                return BadRequest($"Girilen ID {ID} geçersiz");
+                return BadRequest($"Girilen ApplicationID {ApplicationID} geçersiz");
             }
 
-            ApplicationResponseDTO app = _application.Find(ID);
+            ApplicationResponseDTO app = _application.Find(ApplicationID);
 
             if (app == null)
             {
-                return NotFound($"No Application With ID {ID}");
+                return NotFound($"No Application With ApplicationID {ApplicationID}");
             }
 
             return Ok(app);
@@ -161,7 +161,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         {
             if (id < 1)
             {
-                return BadRequest($"Not Accepted ID {id}");
+                return BadRequest($"Not Accepted ApplicationID {id}");
             }
 
             if (_application.DeleteApplication(id))
@@ -170,7 +170,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             }
             else
             {
-                return NotFound($"Application with ID {id} not found. No rows deleted!");
+                return NotFound($"Application with ApplicationID {id} not found. No rows deleted!");
             }
         }
 
