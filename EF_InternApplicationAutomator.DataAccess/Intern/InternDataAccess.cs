@@ -59,9 +59,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         public int AddIntern(InternCreateDTO intern)
         {
             //IsActive 1 means the intern is active/new meanwhile 0 means separated
-            InternEntity internEntity = new InternEntity(0, intern.PersonID,
-                Shared.Common.CommonTools.ComputeHash(intern.PasswordHash), intern.StartDate, intern.EndDate,
-                intern.CreatedDate, 1);
+            InternEntity internEntity = new InternEntity(0, intern.PersonID
+             , intern.StartDate, intern.EndDate,
+                intern.CreatedDate, true);
             EntityEntry<InternEntity> addedIntern = _Context.Interns.Add(internEntity);
 
             if (_Context.SaveChanges() > 0)

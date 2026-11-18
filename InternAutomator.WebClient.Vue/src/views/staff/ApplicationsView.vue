@@ -22,7 +22,7 @@ const ACTIONS = {
     result: 'onaylanacak',
     buttonText: 'Onayla',
     buttonClass: 'btn-success',
-    send: acceptApplication, // API stajyeri oluşturur ve e-posta gönderir
+send: (applicationID, _status, note) => acceptApplication(applicationID, note),
     successMessage: 'Başvuru onaylandı. Stajyere giriş bilgileri e-posta ile gönderildi.',
     // API e-posta ya da stajyer oluşturma hatasında her şeyi geri alıp 500 döner
     serverErrorMessage: 'Onay tamamlanamadı. İşlem geri alındı, lütfen tekrar deneyin.',
@@ -93,7 +93,7 @@ const pendingAction = computed(() => ACTIONS[pending.actionKey] ?? null)
 const pendingApplication = computed(() => applications.value.find((a) => a.applicationID === pending.applicationID))
 const summaryText = computed(() =>
   pendingAction.value && pendingApplication.value
-    ? `${getFullName(pendingApplication.value)} adlı adayın başvurusu ${pendingAction.value.result}. Lütfen bir not girin.`
+    ? `${getFullName(pendingApplication.value)} adlı adayın başvurusu ${pendingAction.value.result}. ${pending.actionKey === 'reject' ? 'Lütfen bir not girin.' : 'İsterseniz bir not ekleyebilirsiniz.'}`
     : '',
 )
 
@@ -109,11 +109,14 @@ function openDecision(actionKey, application) {
 async function submitDecision() {
   if (isSaving.value || !pendingAction.value) return
 
-  const text = notes.value.trim()
-  if (!text) {
-    decisionErrors.value = ['Not alanı zorunludur.']
-    return
-  }
+
+const text = notes.value.trim()
+
+if (pending.actionKey === 'reject' && !text) {
+  decisionErrors.value = ['Ret işlemi için not alanı zorunludur.']
+  return
+}
+
 
   const action = pendingAction.value
 
@@ -221,8 +224,10 @@ onMounted(loadApplications)
         :maxlength="APPLICATION_NOTES_LIMIT"
         :disabled="isSaving"
       ></textarea>
-      <div class="form-text">Zorunlu, en fazla {{ APPLICATION_NOTES_LIMIT }} karakter.</div>
-
+<div class="form-text">
+  {{ pending.actionKey === 'reject' ? 'Zorunlu' : 'İsteğe bağlı' }},
+  en fazla {{ APPLICATION_NOTES_LIMIT }} karakter.
+</div>
       <AlertMessages v-if="decisionErrors.length" :messages="decisionErrors" class="mt-3" />
 
       <template #footer>

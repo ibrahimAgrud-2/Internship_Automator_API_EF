@@ -44,42 +44,55 @@ namespace EF_InternApplicationAutomator.Business.Application
             return _ApplicationDataAccess.Find(appID);
         }
 
-        public int UpdateStatus(ApplicationStatusUpdateDTO applicationStatus)
+
+
+
+        public bool UpdateStatus(int applicationID, int reviewedByUserID,enStatus status,string? note)
         {
 
-            return _ApplicationDataAccess.UpdateStatus(applicationStatus.ApplicationID, applicationStatus);
+            return _ApplicationDataAccess.UpdateStatus(applicationID,(byte)status, reviewedByUserID,note);
         }
-        public bool ApplicationAccepted(int  ID)
+        public bool ApplicationAccepted(int  ID,int reviewedByUserID,string note)
         {
-            //ApplicationResponseDTO application =Find(ID);
-            //if (application.IsActive == (byte)enStatus.Accepted)
-            //{
-            //    PersonResponseSDTO? person = _person.Find(application.PersonID);
-            //    if (person == null || UpdateStatus(applicationStatus) == -1)
-            //    {
-            //        return false;
-            //    }
-            //    string password = Shared.Common.CommonTools.GenerateRandomPassword(8);
-            //    if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now, 0)) != -1)
-            //    {
-            //        if (SendEmail(person.PersonID))
-            //        {
-            //            return true
-            //        }
-            //        else
-            //        {
-            //            app.IsActive = 0;
-            //            UpdateStatus(applicationStatus);
-            //        }
+            ApplicationResponseDTO application = Find(ID);
+            if (application.Status == (byte)enStatus.newApp)
+            {
+                PersonResponseSDTO? person = _person.Find(application.PersonID);
+                if (person == null )
+                {
+                    return false;
+                }
+                if(!UpdateStatus(ID, reviewedByUserID, enStatus.Accepted,note))
+                {
+                    return false;
+                }
+                string password = Shared.Common.CommonTools.GenerateRandomPassword(11);
+                if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now,true)) != -1)
+                {
 
-            //    }
-            //    else
-            //    {
-            //        return false;
-            //    }
-            //}
+                   
+                    if (SendEmail(person.PersonID))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Yeni eklenen stajyere (başvuru ID {application.ApplicationID}) email gönderilemedi");
+                    }
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
             return false;
         }
+    
+        
+        
+        
+        
         public bool SendEmail(int personID)
         {
             bool sent = _emailService.SendEmail("test@gmail.com", "Onaylandi", "Staj başvurusnu onaylandi."); ;

@@ -47,7 +47,7 @@ watch(fullName, (name) => {
 })
 
 // Ayrılan stajyere ekleme/değişiklik yapılamaz. Asıl engel API'dadır; burası sadece kullanıcıyı yönlendirir.
-const canChange = computed(() => !currentIntern.value || currentIntern.value.status === INTERN_ACTIVE)
+const canChange = computed(() => !currentIntern.value || currentIntern.value.isActive === INTERN_ACTIVE)
 
 // Görev, stajyerin atanmış bir projesine verildiği için proje yoksa görev eklenemez.
 const hasProjects = computed(() => internProjects.value.length > 0)
@@ -224,7 +224,7 @@ function onRevoked() {
     <div class="mb-4">
       <div class="d-flex align-items-center flex-wrap gap-2">
         <h4 class="mb-0 text-break">{{ fullName || 'Stajyer Detayı' }}</h4>
-        <InternStatusBadge v-if="currentIntern" :status="currentIntern.status" />
+        <InternStatusBadge v-if="currentIntern" :is-active="currentIntern.isActive" />
       </div>
       <template v-if="currentIntern">
         <div class="small text-muted text-break">{{ currentIntern.email || '-' }} · {{ currentIntern.phone || '-' }}</div>

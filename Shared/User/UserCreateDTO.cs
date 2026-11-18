@@ -16,8 +16,6 @@ namespace Shared.User
         [Required]
         public int PersonID { get; set; }
 
-        [Required]
-        public string PasswordHash { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -25,14 +23,13 @@ namespace Shared.User
         [Required]
         public bool IsActive { get; set; }
 
-        public UserCreateDTO( int personID, string userName, string passwordHash, DateTime createdDate, bool isActive)
+        public UserCreateDTO( int personID, string userName, DateTime createdDate, bool isActive)
         {
 
             PersonID = personID;
           
             CreatedDate = createdDate;
             IsActive = isActive;
-            PasswordHash = passwordHash;
             UserName = userName;
         }
 

@@ -2,14 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { getMyProjects } from '@/api/ongoingProjects'
 import { getErrorMessages } from '@/api/http'
-import { getSession } from '@/auth/session'
 import { formatDate } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import TechnologyBadges from '@/components/TechnologyBadges.vue'
-
-// Rota koruması sayesinde bu sayfaya oturum olmadan gelinmez
-const session = getSession()
-const fullName = `${session.firstName} ${session.lastName}`.trim()
 
 const projects = ref([])
 const isLoading = ref(true)

@@ -4,6 +4,7 @@ using Shared.Application;
 using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using EF_InternApplicationAutomator.API.Service;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
 {
@@ -97,37 +98,46 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             {
                 return BadRequest("Invalid Application data.");
             }
-
-            if (_application.UpdateStatus(updatedApplication) > 0)
+            int? reviewedByUserID = User.GetUserID();
+            if (reviewedByUserID == null)
+            {
+                return Unauthorized();
+            }
+            if (_application.UpdateStatus(updatedApplication.ApplicationID, reviewedByUserID.Value,(ApplicationBL.enStatus)updatedApplication.status,updatedApplication.Notes) )
             {
                 return Ok(updatedApplication);
             }
             else
             {
-                return NotFound("Could Not Update Application");
+                return NotFound("Başvurunun durumu (status) güncellenemedi");
             }
         }
 
+
+
         [Authorize(Roles = "User")]
-        [HttpPut("Update/AppStatus/accepted")]
+        [HttpPut("Update/AppStatus/accept")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<string> Accepted(int applicationID)
+        public ActionResult<string> Accepted(int applicationID,string? note)
         {
-           ApplicationResponseDTO application= _application.Find(applicationID);
-            if (application==null)
+            ApplicationResponseDTO application = _application.Find(applicationID);
+            if (application == null)
             {
                 return BadRequest("başvuru bulunamadı");
             }
-            if(application.Status==(int)ApplicationBL.enStatus.Accepted)
+            if (application.Status != (int)ApplicationBL.enStatus.newApp)
             {
-                return BadRequest("başvuru zaten kabul edilmiş");
+                return BadRequest("başvuru geçerli değil -  kabul edilmiş veya iptal edilmiş");
 
             }
-          
-            string[] InsertedPassword = _application.ApplicationAccepted(applicationID);
-            if (InsertedPassword.Count() != 0)
+            int? reviewedByUserID = User.GetUserID();
+            if(reviewedByUserID==null)
+            {
+                return Unauthorized();
+            }
+            if (_application.ApplicationAccepted(applicationID, reviewedByUserID.Value,note))
             {
                 return Ok();
             }
@@ -138,6 +148,9 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             }
 
         }
+
+
+
 
         [Authorize(Roles = "User")]
         [HttpDelete("{id}", Name = "DeleteApplication")]

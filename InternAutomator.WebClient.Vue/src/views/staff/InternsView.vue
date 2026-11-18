@@ -11,7 +11,7 @@ import InternStatusBadge from '@/components/InternStatusBadge.vue'
 import '@/assets/css/interns.css'
 
 const getFullName = (intern) => `${intern.firstName} ${intern.lastName}`.trim()
-const isActive = (intern) => intern.status === INTERN_ACTIVE
+const isActive = (intern) => intern.isActive === INTERN_ACTIVE
 
 // ---------- Liste ve arama ----------
 const interns = ref([])
@@ -153,7 +153,7 @@ onMounted(loadInterns)
           </div>
           <div>
             <h5 class="mb-1 text-break">{{ getFullName(intern) }}</h5>
-            <InternStatusBadge :status="intern.status" />
+            <InternStatusBadge :is-active="intern.isActive" />
           </div>
         </div>
 

@@ -1,10 +1,10 @@
 // Sabit değerler: API'daki sayısal durumların ekrandaki karşılıkları.
 
-// ---- Stajyer durumu (API: status 1 = aktif, 0 = ayrıldı) ----
-export const INTERN_ACTIVE = 1
+// ---- Stajyer durumu (API: isActive true = aktif, false = ayrıldı) ----
+export const INTERN_ACTIVE = true
 export const INTERN_STATUS = {
-  1: { text: 'Aktif', badge: 'text-bg-success' },
-  0: { text: 'Ayrıldı', badge: 'text-bg-secondary' },
+  true: { text: 'Aktif', badge: 'text-bg-success' },
+  false: { text: 'Ayrıldı', badge: 'text-bg-secondary' },
 }
 
 // ---- Başvuru durumu ----

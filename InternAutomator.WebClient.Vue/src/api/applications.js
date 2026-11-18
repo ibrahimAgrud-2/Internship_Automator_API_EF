@@ -20,6 +20,16 @@ export function updateApplicationStatus(applicationID, status, notes) {
   return apiPut('Application/Update/AppStatus', { applicationID, status, notes })
 }
 
-export function acceptApplication(applicationID, status, notes) {
-  return apiPut('Application/Update/AppStatus/accepted', { applicationID, status, notes })
+
+
+export function acceptApplication(applicationID, note = '') {
+  const query = new URLSearchParams({
+    applicationID: String(applicationID)
+  })
+
+  if (note.trim()) {
+    query.set('note', note.trim())
+  }
+
+  return apiPut(`Application/Update/AppStatus/accept?${query.toString()}`)
 }

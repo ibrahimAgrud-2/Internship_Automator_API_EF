@@ -57,33 +57,22 @@ async function submit() {
   message.value = null
   isSubmitting.value = true
 
-
-try {
-  const result = await submitApplication(buildApplication())
-
-  if (result !== true) {
-    message.value = {
-      type: 'danger',
-      lines: ['Başvurunun sonucu doğrulanamadı. Lütfen tekrar göndermeden önce kontrol edin.'],
+  try {
+    const result = await submitApplication(buildApplication())
+    if (result !== true) {
+      message.value = {
+        type: 'danger',
+        lines: ['Başvurunun sonucu doğrulanamadı. Lütfen tekrar göndermeden önce kontrol edin.'],
+      }
+      return
     }
-    return
+    message.value = { type: 'success', lines: ['Başvurunuz alınmıştır.'] }
+    Object.assign(form, emptyForm())
+  } catch (error) {
+    message.value = { type: 'danger', lines: getErrorMessages(error) }
+  } finally {
+    isSubmitting.value = false
   }
-
-  message.value = {
-    type: 'success',
-    lines: ['Başvurunuz alınmıştır.'],
-  }
-
-  Object.assign(form, emptyForm())
-} catch (error) {
-  message.value = {
-    type: 'danger',
-    lines: getErrorMessages(error),
-  }
-} finally {
-  isSubmitting.value = false
-}
-
 }
 </script>
 

@@ -27,8 +27,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Intern
         [Required]
         public bool IsActive { get; set; }
 
-        public InternEntity(int internID, int personID, string passwordHash,
-            DateTime startDate, DateTime? endDate, DateTime createdDate, byte isActive)
+        public InternEntity(int internID, int personID,
+            DateTime startDate, DateTime? endDate, DateTime createdDate, bool isActive)
         {
             InternID = internID;
             PersonID = personID;

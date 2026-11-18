@@ -9,6 +9,7 @@ export async function getInternProjects(internID) {
 
 export async function getMyProjects() {
   const projects = await apiGet('OngoingProjects/MyProjects')
+
   return Array.isArray(projects) ? projects : []
 }
 

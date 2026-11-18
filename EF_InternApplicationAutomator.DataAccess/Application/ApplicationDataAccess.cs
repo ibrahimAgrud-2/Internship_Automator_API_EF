@@ -56,26 +56,27 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             return -1;
         }
 
-        public int UpdateStatus(int appID, ApplicationStatusUpdateDTO appResponseDTO)
+        public bool UpdateStatus(int appID,byte status,int reviewedBuUserID, string? note)
         {
             var app = _Context.Applications.Find(appID);
 
-            if (app == null || appResponseDTO == null)
+            if (app == null||status>3)
             {
-                return -1;
+                return false;
             }
 
-            //TODO: 2 yerine LOGİN yapmış use'ın ID'sini ver
-            app.ReviewedByUserID = 2;
+           
+            app.ReviewedByUserID = reviewedBuUserID;
             app.ReviewDate = DateTime.Now.Date;
-            app.Status = appResponseDTO.status;
+            app.Status = status;
+            app.Notes = note;
 
             if (_Context.SaveChanges() > 0)
             {
-                return appID;
+                return true;
             }
 
-            return -1;
+            return false;
         }
 
         public bool DeleteApplication(int appID)
