@@ -24,9 +24,10 @@ namespace Shared
 
         public string Role { get; set; }
 
-       
+        public bool MustChangePassword { get; set; }
 
-        public LoginResponseDTO(string token, int ID,string email, string firstName, string lastName, string role,int? internID,int? userID)
+
+        public LoginResponseDTO(string token, int ID,string email, string firstName, string lastName, string role,int? internID,int? userID, bool mustChangePassword)
         {
             this.FirstName = firstName;
             LastName = lastName;
@@ -35,6 +36,7 @@ namespace Shared
             this.UserID = userID;
             this.InternID = internID;
             this.Token = token;
+            this.MustChangePassword = mustChangePassword; ;
         }
     }
 }

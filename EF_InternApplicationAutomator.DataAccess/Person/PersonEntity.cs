@@ -48,7 +48,10 @@ namespace EF_InternApplicationAutomator.DataAccess
         [MaxLength(10)]
         public string Role { get; set; }
 
-        public PersonEntity(int personID, string firstName, string lastName, string email, string phone, string address, string imagePath,string role,bool isActive,string passwordHash)
+        [Required]
+        public bool MustChangePassword { get; set; }
+
+        public PersonEntity(int personID, string firstName, string lastName, string email, string phone, string address, string imagePath,string role,bool isActive,string passwordHash,bool mustChangePassword)
         {
             PersonID = personID;
             FirstName = firstName;
@@ -60,6 +63,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             this.Role = role;
             this.IsActive = isActive;
             this.PasswordHash = passwordHash;
+            this.MustChangePassword = mustChangePassword;
         }
     }
 }

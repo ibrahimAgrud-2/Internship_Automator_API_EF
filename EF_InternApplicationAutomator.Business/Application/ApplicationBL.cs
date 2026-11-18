@@ -118,7 +118,7 @@ namespace EF_InternApplicationAutomator.Business.Application
             PersonResponseSDTO? personCreateSDTO = _person.Find(newApplicationDTO.PersonInfo.Email);
             if (personCreateSDTO == null)
             {
-                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"intern",CommonTools.GenerateRandomPassword(11));
+                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"intern",CommonTools.ComputeHash(CommonTools.GenerateRandomPassword(11)));
                 personID = _person.AddPerson(personCreate);
 
             }

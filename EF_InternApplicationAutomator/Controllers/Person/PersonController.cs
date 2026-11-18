@@ -156,7 +156,7 @@ namespace EF_InternApplicationAutomator.API.Controllers
             string token = _TokenService.CreateToken(person.PersonID.ToString(),person.Role,person.UserID.ToString(),person.InternID.ToString());
 
 
-                return Ok(new LoginResponseDTO(token, person.PersonID, person.Email, person.FirstName, person.LastName, person.Role, person.InternID, person.UserID));
+                return Ok(new LoginResponseDTO(token, person.PersonID, person.Email, person.FirstName, person.LastName, person.Role, person.InternID, person.UserID,person.MustChangePassword));
         }
 
 

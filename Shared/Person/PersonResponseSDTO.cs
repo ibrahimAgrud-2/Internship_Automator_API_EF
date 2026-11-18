@@ -29,8 +29,10 @@ namespace Shared
 
         [Required]
         public string Password { get; set; }
+
+        public bool  MustChangePassword { get; set; }
         public PersonResponseSDTO(int personID,string firstName, string lastName, string email,
-                string phone, string address, string imagePath,string role,bool isActive,string passwordHash)
+                string phone, string address, string imagePath,string role,bool isActive,string passwordHash, bool mustChangePassword)
         {
             this.PersonID = personID;
             this.Role = role;
@@ -42,6 +44,7 @@ namespace Shared
             ImagePath = imagePath;
             this.IsActive = isActive;
             this.Password = passwordHash;
+            this.MustChangePassword = mustChangePassword;
         }
     }
 }

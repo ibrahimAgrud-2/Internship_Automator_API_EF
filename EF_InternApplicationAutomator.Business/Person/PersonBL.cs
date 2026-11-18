@@ -2,6 +2,7 @@
 using EF_InternApplicationAutomator.Business.User;
 using EF_InternApplicationAutomator.DataAccess;
 using Shared;
+using System;
 
 namespace EF_InternApplicationAutomator.Business
 {
@@ -35,7 +36,7 @@ namespace EF_InternApplicationAutomator.Business
             int internID = _Intern.GetInternIDByPersonID(p.PersonID); ;
             int userID = _User.GetUserIDByPersonID(p.PersonID);
 
-            return new PersonResponseWithIDsDTO(p.PersonID, p.FirstName, p.LastName, p.Email, p.Phone, p.Address, p.ImagePath, p.Role, p.IsActive, p.Password, internID, userID);
+            return new PersonResponseWithIDsDTO(p.PersonID, p.FirstName, p.LastName, p.Email, p.Phone, p.Address, p.ImagePath, p.Role, p.IsActive, p.Password, internID, userID, p.MustChangePassword);
         }
         public PersonResponseSDTO? Find(int ID)
         {

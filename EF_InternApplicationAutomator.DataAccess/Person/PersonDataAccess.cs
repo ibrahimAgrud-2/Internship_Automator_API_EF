@@ -18,9 +18,6 @@ namespace EF_InternApplicationAutomator.DataAccess
             _Context = context;
         }
 
-
-
-
         public PersonResponseSDTO? Find(int personID)
         {
             PersonEntity? Person = _Context.People.Find(personID);
@@ -31,7 +28,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
             else
             {
-                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role ,Person.IsActive, Person.PasswordHash);
+                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role ,Person.IsActive, Person.PasswordHash,Person.MustChangePassword);
             }
         }
 
@@ -45,7 +42,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
             else
             {
-                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role,Person.IsActive,Person.PasswordHash);
+                return new PersonResponseSDTO(Person.PersonID, Person.FirstName, Person.LastName, Person.Email, Person.Phone, Person.Address, Person.ImagePath,Person.Role,Person.IsActive,Person.PasswordHash, Person.MustChangePassword);
             }
         }
         public int UpdatePerson(int personID, PersonCreateSDTO personCreateDTO)
@@ -74,7 +71,9 @@ namespace EF_InternApplicationAutomator.DataAccess
        
         public int AddPerson(PersonCreateWithRoleDTO person)
         {
-            PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath,person.Role,true,person.PasswordHash);
+
+            //ilk person add yaptığımızda yeni olduğu için password mutlaka güncellemeli
+            PersonEntity personEntity = new PersonEntity(0,person.FirstName, person.LastName, person.Email, person.Phone, person.Address, person.ImagePath,person.Role,true,person.PasswordHash,true);
 
 
             EntityEntry<PersonEntity> pw = _Context.People.Add(personEntity);
