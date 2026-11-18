@@ -44,9 +44,9 @@ namespace EF_InternApplicationAutomator.Business.Conversation
             return _ConversationDataAccess.Find(ID);
         }
 
-        public int AddMessage(MessageCreateDTO message,bool isStaff)
+        public int AddMessage(MessageCreateDTO message,int personID,bool isStaff)
         {
-            return _MessagesDataAccess.AddMessage(message, isStaff);
+            return _MessagesDataAccess.AddMessage(message, personID,isStaff);
         }
 
 

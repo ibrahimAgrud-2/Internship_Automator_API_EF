@@ -97,13 +97,17 @@ namespace EF_InternApplicationAutomator.DataAccess
 
 
         //------------------------------ CRUD DONE --------------------
-        public bool IsPersonExistByEmail(string email)
+        public bool IsPersonExist(string email)
         {
             return _Context.People.Any(p => p.Email == email);
         }
-        public bool IsPersonExistByID(int ID)
+        public bool IsPersonExist(int ID)
         {
             return _Context.People.Any(p => p.PersonID == ID);
+        }
+        public bool IsPersonActive(int ID)
+        {
+            return _Context.People.Any(p => p.PersonID == ID && p.IsActive);
         }
     }
 }

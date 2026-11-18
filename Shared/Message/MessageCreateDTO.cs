@@ -11,19 +11,13 @@ namespace Shared.Message
     {
       
 
-        [Required]
-        public int PersonID { get; set; }
+    
 
         [Required]
         public int ConversationID { get; set; }
 
         [Required]
         public string Content { get; set; }
-
-
-        [Required]
-        public bool IsStaff { get; set; }
-
         [Required]
         public int ReferencedContentID { get; set; }
 
@@ -32,7 +26,7 @@ namespace Shared.Message
 
 
         public MessageCreateDTO(
-           int personID,
+
             int conversationID,
             string content,
             bool isStaff,
@@ -43,10 +37,9 @@ namespace Shared.Message
           
             ConversationID = conversationID;
             Content = content;
-            IsStaff = isStaff;
             ReferencedContentID = referencedContentID;
             ReferencedContentType = referencedContentType;
-            this.PersonID = personID;
+
         }
     }
 }

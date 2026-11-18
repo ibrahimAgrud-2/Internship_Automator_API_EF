@@ -26,9 +26,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Message
         }
 
        
-        public int AddMessage(Shared.Message.MessageCreateDTO message,bool isStaff)
+        public int AddMessage(Shared.Message.MessageCreateDTO message, int personID, bool isStaff)
         {
-            MessageEntity messageEntity = new MessageEntity(0,message.PersonID,message.ConversationID,message.Content,DateTime.Now,isStaff, message.ReferencedContentID,message.ReferencedContentType);
+            MessageEntity messageEntity = new MessageEntity(0, personID, message.ConversationID,message.Content,DateTime.Now,isStaff, message.ReferencedContentID,message.ReferencedContentType);
             EntityEntry<MessageEntity> addedIntern = _Context.Messages.Add(messageEntity);
 
             if (_Context.SaveChanges() > 0)

@@ -28,10 +28,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
 
 
 
-        public int AddTask(TaskCreateDTO task)
+        public int AddTask(TaskCreateDTO task, int createdByUserID)
         {
 
-            TaskEntity taskEntity = new TaskEntity(0,task.CreatedByUserID,task.OngoingProjectID,task.Title,task.Description,DateTime.Now.Date,task.DueDate,false,null,task.CreatedByUserID,DateTime.Now.Date);
+            TaskEntity taskEntity = new TaskEntity(0, createdByUserID, task.OngoingProjectID,task.Title,task.Description,DateTime.Now.Date,task.DueDate,false,null, createdByUserID, DateTime.Now.Date);
 
             _Context.Tasks.Add(taskEntity);
 

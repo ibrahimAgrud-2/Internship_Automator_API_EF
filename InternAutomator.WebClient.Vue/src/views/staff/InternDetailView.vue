@@ -380,7 +380,6 @@ function onRevoked() {
       v-model="isTaskFormOpen"
       :projects="internProjects"
       :task="editingTask"
-      :userID="session?.userID"
       @saved="onTaskSaved"
       @stale="loadDetails"
     />

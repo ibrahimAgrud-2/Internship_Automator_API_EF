@@ -17,9 +17,9 @@ namespace EF_InternApplicationAutomator.Business.Tasks
             return _TaskDataAccess.ListTasksByInternID(internID);
         }
 
-        public int AddTask(TaskCreateDTO newTask)
+        public int AddTask(TaskCreateDTO newTask, int createdByUserID)
         {
-            return _TaskDataAccess.AddTask(newTask);
+            return _TaskDataAccess.AddTask(newTask,createdByUserID);
         }
 
         public bool UpdateTask(int taskID, TaskUpdateDTO newTask)

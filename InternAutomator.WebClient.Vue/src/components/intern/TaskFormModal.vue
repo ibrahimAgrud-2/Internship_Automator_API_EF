@@ -13,7 +13,6 @@ const props = defineProps({
   modelValue: { type: Boolean, default: false },
   projects: { type: Array, default: () => [] }, // stajyerin atanmış projeleri (görev ongoingProjectID ile bağlanır)
   task: { type: Object, default: null },
-  userID: { type: [Number, String], default: null },
 })
 
 // saved: kaydedildi, pencere kapandı (üst sayfa bildirim gösterip detayları yeniler)
@@ -91,7 +90,6 @@ async function submitUpdate(title, dayText) {
   try {
     await updateTask(props.task.taskID, {
       title,
-      lastUpdatedByUserID: props.userID,
       description,
       // Tarih değişmediyse eski değer aynen gönderilir; saat bilgisi sessizce değişmesin
       dueDate: isDateChanged ? toTaskDueDate(dayText) : original.value.dueDate,
@@ -137,8 +135,6 @@ async function submit() {
     // Düzenlemede tarih hiç değiştirilmediyse (gecikmiş görev) client engellemez; kararı API verir
     message = 'Teslim tarihi bugünden önce olamaz.'
     invalidField = dueDateInput.value
-  } else if (!props.userID) {
-    message = 'Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.'
   }
 
   if (message) {
@@ -158,7 +154,6 @@ async function submit() {
 
   try {
     await addTask({
-      createdByUserID: props.userID,
       ongoingProjectID,
       title,
       description: form.description.trim(),

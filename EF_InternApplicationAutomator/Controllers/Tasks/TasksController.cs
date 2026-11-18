@@ -100,8 +100,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return BadRequest("Kullanici Hesabınız bulunamadığı için görev eklenemedi");
             }
-            newTask.CreatedByUserID = createdByUserID.Value;
-            int taskID = _Tasks.AddTask(newTask);
+         
+            int taskID = _Tasks.AddTask(newTask,createdByUserID.Value);
             if (taskID < 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);

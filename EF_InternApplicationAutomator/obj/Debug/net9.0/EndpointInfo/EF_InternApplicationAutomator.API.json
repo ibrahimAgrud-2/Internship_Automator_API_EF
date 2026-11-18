@@ -489,7 +489,7 @@
         }
       }
     },
-    "/api/Application/{ID}": {
+    "/api/Application/{ApplicationID}": {
       "get": {
         "tags": [
           "Application"
@@ -497,7 +497,7 @@
         "operationId": "FindApplication",
         "parameters": [
           {
-            "name": "ID",
+            "name": "ApplicationID",
             "in": "path",
             "required": true,
             "schema": {
@@ -3620,17 +3620,11 @@
         "required": [
           "content",
           "conversationID",
-          "isStaff",
-          "personID",
           "referencedContentID",
           "referencedContentType"
         ],
         "type": "object",
         "properties": {
-          "personID": {
-            "type": "integer",
-            "format": "int32"
-          },
           "conversationID": {
             "type": "integer",
             "format": "int32"
@@ -3638,9 +3632,6 @@
           "content": {
             "minLength": 1,
             "type": "string"
-          },
-          "isStaff": {
-            "type": "boolean"
           },
           "referencedContentID": {
             "type": "integer",
@@ -3963,7 +3954,6 @@
       },
       "TaskCreateDTO": {
         "required": [
-          "createdByUserID",
           "description",
           "dueDate",
           "ongoingProjectID",
@@ -3971,10 +3961,6 @@
         ],
         "type": "object",
         "properties": {
-          "createdByUserID": {
-            "type": "integer",
-            "format": "int32"
-          },
           "ongoingProjectID": {
             "type": "integer",
             "format": "int32"

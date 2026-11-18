@@ -1,5 +1,6 @@
 ﻿using EF_InternApplicationAutomator.Business.OngoingProjects;
 using EF_InternApplicationAutomator.Business.Project;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Project;
 
@@ -18,6 +19,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Project
             _OngoingProjects = ongoingProjects;
         }
 
+ 
+        
         [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<ProjectListResponseDTO>> GetAllProjects()

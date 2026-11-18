@@ -6,14 +6,12 @@ import { getAllConversations } from '@/api/conversations'
 import { getAllMessages, addMessage } from '@/api/messages'
 import { getErrorMessages } from '@/api/http'
 import { getLatestAnnouncements } from '@/api/announcements'
-import { getSession } from '@/auth/session'
 import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
 import { formatTime, formatDayLabel } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import ReferencePickerModal from '@/components/ReferencePickerModal.vue'
 import '@/assets/css/messages.css'
 
-const session = getSession()
 
 const conversations = ref([])
 const isLoading = ref(true)
@@ -215,22 +213,14 @@ async function sendMessage() {
   const content = draft.value.trim()
   if (!content) return
 
-  // Oturumda personID yoksa (eski oturum) istek hiç atılmaz
-  if (!session?.personID) {
-    sendError.value = ['Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.']
-    return
-  }
-
   sendError.value = []
   isSending.value = true
 
   try {
     // Referans yoksa 0 / 0 gönderilir (API'da 0 = referans yok). Tarihi API atar.
     await addMessage({
-      personID: session.personID,
       conversationID: selectedConversationID.value,
       content,
-      isStaff: true,
       referencedContentID: reference.value ? reference.value.id : 0,
       referencedContentType: reference.value ? reference.value.type : REFERENCE_NONE,
     })

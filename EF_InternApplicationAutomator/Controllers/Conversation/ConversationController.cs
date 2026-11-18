@@ -2,6 +2,7 @@
 using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business;
 using EF_InternApplicationAutomator.Business.Conversation;
+using EF_InternApplicationAutomator.Business.Intern;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Intern;
@@ -96,6 +97,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             {
                 return Unauthorized();
             }
+            if (_People.IsPersonExists(personID.Value)&&_People.IsPersonActive(personID.Value))
+            {
+                return BadRequest("Hesabınızdan mesaj ekleyemezsiniz. Silinmiş veya aktif olmayabilr");
+            }
+
             //intern mesaj ekleyebilir mi? Personel için bir kontrole gerek yok
             bool isStaff = User.IsInRole("User");
             if (!isStaff)
@@ -113,9 +119,9 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                     return Forbid();
                 }
             }
-            message.PersonID = personID.Value;
           
-            int ID = _Conversation.AddMessage(message, isStaff);
+          
+            int ID = _Conversation.AddMessage(message,personID.Value, isStaff);
 
             if (ID < 1)
             {

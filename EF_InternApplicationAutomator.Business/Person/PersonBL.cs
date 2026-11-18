@@ -57,5 +57,13 @@ namespace EF_InternApplicationAutomator.Business
         {
             return _PersonDataAccess.AddPerson(person);
         }
+        public bool IsPersonExists(int personID)
+        {
+            return _PersonDataAccess.IsPersonExist(personID);
+        }
+        public bool IsPersonActive(int personID)
+        {
+            return _PersonDataAccess.IsPersonActive(personID);
+        }
     }
 }
