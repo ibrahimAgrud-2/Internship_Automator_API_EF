@@ -5,7 +5,6 @@ import { getIntern } from '@/api/interns'
 import { getInternProjects, revokeProject } from '@/api/ongoingProjects'
 import { getInternTasks, completeTask, deleteTask } from '@/api/tasks'
 import { ApiError, getErrorMessages } from '@/api/http'
-import { getSession } from '@/auth/session'
 import { INTERN_ACTIVE } from '@/constants'
 import { formatDate } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
@@ -18,7 +17,6 @@ import AssignProjectModal from '@/components/intern/AssignProjectModal.vue'
 import TaskFormModal from '@/components/intern/TaskFormModal.vue'
 import '@/assets/css/intern-detail.css'
 
-const session = getSession()
 const route = useRoute()
 
 // Stajyer numarası adres çubuğundan gelir: /staff/interns/4
@@ -371,7 +369,6 @@ function onRevoked() {
       v-model="isAssignOpen"
       :internID="internID"
       :assignedProjectIDs="internProjects.map((p) => p.projectID)"
-      :userID="session?.userID"
       @assigned="onAssigned"
     />
 

@@ -22,9 +22,9 @@ namespace EF_InternApplicationAutomator.Business.Project
             return _ProjectDataAccess.Find(projectID);
         }
 
-        public int AddNewProject(ProjectCreateDTO newProject)
+        public int AddNewProject(ProjectCreateDTO newProject,int userID)
         {
-            return _ProjectDataAccess.AddNewProject(newProject);
+            return _ProjectDataAccess.AddNewProject(newProject, userID);
         }
 
         public bool UpdateProject(int projectID,ProjectUpdateDTO newProject)

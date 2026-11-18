@@ -15,7 +15,6 @@ const props = defineProps({
   modelValue: { type: Boolean, default: false },
   internID: { type: Number, required: true },
   assignedProjectIDs: { type: Array, default: () => [] }, // bu stajyere zaten atanmış projeler listeden çıkarılır
-  userID: { type: [Number, String], default: null },
 })
 
 // assigned: atama yapıldı, pencere kapandı (üst sayfa bildirim gösterip detayları yeniler)
@@ -142,18 +141,11 @@ async function submitNewProject() {
     return
   }
 
-  // Oturumda kullanıcı numarası yoksa istek hiç atılmaz
-  if (!props.userID) {
-    errors.value = ['Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.']
-    return
-  }
-
   errors.value = []
   isCreating.value = true
 
   try {
     const created = await createProject({
-      createdByUserID: props.userID,
       title,
       description: newProject.value.description.trim(),
       technologies: newProject.value.technologies.trim(),

@@ -2183,17 +2183,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectListResponseDTO"
+                  "$ref": "#/components/schemas/ProjectResponseDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectListResponseDTO"
+                  "$ref": "#/components/schemas/ProjectResponseDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectListResponseDTO"
+                  "$ref": "#/components/schemas/ProjectResponseDTO"
                 }
               }
             }
@@ -2317,6 +2317,26 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -2404,6 +2424,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -2467,6 +2490,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -3855,16 +3881,11 @@
       },
       "ProjectCreateDTO": {
         "required": [
-          "createdByUserID",
           "description",
           "title"
         ],
         "type": "object",
         "properties": {
-          "createdByUserID": {
-            "type": "integer",
-            "format": "int32"
-          },
           "title": {
             "maxLength": 100,
             "minLength": 1,
@@ -3923,6 +3944,36 @@
           "takenByInternCount": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProjectResponseDTO": {
+        "required": [
+          "description",
+          "projectID",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "projectID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "technologies": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

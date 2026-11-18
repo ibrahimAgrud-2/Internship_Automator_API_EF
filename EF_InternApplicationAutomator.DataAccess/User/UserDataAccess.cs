@@ -121,5 +121,10 @@ namespace EF_InternApplicationAutomator.DataAccess.User
 
         }
 
+        public bool IsUserActive(int userID)
+        {
+            return _Context.Users.Any(u => u.UserID == userID&&u.IsActive);
+        }
+
     }
 }

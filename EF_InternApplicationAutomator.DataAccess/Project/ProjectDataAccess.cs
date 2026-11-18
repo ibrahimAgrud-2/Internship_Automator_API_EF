@@ -18,7 +18,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
 
         public List<ProjectListResponseDTO> GetAllProjects()
         {
-            List<ProjectEntity> projects = _Context.Projects.Include(p => p.User).OrderByDescending(p=>p.TakenByInternCount).ToList();
+            List<ProjectsWithInternCount> projects = _Context.ProjectsWithInternCounts.Include(p => p.User).OrderByDescending(p=>p.TakenByInternCount).ToList();
             List<ProjectListResponseDTO> projectDTOs = new List<ProjectListResponseDTO>();
 
             foreach (var project in projects)
@@ -44,13 +44,13 @@ namespace EF_InternApplicationAutomator.DataAccess.Project
         }
         
         
-        public int AddNewProject(ProjectCreateDTO project)
+        public int AddNewProject(ProjectCreateDTO project,int userID)
         {
             ProjectEntity projectEntity = new ProjectEntity(
                 0,
-                project.CreatedByUserID,
+                userID,
                 project.Title, project.Description,
-                project.Technologies,0);
+                project.Technologies);
             _Context.Projects.Add(projectEntity);
 
             if (_Context.SaveChanges() > 0)

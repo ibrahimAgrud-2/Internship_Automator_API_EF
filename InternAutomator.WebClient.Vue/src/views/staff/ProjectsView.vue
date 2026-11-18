@@ -7,7 +7,6 @@ import {
   deleteProject,
 } from '@/api/projects'
 import { ApiError, getErrorMessages } from '@/api/http'
-import { getSession } from '@/auth/session'
 import { PROJECT_LIMITS } from '@/constants'
 import { normalizeSearchText } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
@@ -17,8 +16,6 @@ import ConfirmModal from '@/components/ConfirmModal.vue'
 import TechnologyBadges from '@/components/TechnologyBadges.vue'
 import '@/assets/css/interns.css' // arama kutusu (.intern-search) burada da kullanılır
 import '@/assets/css/projects.css'
-
-const session = getSession()
 
 // Veritabanından açıklama sonunda boşluklarla dolu gelebiliyor; gösterirken kırpılır
 const getDescription = (project) => (project.description ?? '').trim()
@@ -152,18 +149,11 @@ async function submitForm() {
     return
   }
 
-  // Oturumda kullanıcı numarası yoksa istek hiç atılmaz
-  if (!session.userID) {
-    formErrors.value = ['Oturum bilgisi eksik. Lütfen çıkış yapıp tekrar giriş yapın.']
-    return
-  }
-
   formErrors.value = []
   isSaving.value = true
 
   try {
     await createProject({
-      createdByUserID: session.userID,
       title,
       description: form.description.trim(),
       technologies: form.technologies.trim(),

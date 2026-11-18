@@ -26,6 +26,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Data
         public DbSet<ApplicationEntity> Applications { set; get; }
         public DbSet<InternEntity> Interns { set; get; }
         public DbSet<ProjectEntity> Projects { get; set; }
+        public DbSet<ProjectsWithInternCount> ProjectsWithInternCounts { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<OngoingProjectEntity> OngoingProjects { get; set; }
         public DbSet<AnnouncementEntity> Announcements { get; set; }

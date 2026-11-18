@@ -59,6 +59,12 @@ namespace EF_InternApplicationAutomator.Business.User
         {
             return _userDataAccess.GetUserIDByPersonID(personID);
         }
+
+        public bool IsUserActive(int userID)
+        {
+            return _userDataAccess.IsUserActive(userID);
+        }
+
     }
 
 
