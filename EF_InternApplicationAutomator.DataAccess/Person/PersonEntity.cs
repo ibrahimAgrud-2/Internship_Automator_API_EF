@@ -41,6 +41,7 @@ namespace EF_InternApplicationAutomator.DataAccess
         public bool IsActive { get; set; }
 
         [Required]
+        [MaxLength(256)]
         public string PasswordHash { get; set; }
 
 

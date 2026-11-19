@@ -141,7 +141,7 @@ builder.Services.AddTransient<EmailService>(sp =>
     settings.Password =
         configuration["Email:AppPassword"] ?? "";
 
-    return new EmailService(settings);
+    return new EmailService(settings, configuration);
 });
 
 

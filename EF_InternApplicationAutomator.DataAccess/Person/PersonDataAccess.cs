@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;
+using Shared.Common;
 using System;
 
 
@@ -106,20 +107,21 @@ namespace EF_InternApplicationAutomator.DataAccess
         }
         public bool IsPersonExistsByIDAndPassword(int ID, string password)
         {
-            return _Context.People.Any(p => p.PersonID == ID&&p.PasswordHash==password);
+           
+            return _Context.People.Any(p => p.PersonID == ID&&password==p.PasswordHash);
         }
         public bool IsPersonActive(int ID)
         {
             return _Context.People.Any(p => p.PersonID == ID && p.IsActive);
         }
-        public bool ChangePassword(int ID,string newPassword)
+        public bool ChangePassword(int ID,string newPassword,bool mustChangePassword)
         {
             var person = _Context.People.Find(ID);
             if(person==null)
             {
                 return false;
             }
-            person.MustChangePassword = false;
+            person.MustChangePassword = mustChangePassword;
             person.PasswordHash = newPassword;
 
             return _Context.SaveChanges() > 0;

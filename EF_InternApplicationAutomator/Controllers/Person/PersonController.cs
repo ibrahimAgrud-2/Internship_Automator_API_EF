@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared;
+using Shared.Common;
 using Shared.User;
 using System;
 using System.Security.Claims;
@@ -134,7 +135,7 @@ namespace EF_InternApplicationAutomator.API.Controllers
             {
                 return NotFound("email  veya şifre hatalı");
             }
-            else if(Shared.Common.CommonTools.ComputeHash(loginDTO.Password) !=person.Password)
+            else if(!CommonTools.VerifyPassword(loginDTO.Password, person.Password))
             {
                 return NotFound("email  veya şifre hatalı");
             }
@@ -186,18 +187,21 @@ namespace EF_InternApplicationAutomator.API.Controllers
             {
                 return NotFound("Bu hesap aktif olmadı için şifre değiştirilemez");
             }
-            if (!_person.IsPersonExistsByIDAndPassword(personID.Value,changePasswordDTO.OldPassword))
+            PersonResponseSDTO person = _person.Find(personID.Value);
+            if (!CommonTools.VerifyPassword(changePasswordDTO.OldPassword, person.Password))
             {
                 return NotFound("Verdiğiniz eski şifre doğru değil");
             }
 
-            if (_person.ChangePassword(personID.Value,changePasswordDTO.NewPassword))
+            if (_person.ChangePassword(personID.Value,changePasswordDTO.NewPassword,false))
             {
                 return Ok(true);
             }
 
               return   StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+    
 
     }
 }

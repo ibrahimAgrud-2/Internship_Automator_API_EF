@@ -68,18 +68,33 @@ children: [
 const LOGIN_PAGE = { [ROLE_STAFF]: '/login', [ROLE_INTERN]: '/login' }
 const HOME_PAGE = { [ROLE_STAFF]: '/staff/applications', [ROLE_INTERN]: '/intern/projects' }
 // Rota koruması: her sayfa geçişinden önce tek yerde çalışır
+
 router.beforeEach((to) => {
   const session = getSession()
+
+  // Zorunlu şifre değişikliği
+  if (
+    session?.mustChangePassword === true &&
+    to.path !== '/change-password'
+  ) {
+    return '/change-password'
+  }
+
+  // Şifre sayfasına yalnızca giriş yapanlar erişebilir
+  if (to.path === '/change-password' && !session?.role) {
+    return '/login'
+  }
+
+  // Mevcut rol kontrolü
   const requiredRole = to.meta.requiresRole
 
-  // Giriş gerektiren bölüm: oturum yoksa ya da rol uymuyorsa o rolün giriş sayfasına
   if (requiredRole && session?.role !== requiredRole) {
     return LOGIN_PAGE[requiredRole]
   }
 
-    // Zaten girişliyken giriş sayfasını gösterme
+  // Giriş yapmış kullanıcı tekrar login sayfasına gidemez
   if (to.meta.isLoginPage && session?.role) {
-    return HOME_PAGE[session.role]
+    return HOME_PAGE[session.role] ?? '/login'
   }
 })
 

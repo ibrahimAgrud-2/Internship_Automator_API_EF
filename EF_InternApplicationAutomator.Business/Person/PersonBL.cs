@@ -65,18 +65,17 @@ namespace EF_InternApplicationAutomator.Business
         }
         public bool IsPersonExistsByIDAndPassword(int personID,string password)
         {
-            password = CommonTools.ComputeHash(password);
-            return _PersonDataAccess.IsPersonExistsByIDAndPassword(personID, password);
+         
+            return _PersonDataAccess.IsPersonExistsByIDAndPassword(personID, CommonTools.HashPassword(password));
         }
         public bool IsPersonActive(int personID)
         {
             return _PersonDataAccess.IsPersonActive(personID);
         }
 
-        public bool ChangePassword(int personID,string newPassword)
+        public bool ChangePassword(int personID,string newPassword,bool mustChangePassword)
         {
-            newPassword = CommonTools.ComputeHash(newPassword);
-            return _PersonDataAccess.ChangePassword(personID, newPassword);
+            return _PersonDataAccess.ChangePassword(personID, CommonTools.HashPassword(newPassword), mustChangePassword);
         }
     }
 }

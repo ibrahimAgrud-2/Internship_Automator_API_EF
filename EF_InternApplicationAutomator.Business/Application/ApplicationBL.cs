@@ -45,9 +45,7 @@ namespace EF_InternApplicationAutomator.Business.Application
         }
 
 
-
-
-        public bool UpdateStatus(int applicationID, int reviewedByUserID,enStatus status,string? note)
+        public  bool UpdateStatus(int applicationID, int reviewedByUserID,enStatus status,string? note)
         {
 
             return _ApplicationDataAccess.UpdateStatus(applicationID,(byte)status, reviewedByUserID,note);
@@ -70,15 +68,15 @@ namespace EF_InternApplicationAutomator.Business.Application
                 if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now,true)) != -1)
                 {
 
-                   
-                    if (SendEmail(person.PersonID))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Yeni eklenen stajyere (başvuru ID {application.ApplicationID}) email gönderilemedi");
-                    }
+                    if (_person.ChangePassword(person.PersonID, password,true))
+                        if (SendEmail(person, password))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Yeni eklenen stajyere (başvuru ID {application.ApplicationID}) email gönderilemedi");
+                        }
 
                 }
                 else
@@ -89,15 +87,14 @@ namespace EF_InternApplicationAutomator.Business.Application
             return false;
         }
     
-        
-        
-        
-        
-        public bool SendEmail(int personID)
+
+
+        public bool SendEmail(PersonResponseSDTO person,string tempPassword)
         {
-            bool sent = _emailService.SendEmail("bilgisayarmuhh@gmail.com", "Onaylandi", "Staj başvurusnu onaylandi."); ;
-          
-            return true;
+
+
+            return _emailService.SendEmail(person, tempPassword); ; 
+             
         }
 
         public int AddApplication(ApplicationCreateSecure newApplicationDTO)
@@ -111,7 +108,7 @@ namespace EF_InternApplicationAutomator.Business.Application
             PersonResponseSDTO? personCreateSDTO = _person.Find(newApplicationDTO.PersonInfo.Email);
             if (personCreateSDTO == null)
             {
-                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"intern",CommonTools.ComputeHash(CommonTools.GenerateRandomPassword(11)));
+                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"Intern",CommonTools.HashPassword(personCreateSDTO.Password));
                 personID = _person.AddPerson(personCreate);
 
             }

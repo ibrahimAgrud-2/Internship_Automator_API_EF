@@ -4,6 +4,10 @@ using MailKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+
 
 namespace Shared.Common
 {
@@ -47,15 +51,54 @@ namespace Shared.Common
             return new string(password);
         }
 
-        public static string ComputeHash(string input)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        private static readonly PasswordHasher<object> _passwordHasher =
+            new PasswordHasher<object>(
+                Options.Create(new PasswordHasherOptions
+                {
+                    CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3,
+                    IterationCount = 600_000
+                })
+            );
+
+        // Şifreyi hash'ler (DB'ye kaydetmek için)
+        public static string HashPassword(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Şifre boş olamaz.");
+
+            return _passwordHasher.HashPassword(
+                new object(),
+                password
+            );
+        }
+
+        //bu fonksiyonda ilk password, kullanıcının verdiği password.
+        //İkici password ise o kullanıcını DB'de önceden kayıt edilen şifresi 
+        public static bool VerifyPassword( string password, string storedHash)
+        {
+            if (string.IsNullOrEmpty(password) ||
+                string.IsNullOrEmpty(storedHash))
+            {
+                return false;
+            }
+
+            try
+            {
+                var result = _passwordHasher.VerifyHashedPassword(
+                    new object(),
+                    storedHash,
+                    password
+                );
+
+                return result != PasswordVerificationResult.Failed;
+            }
+            catch (FormatException)
+            {
+                return false;
             }
         }
+
     }
 
 
@@ -69,42 +112,55 @@ namespace Shared.Common
         public string FromName { get; set; } = "Staj Otomasyonu";
     }
 
+
     public class EmailService
     {
         private readonly EmailSettings _settings;
+        private readonly IConfiguration _configuration;
 
-        public EmailService(EmailSettings settings)
+        public EmailService(
+            EmailSettings settings,
+            IConfiguration configuration)
         {
             _settings = settings;
+            _configuration = configuration;
         }
 
-
-        public bool SendEmail(string sendTo, string subject, string body)
+        public bool SendEmail(PersonResponseSDTO person,string tempPassword)
         {
-            if (string.IsNullOrWhiteSpace(sendTo) ||
-                string.IsNullOrWhiteSpace(subject) ||
-                string.IsNullOrWhiteSpace(body))
-            {
+            if (person == null || string.IsNullOrWhiteSpace(person.Email))
                 return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(_settings.Password) ||
-                string.IsNullOrWhiteSpace(_settings.UserName) ||
-                string.IsNullOrWhiteSpace(_settings.FromAddress))
-            {
-                return false;
-            }
 
             try
             {
+                // 1. E-posta şablonunu oku
+                string? subject = _configuration[
+                    "EmailTemplates:ApplicationAccepted:Subject"];
+
+                string? body = _configuration[
+                    "EmailTemplates:ApplicationAccepted:Body"];
+
+                if (string.IsNullOrWhiteSpace(subject) ||
+                    string.IsNullOrWhiteSpace(body))
+                {
+                    return false;
+                }
+
+                // 2. Şablondaki alanları doldur
+                body = body
+                    .Replace("{FirstName}", person.FirstName ?? "")
+                    .Replace("{LastName}", person.LastName ?? "")
+                    .Replace("{Email}", person.Email)
+                    .Replace("{Password}", tempPassword);
+
+                // 3. E-postayı oluştur
                 var message = new MimeMessage();
 
                 message.From.Add(new MailboxAddress(
                     _settings.FromName,
-                    _settings.FromAddress
-                ));
+                    _settings.FromAddress));
 
-                message.To.Add(MailboxAddress.Parse(sendTo));
+                message.To.Add(MailboxAddress.Parse(person.Email));
 
                 message.Subject = subject;
 
@@ -113,24 +169,30 @@ namespace Shared.Common
                     Text = body
                 };
 
+
                 using var smtp = new SmtpClient();
 
+                // Gmail sunucusuna bağlan
                 smtp.Connect(
                     _settings.Host,
                     _settings.Port,
                     SecureSocketOptions.StartTls
                 );
 
+                // Kimlik doğrulaması
                 smtp.Authenticate(
                     _settings.UserName,
                     _settings.Password
                 );
 
+                // E-postayı gönder
                 smtp.Send(message);
 
+                // Bağlantıyı kapat
                 smtp.Disconnect(true);
 
                 return true;
+
             }
             catch (Exception ex)
             {
@@ -138,6 +200,9 @@ namespace Shared.Common
                 return false;
             }
         }
-
     }
+
+
+
+
 }
