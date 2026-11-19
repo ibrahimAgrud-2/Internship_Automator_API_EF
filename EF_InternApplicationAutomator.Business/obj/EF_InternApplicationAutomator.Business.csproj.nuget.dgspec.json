@@ -197,9 +197,13 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "NETCore.MailKit": {
+            "MailKit": {
               "target": "Package",
-              "version": "[2.1.0, )"
+              "version": "[5.0.0, )"
+            },
+            "MimeKit": {
+              "target": "Package",
+              "version": "[5.0.0, )"
             }
           },
           "imports": [

@@ -1,6 +1,7 @@
 ﻿
 using EF_InternApplicationAutomator.DataAccess.Application;
 using EF_InternApplicationAutomator.DataAccess.Conversation;
+using EF_InternApplicationAutomator.DataAccess.ConversationIntern;
 using EF_InternApplicationAutomator.DataAccess.Message;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -8,6 +9,7 @@ using Shared;
 using Shared.Application;
 using Shared.Intern;
 using Shared.Message;
+using Shared.Conversation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +26,12 @@ namespace EF_InternApplicationAutomator.Business.Conversation
 
          ConversationDataAccess _ConversationDataAccess;
        MessagesDataAccess _MessagesDataAccess;
-        public ConversationBL(ConversationDataAccess conversationDataAccess, MessagesDataAccess messagesDataAccess)
+       ConversationInternDataAccess _ConversationInternDataAccess;
+        public ConversationBL(ConversationDataAccess conversationDataAccess, MessagesDataAccess messagesDataAccess, ConversationInternDataAccess conversationInternDataAccess)
         {
             _ConversationDataAccess = conversationDataAccess;
             _MessagesDataAccess = messagesDataAccess;
+            _ConversationInternDataAccess = conversationInternDataAccess;
         }
 
         public List<ConversationResponseDTO>GetAllConversation()
@@ -66,7 +70,21 @@ namespace EF_InternApplicationAutomator.Business.Conversation
         public bool IsInternExistsInConversations(int internID,int conversationID)
         {
            
-            return _ConversationDataAccess.IsInternExistsInConversations(internID,conversationID);
+            return _ConversationDataAccess.DoesInternExistsInConversations(internID,conversationID);
         }
+   
+        public bool AddNewConversation(ConversationCreateDTO conversation)
+        {
+            return _ConversationDataAccess.AddNewConversation(conversation);
+        }
+
+
+        public bool DoesInternHasAPrivateChat(int internID)
+        {
+            return _ConversationInternDataAccess.DoesInternHasAPrivateChat(internID);
+        }
+
+
+
     }
 }

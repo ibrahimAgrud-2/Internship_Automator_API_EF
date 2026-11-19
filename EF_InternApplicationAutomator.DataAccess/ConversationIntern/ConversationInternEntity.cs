@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
 {
     [Table("vw_ConversationIntern")]
-    public class ConversationInternEntity
+    public class vw_ConversationIntern
     {
         [Key]
         public int ConversationID { get; set; }
@@ -25,7 +25,7 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
         [Required]
         public bool IsGroup { get; set; }
 
-        public ConversationInternEntity(int conversationID, int internID, string conversationName, bool isGroup)
+        public vw_ConversationIntern(int conversationID, int internID, string conversationName, bool isGroup)
         {
             ConversationID = conversationID;
             this.InternID = internID;

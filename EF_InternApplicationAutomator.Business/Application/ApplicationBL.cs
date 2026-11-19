@@ -95,15 +95,8 @@ namespace EF_InternApplicationAutomator.Business.Application
         
         public bool SendEmail(int personID)
         {
-            bool sent = _emailService.SendEmail("test@gmail.com", "Onaylandi", "Staj başvurusnu onaylandi."); ;
-            if (!sent)
-            {
-                InternResponseDTO intern = _Intern.FindByPersonID(personID);
-
-                _Intern.DeleteIntern(intern.InternID);
-
-                return false;
-            }
+            bool sent = _emailService.SendEmail("bilgisayarmuhh@gmail.com", "Onaylandi", "Staj başvurusnu onaylandi."); ;
+          
             return true;
         }
 

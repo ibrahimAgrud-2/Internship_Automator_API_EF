@@ -7,13 +7,13 @@ using Shared.Intern.ConversationIntern;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
 {
-    [Route("api/ConversationIntern")]
+    [Route("api/ConversationInternConroller")]
     [ApiController]
-    public class ConversationIntern : ControllerBase
+    public class ConversationInternConroller : ControllerBase
     {
         ConversationInternBL _ConversationInternBL;
 
-        public ConversationIntern(ConversationInternBL conversationInternBL)
+        public ConversationInternConroller(ConversationInternBL conversationInternBL)
         {
             _ConversationInternBL = conversationInternBL;
         }

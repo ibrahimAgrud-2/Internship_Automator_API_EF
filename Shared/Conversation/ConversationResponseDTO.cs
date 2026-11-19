@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Intern
+namespace Shared.Conversation
 {
-    //Conversation response DTO
+    //Conversation ConversationResponseDTO DTO
     public class ConversationResponseDTO
     {
         [Required]

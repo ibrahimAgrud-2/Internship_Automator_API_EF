@@ -27,9 +27,6 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Microsoft.OpenApi.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\MimeKit.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\NETCore.MailKit.dll
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\BouncyCastle.Crypto.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -84,3 +81,10 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net9.0\EF_InternApplicationAutomator.API.pdb
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net9.0\EF_InternApplicationAutomator.API.genruntimeconfig.cache
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\obj\Debug\net9.0\ref\EF_InternApplicationAutomator.API.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\MimeKit.Core.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\System.Formats.Asn1.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\Microsoft.Bcl.Cryptography.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\MimeKit.Cryptography.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Security.Cryptography.Pkcs.dll

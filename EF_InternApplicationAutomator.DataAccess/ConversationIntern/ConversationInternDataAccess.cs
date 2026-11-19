@@ -26,7 +26,7 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
         public List<ConversationInternResponseDTO> GetAllInternConversation(int internID)
         {
 
-            return _Context.ConversationIntern
+            return _Context.vw_ConversationIntern
                 .AsNoTracking().Where(c => c.InternID == internID)
                 .Select(c => new ConversationInternResponseDTO(c.ConversationID,c.InternID,c.ConversationName,c.IsGroup))
                 .ToList();
@@ -34,9 +34,12 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
 
         }
 
-       
+        public bool DoesInternHasAPrivateChat(int internID)
+        {
+            return _Context.vw_ConversationIntern.Any(c => c.InternID == internID && !c.IsGroup);
+        }
 
-        
+
 
     }
 }

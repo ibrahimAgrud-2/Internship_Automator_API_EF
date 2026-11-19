@@ -4,7 +4,7 @@ using EF_InternApplicationAutomator.DataAccess.Message;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Application;
-using Shared.Intern;
+using Shared.Conversation;
 using Shared.Message;
 
 
@@ -48,7 +48,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
            .ToList();
         }
 
-        public bool IsInternExistsInConversations(int internID, int conversationID)
+        public bool DoesInternExistsInConversations(int internID, int conversationID)
         {
             return _Context.ConversationIntern.Any(c => c.InternID == internID && c.ConversationID == conversationID);
 
@@ -59,6 +59,25 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
         {
             return _Context.Conversations.Any(c => c.ConversationID == conversationID);
         }
+
+
+        public bool AddNewConversation(ConversationCreateDTO conversation)
+        {
+
+
+            ConversationEntity conversationEntity = new ConversationEntity(0, conversation.ConversationName, conversation.IsGroup);
+
+            EntityEntry<ConversationEntity> addedIntern = _Context.Conversations.Add(conversationEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
 
 
     }

@@ -1,6 +1,9 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
+using MailKit;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace Shared.Common
 {
@@ -75,9 +78,66 @@ namespace Shared.Common
             _settings = settings;
         }
 
+
         public bool SendEmail(string sendTo, string subject, string body)
         {
-            return true;
+            if (string.IsNullOrWhiteSpace(sendTo) ||
+                string.IsNullOrWhiteSpace(subject) ||
+                string.IsNullOrWhiteSpace(body))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(_settings.Password) ||
+                string.IsNullOrWhiteSpace(_settings.UserName) ||
+                string.IsNullOrWhiteSpace(_settings.FromAddress))
+            {
+                return false;
+            }
+
+            try
+            {
+                var message = new MimeMessage();
+
+                message.From.Add(new MailboxAddress(
+                    _settings.FromName,
+                    _settings.FromAddress
+                ));
+
+                message.To.Add(MailboxAddress.Parse(sendTo));
+
+                message.Subject = subject;
+
+                message.Body = new TextPart("plain")
+                {
+                    Text = body
+                };
+
+                using var smtp = new SmtpClient();
+
+                smtp.Connect(
+                    _settings.Host,
+                    _settings.Port,
+                    SecureSocketOptions.StartTls
+                );
+
+                smtp.Authenticate(
+                    _settings.UserName,
+                    _settings.Password
+                );
+
+                smtp.Send(message);
+
+                smtp.Disconnect(true);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"E-posta gönderilemedi: {ex.Message}");
+                return false;
+            }
         }
+
     }
 }

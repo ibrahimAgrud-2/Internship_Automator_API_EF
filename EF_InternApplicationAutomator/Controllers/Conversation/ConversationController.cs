@@ -2,10 +2,11 @@
 using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business;
 using EF_InternApplicationAutomator.Business.Conversation;
-using EF_InternApplicationAutomator.Business.Intern;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Intern;
+using Shared.Conversation;
+using EF_InternApplicationAutomator.Business.Conversation;
 using Shared.Message;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
@@ -14,7 +15,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
     [ApiController]
     public class ConversationController : ControllerBase
     {
-        ConversationBL _Conversation;
+        Business.Conversation.ConversationBL _Conversation;
         Business.PersonBL _People;
 
         public ConversationController(ConversationBL conversation, PersonBL people)
@@ -31,7 +32,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         public ActionResult<IEnumerable<ConversationResponseDTO>> GetAllConversation()
         {
             List<ConversationResponseDTO> applicationList = _Conversation.GetAllConversation();
-
+            
     
 
             return Ok(applicationList);
@@ -127,7 +128,57 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
             return Ok(true);
         }
-    
-    
+
+
+
+        [Authorize]
+        [HttpPost("CreateConversation")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<bool> CreateConversation(ConversationCreateDTO Conversation)
+        {
+            if (Conversation == null)
+            {
+                return BadRequest("Grup Eklemek için girilen parametreler doğru değil");
+            }
+
+            //API kısmında bir intern'İn 2 defa sobet oluşturmasını engellicem)
+            
+            if(User.IsInRole("Intern"))
+            {
+                int? internID = User.GetInternID();
+                if(internID==null|| Conversation.IsGroup)
+                {
+                    return Unauthorized();
+                }
+                if(_Conversation.DoesInternHasAPrivateChat(internID.Value))
+                {
+                    return BadRequest();
+                }
+
+               
+            }
+
+            int? personID = User.GetPersonID();
+            if (personID == null)
+            {
+                return Unauthorized();
+            }
+            if (!_People.IsPersonExists(personID.Value) ||! _People.IsPersonActive(personID.Value))
+            {
+                return BadRequest("Hesabınız Silinmiş veya aktif olmaadığı için yeni grup oluşturamazsınız");
+            }
+
+            if (_Conversation.AddNewConversation(Conversation))
+            {
+                return Ok(true);
+            }
+           
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+
     }
 }
