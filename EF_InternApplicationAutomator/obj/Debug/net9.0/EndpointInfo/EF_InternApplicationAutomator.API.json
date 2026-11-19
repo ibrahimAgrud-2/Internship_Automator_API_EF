@@ -3411,7 +3411,7 @@
             "$ref": "#/components/schemas/PersonCreateSDTO"
           },
           "university": {
-            "maxLength": 30,
+            "maxLength": 100,
             "minLength": 1,
             "type": "string"
           },
@@ -3469,7 +3469,7 @@
             "format": "date-time"
           },
           "university": {
-            "maxLength": 30,
+            "maxLength": 100,
             "minLength": 1,
             "type": "string"
           },
@@ -3532,7 +3532,7 @@
             "format": "date-time"
           },
           "university": {
-            "maxLength": 30,
+            "maxLength": 100,
             "minLength": 1,
             "type": "string"
           },

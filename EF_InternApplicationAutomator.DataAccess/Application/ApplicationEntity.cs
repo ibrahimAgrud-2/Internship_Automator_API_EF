@@ -25,7 +25,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         public DateTime ApplicationDate { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(100)]
         public string University { get; set; }
 
         [Required]
