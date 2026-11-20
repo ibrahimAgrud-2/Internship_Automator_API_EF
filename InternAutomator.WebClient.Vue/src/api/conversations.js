@@ -19,3 +19,11 @@ export const createPrivateConversation = (internID, conversation) =>
     `Conversation/CreatePrivateConversation?internID=${encodeURIComponent(internID)}`,
     conversation
   )
+
+// Personel: yeni grup oluşturur. Üye listesi isteğe bağlıdır.
+// POST Conversation/CreateGroupConversation
+// Body: { conversationName: 'Yazılım Ekibi', interIDs: [4, 9] }
+// Boş grup: interIDs: []
+// Başarı: oluşturulan grubun ID'si ("21" veya 21).
+export const createGroupConversation = (groupConversation) =>
+  apiPost('Conversation/CreateGroupConversation', groupConversation)

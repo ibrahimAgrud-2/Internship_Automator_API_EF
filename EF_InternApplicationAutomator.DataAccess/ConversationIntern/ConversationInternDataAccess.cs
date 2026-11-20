@@ -46,12 +46,13 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
         public bool AddInternToConversation(int conversationID,int internID)
         {
 
-            ConversationInternEntity conversationEntity = new ConversationInternEntity(conversationID,internID);
+            ConversationInternEntity conversationInternEntity = new ConversationInternEntity(conversationID,internID);
 
-            EntityEntry<ConversationInternEntity> addedIntern = _Context.ConversationIntern.Add(conversationEntity);
+            EntityEntry<ConversationInternEntity> addedIntern = _Context.ConversationIntern.Add(conversationInternEntity);
 
             if (_Context.SaveChanges() > 0)
             {
+                _Context.Entry(conversationInternEntity).State = EntityState.Detached;
                 return true;
             }
 

@@ -211,6 +211,38 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
+        //[Authorize(Roles = "User")]
+        //[HttpPost("AddIntern")]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public ActionResult<string> AddInternToConversation(int conversationID,int internID)
+        //{
+        //    int? personID = User.GetPersonID();
+        //    if (personID == null)
+        //    {
+        //        return Unauthorized();
+        //    }
+        //    if (!_People.IsPersonExists(personID.Value) || !_People.IsPersonActive(personID.Value))
+        //    {
+        //        return BadRequest("Hesabınız Silinmiş veya aktif olmaadığı için yeni grup oluşturamazsınız");
+        //    }
+        //    if(!_Conversation.IsConversationExists(conversationID))
+        //    {
+        //        return BadRequest("Sohbet bulunamdi");
+        //    }
+        //    if (!_InterBL.IsInternExists(internID))
+        //    {
+        //        return BadRequest("Eklemek istediğiniz stajyer bulunamadi");
+        //    }
+
+        //    if (_ConversationInternBL.AddInternToConversation(conversationID,internID))
+        //    {
+        //        return Ok();
+        //    }
+        //    return StatusCode(StatusCodes.Status500InternalServerError);
+        //}
 
 
     }

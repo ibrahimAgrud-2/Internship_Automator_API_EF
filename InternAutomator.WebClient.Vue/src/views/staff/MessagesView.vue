@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue'
-import { getAllConversations, createPrivateConversation } from '@/api/conversations'
+import { getAllConversations, createPrivateConversation, createGroupConversation } from '@/api/conversations'
 import { getAllInterns } from '@/api/interns'
 import { getAllMessages, addMessage } from '@/api/messages'
 import { getAllProjects } from '@/api/projects'
@@ -360,8 +360,8 @@ async function openNewChat() {
       throw new Error('Stajyer listesi beklenen biçimde alınamadı.')
     }
 
-    availableInterns.value = interns
-      .filter((intern) => intern.isActive === INTERN_ACTIVE)
+    // Personel, stajı bitmiş stajyerlerle de birebir sohbet başlatabilir.
+    availableInterns.value = [...interns]
       .sort((a, b) =>
         `${a.firstName ?? ''} ${a.lastName ?? ''}`.localeCompare(
           `${b.firstName ?? ''} ${b.lastName ?? ''}`,
@@ -438,6 +438,106 @@ async function submitNewChat() {
   }
 }
 
+
+// ---------- Yeni grup oluşturma (yalnızca personel) ----------
+const isNewGroupOpen = ref(false)
+const groupName = ref('')
+const groupInterns = ref([])
+const groupSearchText = ref('')
+const selectedGroupInternIDs = ref([])
+const isGroupInternsLoading = ref(false)
+const isCreatingGroup = ref(false)
+const groupErrors = ref([])
+
+const filteredGroupInterns = computed(() => {
+  const words = groupSearchText.value.toLocaleLowerCase('tr-TR').trim().split(/\s+/).filter(Boolean)
+  return groupInterns.value.filter((intern) => {
+    const text = `${intern.firstName ?? ''} ${intern.lastName ?? ''} ${intern.email ?? ''}`
+      .toLocaleLowerCase('tr-TR')
+    return words.every((word) => text.includes(word))
+  })
+})
+
+async function openNewGroup() {
+  if (isCreatingGroup.value) return
+
+  groupName.value = ''
+  groupSearchText.value = ''
+  selectedGroupInternIDs.value = []
+  groupInterns.value = []
+  groupErrors.value = []
+  isNewGroupOpen.value = true  // Liste otomatik açılır, ikinci tıklama gerekmez.
+  isGroupInternsLoading.value = true
+
+  try {
+    const interns = await getAllInterns()
+    if (!Array.isArray(interns)) throw new Error('Stajyer listesi beklenen biçimde alınamadı.')
+    // Aktif/pasif ayrımı yok. Aynı ID kazara iki kez listelenirse tek kez göster.
+    const uniqueInterns = new Map()
+    for (const intern of interns) {
+      const id = Number(intern.internID)
+      if (Number.isSafeInteger(id) && id > 0) uniqueInterns.set(id, intern)
+    }
+    groupInterns.value = [...uniqueInterns.values()].sort((a, b) =>
+      `${a.firstName ?? ''} ${a.lastName ?? ''}`.localeCompare(
+        `${b.firstName ?? ''} ${b.lastName ?? ''}`, 'tr'
+      )
+    )
+  } catch (error) {
+    // Liste alınamazsa yine de boş grup oluşturulabilir.
+    groupErrors.value = getErrorMessages(error)
+  } finally {
+    isGroupInternsLoading.value = false
+  }
+}
+
+async function submitNewGroup() {
+  if (isCreatingGroup.value || !groupName.value.trim()) return
+
+  const name = groupName.value.trim()
+  const allowedIDs = new Set(groupInterns.value.map((intern) => Number(intern.internID)))
+  // JSON array, backend HashSet<int> olarak karşılar. Sadece listede bulunan ID'ler.
+  const interIDs = [...new Set(selectedGroupInternIDs.value.map(Number))]
+    .filter((id) => Number.isSafeInteger(id) && id > 0 && allowedIDs.has(id))
+
+  isCreatingGroup.value = true
+  groupErrors.value = []
+
+  try {
+    const response = await createGroupConversation({
+      conversationName: name,
+      interIDs,
+    })
+    const groupID = parseConversationID(response)
+
+    // Önce veritabanı kaydını, sohbet listesi endpoint'inden doğrula.
+    // Yalnızca frontend'de görünen geçici bir grup ASLA ekleme.
+    const serverConversations = await getAllConversations()
+    if (!Array.isArray(serverConversations)) {
+      throw new Error('Grup işlemi sonrası sohbet listesi sunucudan alınamadı.')
+    }
+    conversations.value = serverConversations
+    void refreshChatOrder(serverConversations)
+
+    const createdGroup = serverConversations.find(
+      (chat) => Number(chat.conversationID) === groupID && chat.isGroup === true
+    )
+    if (!createdGroup) {
+      throw new Error(
+        `API ${groupID} numaralı grubu döndürdü ancak Conversation/All listesinde doğrulanamadı. ` +
+        'Oluşturma isteğini tekrar göndermeden önce veritabanını kontrol edin.'
+      )
+    }
+
+    isNewGroupOpen.value = false
+    selectConversation(groupID)
+  } catch (error) {
+    groupErrors.value = getErrorMessages(error)
+  } finally {
+    isCreatingGroup.value = false
+  }
+}
+
 onMounted(async () => {
   await loadConversations()
   // İlk açılışta listenin başındaki sohbet (ortak grup) açılır
@@ -459,7 +559,14 @@ onMounted(async () => {
           >
             Yeni sohbet
           </button>
-          <button type="button" class="btn btn-outline-primary" disabled>Grup ekle</button>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            :disabled="isCreatingGroup"
+            @click="openNewGroup"
+          >
+            Yeni grup
+          </button>
         </div>
 
         <div class="flex-grow-1 overflow-auto">
@@ -629,7 +736,7 @@ onMounted(async () => {
         v-else-if="availableInterns.length === 0"
         class="text-muted small mb-0"
       >
-        Aktif stajyer bulunamadı.
+        Henüz stajyer bulunamadı.
       </p>
       <template v-else>
         <p class="small text-muted mb-2">
@@ -658,6 +765,9 @@ onMounted(async () => {
               <strong>{{ intern.firstName }} {{ intern.lastName }}</strong>
               <small v-if="intern.email" class="d-block text-muted">{{ intern.email }}</small>
             </span>
+            <span class="badge" :class="intern.isActive === INTERN_ACTIVE ? 'text-bg-success' : 'text-bg-secondary'">
+              {{ intern.isActive === INTERN_ACTIVE ? 'Aktif' : 'Ayrıldı' }}
+            </span>
           </label>
           <p v-if="filteredChatInterns.length === 0" class="text-muted small text-center py-3 mb-0">
             Aramanızla eşleşen stajyer bulunamadı.
@@ -680,6 +790,122 @@ onMounted(async () => {
           :disabled="!selectedIntern || isInternsLoading || isCreatingChat"
         >
           {{ isCreatingChat ? 'İşleniyor...' : 'Sohbeti Aç' }}
+        </button>
+      </template>
+    </BaseModal>
+
+
+    <!-- Yeni grup: ad + isteğe bağlı çoklu stajyer seçimi. -->
+    <BaseModal
+      v-model="isNewGroupOpen"
+      title="Yeni Grup Oluştur"
+      dialog-class="modal-dialog-scrollable"
+      as-form
+      @submit="submitNewGroup"
+    >
+      <label for="groupConversationName" class="form-label fw-semibold">Grup adı</label>
+      <input
+        id="groupConversationName"
+        v-model="groupName"
+        type="text"
+        class="form-control mb-3"
+        placeholder="Örneğin: Yazılım Ekibi"
+        autocomplete="off"
+        :disabled="isCreatingGroup"
+        required
+      />
+
+      <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+        <label for="groupInternSearch" class="form-label fw-semibold mb-0">
+          Üyeler (isteğe bağlı)
+        </label>
+        <span class="small text-muted">{{ selectedGroupInternIDs.length }} seçili</span>
+      </div>
+      <div class="input-group mb-2">
+        <input
+          id="groupInternSearch"
+          v-model="groupSearchText"
+          type="search"
+          class="form-control"
+          placeholder="Ad, soyad veya e-posta ara..."
+          aria-label="Grup üyesi ara"
+          :disabled="isCreatingGroup || isGroupInternsLoading"
+          @keydown.enter.prevent
+        />
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          :disabled="!groupSearchText || isCreatingGroup || isGroupInternsLoading"
+          @click="groupSearchText = ''"
+        >
+          Temizle
+        </button>
+      </div>
+
+      <AlertMessages
+        v-if="isGroupInternsLoading"
+        type="info"
+        messages="Stajyerler yükleniyor..."
+      />
+      <template v-else>
+        <p v-if="groupInterns.length === 0" class="text-muted small mt-2">
+          Listelenecek stajyer yok. Üye seçmeden de grup oluşturabilirsiniz.
+        </p>
+        <div
+          v-else
+          class="chat-member-picker"
+          style="max-height: 320px; overflow-y: auto"
+          aria-label="Gruba eklenecek stajyerler"
+        >
+          <label
+            v-for="intern in filteredGroupInterns"
+            :key="intern.internID"
+            class="chat-member-row"
+            :class="{ selected: selectedGroupInternIDs.includes(Number(intern.internID)) }"
+          >
+            <input
+              v-model="selectedGroupInternIDs"
+              type="checkbox"
+              :value="Number(intern.internID)"
+              :disabled="isCreatingGroup"
+            />
+            <span class="flex-grow-1">
+              <strong>{{ intern.firstName }} {{ intern.lastName }}</strong>
+              <small v-if="intern.email" class="d-block text-muted">{{ intern.email }}</small>
+            </span>
+            <span
+              class="badge"
+              :class="intern.isActive === INTERN_ACTIVE ? 'text-bg-success' : 'text-bg-secondary'"
+            >
+              {{ intern.isActive === INTERN_ACTIVE ? 'Aktif' : 'Ayrıldı' }}
+            </span>
+          </label>
+          <p v-if="filteredGroupInterns.length === 0" class="text-muted small text-center py-3 mb-0">
+            Aramanızla eşleşen stajyer bulunamadı.
+          </p>
+        </div>
+      </template>
+
+      <p class="small text-muted mt-2 mb-0">
+        Üye seçmezseniz grup boş oluşturulur. Daha sonra üyeler eklenebilir.
+      </p>
+      <AlertMessages v-if="groupErrors.length" class="mt-3" :messages="groupErrors" />
+
+      <template #footer>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          :disabled="isCreatingGroup"
+        >
+          Vazgeç
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          :disabled="!groupName.trim() || isCreatingGroup"
+        >
+          {{ isCreatingGroup ? 'Oluşturuluyor...' : 'Grubu Oluştur' }}
         </button>
       </template>
     </BaseModal>
