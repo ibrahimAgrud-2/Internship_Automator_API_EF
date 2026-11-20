@@ -731,7 +731,7 @@
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ConversationController",
     "Method": "RemoveInternFromConversation",
-    "RelativePath": "api/Conversation/RemoveIntern",
+    "RelativePath": "api/Conversation/RemoveIntern/{conversationID}/Intern/{internID}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -739,12 +739,12 @@
       {
         "Name": "conversationID",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       },
       {
         "Name": "internID",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -834,6 +834,15 @@
           "text/json"
         ],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
       }
     ]
   },

@@ -249,7 +249,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
       
         
         [Authorize(Roles = "User")]
-        [HttpPost("RemoveIntern")]
+        [HttpPost("RemoveIntern/{conversationID}/Intern/{internID}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -274,7 +274,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                 return BadRequest("Eklemek istediğiniz stajyer bulunamadi");
             }
 
-            if (!_ConversationInternBL.RemoveInternConversation(conversationID,internID))
+            if (_ConversationInternBL.RemoveInternConversation(conversationID,internID))
             {
                 return Ok();
             }

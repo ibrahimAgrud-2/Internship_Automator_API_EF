@@ -28,8 +28,27 @@ export const createPrivateConversation = (internID, conversation) =>
 export const createGroupConversation = (groupConversation) =>
   apiPost('Conversation/CreateGroupConversation', groupConversation)
 
+// Personel: var olan bir sohbete/gruba tek stajyer ekler.
+// POST Conversation/AddIntern?conversationID=21&internID=7
+// Endpoint'in parametreleri basit int olduğu için query string kullanılır.
+// Başarı: 200 OK (response body boş olabilir).
 export const addInternToConversation = (conversationID, internID) =>
   apiPost(
     `Conversation/AddIntern?conversationID=${encodeURIComponent(conversationID)}&internID=${encodeURIComponent(internID)}`,
+    {}
+  )
+
+// Personel: belirli bir grup sohbetine kayıtlı stajyerleri getirir.
+// GET ConversationIntern/AllConversationIntern/{conversationID}
+// Response: [{ internID, conversationID, firstName, lastName }]
+export const getAllConversationInterns = (conversationID) =>
+  apiGet(`ConversationIntern/AllConversationIntern/${encodeURIComponent(conversationID)}`)
+
+// Personel: stajyeri gruptan çıkarır.
+// POST Conversation/RemoveIntern/{conversationID}/Intern/{internID}
+// Başarı: 200 OK (response body boş olabilir).
+export const removeInternFromConversation = (conversationID, internID) =>
+  apiPost(
+    `Conversation/RemoveIntern/${encodeURIComponent(conversationID)}/Intern/${encodeURIComponent(internID)}`,
     {}
   )
