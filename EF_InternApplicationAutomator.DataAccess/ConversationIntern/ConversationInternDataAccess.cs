@@ -59,6 +59,33 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
             return false;
         }
 
+        public bool DoesInternExistsInConversations(int conversationID, int internID)
+        {
+            return _Context.ConversationIntern.Any(c => c.InternID == internID && c.ConversationID == conversationID);
+
+
+        }
+
+
+        public bool RemoveInternFromConversation(int conversationID, int internID)
+        {
+            return _Context.ConversationIntern
+                .Where(c => c.InternID == internID&&c.ConversationID== conversationID)
+                .ExecuteDelete() > 0;
+
+        }
+     
+        //bir grubun tüm stajyer listesini almak için
+        public List<InterGroupListResponseDTO> GetAllConversationIntern(int conversationID)
+        {
+
+            return _Context.vw_ListGroupInterns
+                .AsNoTracking().Where(c => c.ConversationID == conversationID)
+                .Select(c => new InterGroupListResponseDTO(c.ConversationID,c.InternID,c.FirstName,c.LastName))
+                .ToList();
+
+
+        }
 
     }
 }

@@ -48,12 +48,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
            .ToList();
         }
 
-        public bool DoesInternExistsInConversations(int internID, int conversationID)
-        {
-            return _Context.ConversationIntern.Any(c => c.InternID == internID && c.ConversationID == conversationID);
 
-
-        }
 
         public bool IsConversationExists(int conversationID)
         {

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue'
-import { getAllConversations, createPrivateConversation, createGroupConversation } from '@/api/conversations'
+import { getAllConversations, createPrivateConversation, createGroupConversation, addInternToConversation } from '@/api/conversations'
 import { getAllInterns } from '@/api/interns'
 import { getAllMessages, addMessage } from '@/api/messages'
 import { getAllProjects } from '@/api/projects'
@@ -37,35 +37,97 @@ async function refreshChatOrder(items) {
   })
 }
 
-// Grup üyesi seçimi hazırdır; kayıt endpoint'i henüz API sözleşmesinde yoktur.
-const isMemberPickerOpen=ref(false)
-const memberList=ref([])
-const memberSearch=ref('')
-const selectedMemberID=ref(null)
-const isMemberListLoading=ref(false)
-const memberLoadErrors=ref([])
+// ---------- Mevcut gruba tek stajyer ekleme ----------
+// API her istekte tek bir internID kabul eder. Mevcut üyeler için
+// listeleme endpoint'i olmadığından üye olup olmadığını backend kontrol eder.
+const isMemberPickerOpen = ref(false)
+const memberList = ref([])
+const memberSearch = ref('')
+const selectedMemberID = ref(null)
+const memberTargetConversationID = ref(null)
+const isMemberListLoading = ref(false)
+const isAddingMember = ref(false)
+const memberLoadErrors = ref([])
+const memberSaveErrors = ref([])
+const memberSuccess = ref('')
+
 const filteredMembers = computed(() => {
-  const query = memberSearch.value.toLocaleLowerCase('tr-TR')
+  const words = memberSearch.value.toLocaleLowerCase('tr-TR').trim().split(/\s+/).filter(Boolean)
   return [...memberList.value]
     .sort((a, b) => {
-      const activeA = a.isActive === true || a.isActive === 1
-      const activeB = b.isActive === true || b.isActive === 1
-      const activeCompare = Number(activeB) - Number(activeA)
-      if (activeCompare !== 0) return activeCompare
-      const nameA = `${a.firstName ?? ''} ${a.lastName ?? ''}`.trim().toLocaleLowerCase('tr-TR')
-      const nameB = `${b.firstName ?? ''} ${b.lastName ?? ''}`.trim().toLocaleLowerCase('tr-TR')
-      return nameA.localeCompare(nameB, 'tr')
+      const activeA = a.isActive === INTERN_ACTIVE
+      const activeB = b.isActive === INTERN_ACTIVE
+      if (activeA !== activeB) return Number(activeB) - Number(activeA)
+      return `${a.firstName ?? ''} ${a.lastName ?? ''}`.localeCompare(
+        `${b.firstName ?? ''} ${b.lastName ?? ''}`, 'tr'
+      )
     })
-    .filter((i) => `${i.firstName ?? ''} ${i.lastName ?? ''} ${i.email ?? ''}`.toLocaleLowerCase('tr-TR').includes(query))
+    .filter((intern) => {
+      const searchText = `${intern.firstName ?? ''} ${intern.lastName ?? ''} ${intern.email ?? ''}`
+        .toLocaleLowerCase('tr-TR')
+      return words.every((word) => searchText.includes(word))
+    })
 })
-async function openMemberPicker(){
-  if(!selectedConversation.value?.isGroup)return
-  memberSearch.value='';selectedMemberID.value=null;memberLoadErrors.value=[]
-  isMemberPickerOpen.value=true;isMemberListLoading.value=true
-  try{const list=await getAllInterns();memberList.value=Array.isArray(list)?list:[]}
-  catch(error){memberLoadErrors.value=getErrorMessages(error)}
-  finally{isMemberListLoading.value=false}
+
+const selectedMember = computed(() =>
+  memberList.value.find((intern) => Number(intern.internID) === Number(selectedMemberID.value)) ?? null
+)
+
+async function openMemberPicker() {
+  if (!selectedConversation.value?.isGroup || isMemberListLoading.value || isAddingMember.value) return
+
+  // İşlem daima pencere açıldığı andaki gruba uygulanır.
+  memberTargetConversationID.value = Number(selectedConversationID.value)
+  memberSearch.value = ''
+  selectedMemberID.value = null
+  memberList.value = []
+  memberLoadErrors.value = []
+  memberSaveErrors.value = []
+  memberSuccess.value = ''
+  isMemberPickerOpen.value = true
+  isMemberListLoading.value = true
+
+  try {
+    const interns = await getAllInterns()
+    if (!Array.isArray(interns)) throw new Error('Stajyer listesi beklenen biçimde alınamadı.')
+    // Pasif stajyerler de eklenebilir. Aynı ID'yi listede iki kez gösterme.
+    const uniqueInterns = new Map()
+    for (const intern of interns) {
+      const id = Number(intern.internID)
+      if (Number.isSafeInteger(id) && id > 0) uniqueInterns.set(id, intern)
+    }
+    memberList.value = [...uniqueInterns.values()]
+  } catch (error) {
+    memberLoadErrors.value = getErrorMessages(error)
+  } finally {
+    isMemberListLoading.value = false
+  }
 }
+
+async function submitAddMember() {
+  if (isAddingMember.value || isMemberListLoading.value || !selectedMember.value) return
+  const conversationID = memberTargetConversationID.value
+  const internID = Number(selectedMember.value.internID)
+  if (!Number.isSafeInteger(conversationID) || conversationID <= 0) return
+  if (!Number.isSafeInteger(internID) || internID <= 0) return
+
+  isAddingMember.value = true
+  memberSaveErrors.value = []
+  const internName = `${selectedMember.value.firstName ?? ''} ${selectedMember.value.lastName ?? ''}`.trim()
+
+  try {
+    // API 200 OK döndürebilir ve response body boş olabilir.
+    await addInternToConversation(conversationID, internID)
+    isMemberPickerOpen.value = false
+    memberSuccess.value = `${internName} gruba eklendi.`
+    // Sahte üyelik/sohbet kaydı eklemiyoruz; başarı sunucunun sonucuna bağlı.
+  } catch (error) {
+    memberSaveErrors.value = getErrorMessages(error)
+  } finally {
+    isAddingMember.value = false
+  }
+}
+
 const selectedConversation = computed(
   () => conversations.value.find((conversation) => Number(conversation.conversationID) === selectedConversationID.value) ?? null,
 )
@@ -176,6 +238,7 @@ function selectConversation(conversationID) {
   }
 
   selectedConversationID.value = id
+  memberSuccess.value = ''
   // Yarım yazılan metin ve referans başka sohbete gitmesin.
   draft.value = ''
   reference.value = null
@@ -610,6 +673,14 @@ onMounted(async () => {
           <button v-if="selectedConversation.isGroup" type="button" class="btn btn-sm btn-outline-primary" @click="openMemberPicker">+ Üye Ekle</button>
         </div>
 
+        <AlertMessages
+          v-if="memberSuccess"
+          class="m-3 mb-0"
+          type="success"
+          :messages="memberSuccess"
+          role="status"
+        />
+
         <template v-if="selectedConversation">
           <!-- Yükleniyor / hata mesajı -->
           <AlertMessages v-if="isMessagesLoading" class="m-3 mb-0" type="info" messages="Mesajlar yükleniyor..." />
@@ -910,28 +981,80 @@ onMounted(async () => {
       </template>
     </BaseModal>
 
-    <!-- Üye seçimi: grup üyeliği kaydetme endpoint'i henüz sağlanmadı. -->
-    <BaseModal v-model="isMemberPickerOpen" title="Gruba Üye Ekle" dialog-class="modal-dialog-scrollable">
-      <p class="small text-muted">{{ selectedConversation?.conversationName }} grubuna eklenecek stajyeri seçin.</p>
+    <!-- Gruba tek stajyer ekle. Aktif ve pasif stajyerler seçilebilir. -->
+    <BaseModal
+      v-model="isMemberPickerOpen"
+      title="Gruba Üye Ekle"
+      dialog-class="modal-dialog-scrollable"
+      as-form
+      @submit="submitAddMember"
+    >
+      <p class="small text-muted mb-3">
+        {{ selectedConversation?.conversationName }} grubuna eklenecek stajyeri seçin.
+      </p>
+
       <AlertMessages v-if="isMemberListLoading" type="info" messages="Stajyerler yükleniyor..." />
-      <AlertMessages v-else-if="memberLoadErrors.length" :messages="memberLoadErrors" />
-      <template v-else>
-        <input v-model="memberSearch" type="search" class="form-control mb-3" placeholder="Stajyer ara..." aria-label="Stajyer ara" />
+      <AlertMessages v-if="memberLoadErrors.length" :messages="memberLoadErrors" />
+
+      <template v-if="!isMemberListLoading && !memberLoadErrors.length">
+        <input
+          v-model="memberSearch"
+          type="search"
+          class="form-control mb-3"
+          placeholder="Ad, soyad veya e-posta ara..."
+          aria-label="Gruba eklenecek stajyeri ara"
+          :disabled="isAddingMember"
+          @keydown.enter.prevent
+        />
         <div class="chat-member-picker" role="radiogroup" aria-label="Gruba eklenecek stajyer">
-          <label v-for="person in filteredMembers" :key="person.internID" class="chat-member-row" :class="{selected:selectedMemberID===person.internID}">
-            <input v-model="selectedMemberID" type="radio" name="member" :value="person.internID" />
-            <span><strong>{{person.firstName}} {{person.lastName}}</strong><small class="d-block text-muted">{{person.email}}</small></span>
-            <span class="badge" :class="person.isActive ? 'text-bg-success' : 'text-bg-secondary'">{{person.isActive?'Aktif':'Ayrıldı'}}</span>
+          <label
+            v-for="intern in filteredMembers"
+            :key="intern.internID"
+            class="chat-member-row"
+            :class="{ selected: selectedMemberID === Number(intern.internID) }"
+          >
+            <input
+              v-model="selectedMemberID"
+              type="radio"
+              name="member"
+              :value="Number(intern.internID)"
+              :disabled="isAddingMember"
+            />
+            <span class="flex-grow-1">
+              <strong>{{ intern.firstName }} {{ intern.lastName }}</strong>
+              <small v-if="intern.email" class="d-block text-muted">{{ intern.email }}</small>
+            </span>
+            <span
+              class="badge"
+              :class="intern.isActive === INTERN_ACTIVE ? 'text-bg-success' : 'text-bg-secondary'"
+            >
+              {{ intern.isActive === INTERN_ACTIVE ? 'Aktif' : 'Ayrıldı' }}
+            </span>
           </label>
-          <div v-if="filteredMembers.length===0" class="text-muted text-center py-3">Stajyer bulunamadı.</div>
-        </div>
-        <div v-if="selectedMemberID !== null" class="alert alert-warning mt-3 mb-0 small">
-          Seçim yapıldı. Ancak grup üyeliğini kaydedecek API endpoint'i henüz mevcut değil; işlem tamamlanamaz.
+          <p v-if="filteredMembers.length === 0" class="text-muted text-center py-3 mb-0">
+            Stajyer bulunamadı.
+          </p>
         </div>
       </template>
+
+      <AlertMessages v-if="memberSaveErrors.length" class="mt-3" :messages="memberSaveErrors" />
+
       <template #footer>
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Kapat</button>
-        <button type="button" class="btn btn-primary" disabled title="Gruba üye ekleme endpoint'i gerekli">Gruba Ekle</button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+          :disabled="isAddingMember"
+        >
+          Vazgeç
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          :disabled="!selectedMember || isMemberListLoading || isAddingMember"
+        >
+          {{ isAddingMember ? 'Ekleniyor...' : 'Gruba Ekle' }}
+        </button>
       </template>
     </BaseModal>
 

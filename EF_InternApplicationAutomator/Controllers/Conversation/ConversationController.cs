@@ -63,8 +63,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                     return Unauthorized();
                 }
 
-                if (!_Conversation.IsInternExistsInConversations(
-                    internID.Value, conversationID))
+                if (!_ConversationInternBL.DoesInternExistsInConversations(
+                    conversationID, internID.Value))
                 {
                     return Forbid();
                 }
@@ -115,8 +115,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                     return Unauthorized();
                 }
 
-                if (!_Conversation.IsInternExistsInConversations(
-                    internID.Value, message.ConversationID))
+                if (!_ConversationInternBL.DoesInternExistsInConversations(
+                    message.ConversationID, internID.Value))
                 {
                     return Forbid();
                 }
@@ -211,38 +211,76 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        //[Authorize(Roles = "User")]
-        //[HttpPost("AddIntern")]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public ActionResult<string> AddInternToConversation(int conversationID,int internID)
-        //{
-        //    int? personID = User.GetPersonID();
-        //    if (personID == null)
-        //    {
-        //        return Unauthorized();
-        //    }
-        //    if (!_People.IsPersonExists(personID.Value) || !_People.IsPersonActive(personID.Value))
-        //    {
-        //        return BadRequest("Hesabınız Silinmiş veya aktif olmaadığı için yeni grup oluşturamazsınız");
-        //    }
-        //    if(!_Conversation.IsConversationExists(conversationID))
-        //    {
-        //        return BadRequest("Sohbet bulunamdi");
-        //    }
-        //    if (!_InterBL.IsInternExists(internID))
-        //    {
-        //        return BadRequest("Eklemek istediğiniz stajyer bulunamadi");
-        //    }
+        [Authorize(Roles = "User")]
+        [HttpPost("AddIntern")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<string> AddInternToConversation(int conversationID, int internID)
+        {
+            int? personID = User.GetPersonID();
+            if (personID == null)
+            {
+                return Unauthorized();
+            }
+            if (!_People.IsPersonExists(personID.Value) || !_People.IsPersonActive(personID.Value))
+            {
+                return BadRequest("Hesabınız Silinmiş veya aktif olmaadığı için yeni grup oluşturamazsınız");
+            }
+            if (!_Conversation.IsConversationExists(conversationID))
+            {
+                return BadRequest("Sohbet bulunamdi");
+            }
+            if (!_InterBL.IsInternExists(internID))
+            {
+                return BadRequest("Eklemek istediğiniz stajyer bulunamadi");
+            }
+            if(_ConversationInternBL.DoesInternExistsInConversations(conversationID,internID))
+            {
+                return Ok();
+            }
+            if (_ConversationInternBL.AddInternToConversation(conversationID, internID))
+            {
+                return Ok();
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+      
+        
+        [Authorize(Roles = "User")]
+        [HttpPost("RemoveIntern")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<string> RemoveInternFromConversation(int conversationID, int internID)
+        {
+            int? personID = User.GetPersonID();
+            if (personID == null)
+            {
+                return Unauthorized();
+            }
+            if (!_People.IsPersonExists(personID.Value) || !_People.IsPersonActive(personID.Value))
+            {
+                return BadRequest("Hesabınız Silinmiş veya aktif olmaadığı için yeni grup oluşturamazsınız");
+            }
+            if (!_Conversation.IsConversationExists(conversationID))
+            {
+                return BadRequest("Sohbet bulunamdi");
+            }
+            if (!_InterBL.IsInternExists(internID))
+            {
+                return BadRequest("Eklemek istediğiniz stajyer bulunamadi");
+            }
 
-        //    if (_ConversationInternBL.AddInternToConversation(conversationID,internID))
-        //    {
-        //        return Ok();
-        //    }
-        //    return StatusCode(StatusCodes.Status500InternalServerError);
-        //}
+            if (!_ConversationInternBL.RemoveInternConversation(conversationID,internID))
+            {
+                return Ok();
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
 
 
     }

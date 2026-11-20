@@ -35,5 +35,6 @@ namespace EF_InternApplicationAutomator.DataAccess.Data
         public DbSet<MessageEntity> Messages { get; set; }
         public DbSet<ConversationInternEntity> ConversationIntern { get; set; }
         public DbSet<vw_ConversationIntern> vw_ConversationIntern { get; set; }
+        public DbSet<vw_ListGroupInterns> vw_ListGroupInterns { get; set; }
     }
 }

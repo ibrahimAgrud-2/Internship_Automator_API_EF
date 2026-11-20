@@ -5,6 +5,7 @@ using EF_InternApplicationAutomator.DataAccess.Application;
 using EF_InternApplicationAutomator.DataAccess.Conversation;
 using EF_InternApplicationAutomator.DataAccess.ConversationIntern;
 using EF_InternApplicationAutomator.DataAccess.Message;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shared;
@@ -54,7 +55,26 @@ namespace EF_InternApplicationAutomator.Business.ConversationIntern
             return _ConversationInternDataAccess.AddInternToConversation(conversationID, internID);
         }
 
+        public bool DoesInternExistsInConversations(int conversationID, int internID)
+        {
+            return _ConversationInternDataAccess.DoesInternExistsInConversations(conversationID, internID);
 
+
+        }
+        public bool RemoveInternConversation(int conversationID, int internID)
+        {
+            if(!DoesInternExistsInConversations(conversationID, internID))
+            {
+                return false;
+            }
+            return _ConversationInternDataAccess.RemoveInternFromConversation(conversationID, internID);
+        }
+
+
+        public List<InterGroupListResponseDTO> GetAllConversationIntern(int conversationID)
+        {
+            return _ConversationInternDataAccess.GetAllConversationIntern(conversationID);
+        }   
 
     }
 }
