@@ -1,0 +1,5 @@
+.shell-content h4,.shell-content h5{color:#292929}
+.shell-content > div > .card,.shell-content .card{border-color:#e9e3e3}
+.shell-content .form-control,.shell-content .form-select{border-radius:8px}
+.shell-content .btn{font-weight:500}
+/* Anlamlı durum renkleri yeşil/kırmızı/sarı olarak kalır; ana aksiyonlar bordo olur. */

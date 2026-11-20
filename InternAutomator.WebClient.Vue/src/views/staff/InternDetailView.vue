@@ -10,7 +10,6 @@ import { formatDate } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
 import AlertMessages from '@/components/AlertMessages.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
-import InternStatusBadge from '@/components/InternStatusBadge.vue'
 import TechnologyBadges from '@/components/TechnologyBadges.vue'
 import TaskItem from '@/components/intern/TaskItem.vue'
 import AssignProjectModal from '@/components/intern/AssignProjectModal.vue'
@@ -217,20 +216,6 @@ function onRevoked() {
 <template>
   <div>
     <RouterLink to="/staff/interns" class="btn btn-outline-secondary btn-sm mb-3">&larr; Stajyerler</RouterLink>
-
-    <!-- Stajyer özeti: yüklenince dolar -->
-    <div class="mb-4">
-      <div class="d-flex align-items-center flex-wrap gap-2">
-        <h4 class="mb-0 text-break">{{ fullName || 'Stajyer Detayı' }}</h4>
-        <InternStatusBadge v-if="currentIntern" :is-active="currentIntern.isActive" />
-      </div>
-      <template v-if="currentIntern">
-        <div class="small text-muted text-break">{{ currentIntern.email || '-' }} · {{ currentIntern.phone || '-' }}</div>
-        <div class="small text-muted">
-          Başlangıç: {{ formatDate(currentIntern.startDate, 'Belirlenmedi') }} · Bitiş: {{ formatDate(currentIntern.endDate, 'Belirlenmedi') }}
-        </div>
-      </template>
-    </div>
 
     <!-- İşlem sonucu bildirimi (proje atandı vb.) -->
     <AlertMessages v-if="notice" :type="notice.type" :messages="notice.text" role="status" />

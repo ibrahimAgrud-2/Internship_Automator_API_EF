@@ -95,7 +95,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             {
                 return Unauthorized();
             }
-            if (_People.IsPersonExists(personID.Value)&&_People.IsPersonActive(personID.Value))
+            if (!_People.IsPersonExists(personID.Value)&&!_People.IsPersonActive(personID.Value))
             {
                 return BadRequest("Hesabınızdan mesaj ekleyemezsiniz. Silinmiş veya aktif olmayabilr");
             }

@@ -1,84 +1,22 @@
-/* Stajyer kartları: sabit genişlikli, dikdörtgensi kartlar ızgarası */
-/* Arama kutusu */
-.intern-search {
-    width: 300px;
-    max-width: 100%;
-}
-
-
-.intern-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 280px));
-    gap: 1.5rem;
-    justify-content: start;
-}
-
-.intern-card {
-    --intern-accent: var(--bs-success);
-    position: relative;
-    background: transparent;
-    border: 0;
-    transition: transform 0.35s ease;
-}
-
-    .intern-card.intern-card-left {
-        --intern-accent: var(--bs-secondary);
-    }
-
-    /* Kartın arka yüzü hafif yatık durur; içerik düz kalır, okunurluk bozulmaz */
-    .intern-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        background: var(--bs-body-bg);
-        border: 1px solid var(--bs-border-color);
-        border-bottom: 4px solid var(--intern-accent);
-        border-radius: 0.5rem;
-        box-shadow: -8px 10px 18px rgba(0, 0, 0, 0.08);
-        transform: skewX(-2deg);
-        transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-
-    .intern-card > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Fare üstüne gelince: kart yukarı kalkar, arka yüz dikleşir, gölge büyür */
-    .intern-card:hover {
-        transform: translateY(-8px);
-    }
-
-        .intern-card:hover::before {
-            transform: skewX(0deg);
-            box-shadow: -18px 26px 30px rgba(0, 0, 0, 0.18);
-        }
-
-    .intern-card .avatar-circle {
-        transition: transform 0.35s ease;
-    }
-
-    .intern-card:hover .avatar-circle {
-        transform: scale(1.12);
-    }
-
-/* Bölüm başlığı: Bilgiler / Staj / Projeler */
-.intern-section-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--bs-secondary-color);
-    border-bottom: 1px solid var(--bs-border-color);
-    padding-bottom: 0.25rem;
-    margin-bottom: 0.35rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .intern-card,
-    .intern-card::before,
-    .intern-card .avatar-circle {
-        transition: none;
-    }
-}
+/* Daha fazla stajyerin aynı satırda görülmesi için kompakt ızgara */
+.intern-search{width:245px;max-width:100%}
+.intern-status-filter{width:175px;max-width:100%}
+.intern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:14px;align-items:stretch}
+.intern-card{min-width:0;border:1px solid #e7e2e2;border-radius:15px;box-shadow:0 7px 18px rgba(0,0,0,.06);background:#fff;overflow:hidden;transition:box-shadow .2s ease,transform .2s ease}
+.intern-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.12)}
+.intern-card-left{opacity:.84}
+.intern-card-body{padding:16px 15px 14px;min-width:0;flex:1;display:flex;flex-direction:column}
+.intern-card-identity{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:13px}
+.intern-avatar{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#f7e9e9;color:#822328;font-weight:700;font-size:12px}
+.intern-card-name{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 7px;color:#242424}
+.intern-card-email{font-size:.79rem;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:13px}
+.intern-card-meta{display:grid;gap:8px;margin-top:auto}
+.intern-card-date{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:#faf7f7;border:1px solid #f0e6e6}
+.intern-card-date span{font-size:.7rem;color:#777;text-transform:uppercase;letter-spacing:.04em}
+.intern-card-date strong{font-size:.8rem;color:#333;font-weight:600}
+.intern-card-actions{display:flex;gap:7px;padding:0 12px 14px}
+.intern-card-actions .btn{flex:1;min-width:0;font-size:.75rem;padding:7px 4px}
+@media(min-width:1560px){.intern-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:600px){.intern-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.intern-search{width:100%}}
+@media(max-width:390px){.intern-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.intern-card{transition:none}}

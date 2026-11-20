@@ -18,6 +18,7 @@ const interns = ref([])
 const isLoading = ref(true)
 const loadErrors = ref([])
 const searchText = ref('')
+const statusFilter = ref('active')
 const { notice, pushNotice } = useNotice()
 
 const hasInterns = computed(() => interns.value.length > 0)
@@ -26,16 +27,13 @@ const searchWords = computed(() => normalizeSearchText(searchText.value).split('
 // Yazılan her kelime ad soyadın içinde geçmeli; sıra önemli değil ("oruc ibrahim" de bulur)
 const filteredInterns = computed(() =>
   interns.value.filter((intern) => {
-    const fullName = normalizeSearchText(getFullName(intern))
-    return searchWords.value.every((word) => fullName.includes(word))
+    const fullName = normalizeSearchText(getFullName(intern) + ' ' + (intern.email ?? ''))
+    const matchesStatus = statusFilter.value === 'all' || (statusFilter.value === 'active' ? isActive(intern) : !isActive(intern))
+    return matchesStatus && searchWords.value.every((word) => fullName.includes(word))
   }),
 )
 
-const resultCountText = computed(() =>
-  searchWords.value.length > 0
-    ? `${filteredInterns.value.length} / ${interns.value.length} stajyer`
-    : `${interns.value.length} stajyer`,
-)
+const resultCountText = computed(() => `${filteredInterns.value.length} / ${interns.value.length} stajyer`)
 
 async function loadInterns() {
   isLoading.value = true
@@ -112,8 +110,13 @@ onMounted(loadInterns)
       <h4 class="mb-0">Stajyerler</h4>
 
       <!-- Ad-soyad arama: yazdıkça listeyi süzer -->
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex flex-wrap align-items-center gap-2">
         <span v-if="hasInterns" class="small text-muted">{{ resultCountText }}</span>
+        <select v-model="statusFilter" class="form-select intern-status-filter" aria-label="Stajyer durumu">
+          <option value="active">Aktif stajyerler</option>
+          <option value="inactive">Ayrılanlar</option>
+          <option value="all">Tümü</option>
+        </select>
         <div class="input-group intern-search">
           <input
             v-model="searchText"
@@ -139,46 +142,28 @@ onMounted(loadInterns)
     <AlertMessages v-else-if="!hasInterns" type="secondary" messages="Henüz stajyer yok." />
     <AlertMessages v-else-if="filteredInterns.length === 0" type="secondary" messages="Aramanızla eşleşen stajyer bulunamadı." />
 
-    <div class="intern-grid">
+    <div v-if="!isLoading && !loadErrors.length && filteredInterns.length" class="intern-grid">
       <div
         v-for="intern in filteredInterns"
         :key="intern.internID"
         class="card intern-card"
-        :class="isActive(intern) ? '' : 'intern-card-left opacity-75'"
+        :class="isActive(intern) ? '' : 'intern-card-left'"
       >
-        <!-- Üst: avatar + ad soyad + durum rozeti -->
-        <div class="d-flex align-items-center gap-3 p-3 pb-2">
-          <div class="avatar-circle rounded-circle bg-secondary-subtle text-secondary-emphasis d-flex align-items-center justify-content-center fw-semibold">
-            {{ getInitials(intern.firstName, intern.lastName) }}
-          </div>
-          <div>
-            <h5 class="mb-1 text-break">{{ getFullName(intern) }}</h5>
+        <div class="intern-card-body">
+          <div class="intern-card-identity">
+            <span class="intern-avatar">{{ getInitials(intern.firstName, intern.lastName) }}</span>
             <InternStatusBadge :is-active="intern.isActive" />
           </div>
-        </div>
-
-        <!-- Orta: başlıklı bölümler -->
-        <div class="px-3 flex-grow-1">
-          <div class="mb-3">
-            <div class="intern-section-title">Bilgiler</div>
-            <div class="small text-break"><span class="text-muted">E-posta: </span><span>{{ intern.email || '-' }}</span></div>
-            <div class="small text-break"><span class="text-muted">Telefon: </span><span>{{ intern.phone || '-' }}</span></div>
-          </div>
-          <div class="mb-3">
-            <div class="intern-section-title">Staj</div>
-            <div class="small text-break"><span class="text-muted">Başlangıç: </span><span>{{ formatDate(intern.startDate, 'Belirlenmedi') }}</span></div>
-            <div class="small text-break"><span class="text-muted">Bitiş: </span><span>{{ formatDate(intern.endDate, 'Belirlenmedi') }}</span></div>
-          </div>
-          <div class="mb-3">
-            <div class="intern-section-title">Projeler</div>
-            <div class="small text-break"><span class="text-muted">Aktif proje sayısı: </span><span>{{ intern.activeProjectCount ?? 0 }}</span></div>
+          <h5 class="intern-card-name" :title="getFullName(intern)">{{ getFullName(intern) }}</h5>
+          <div class="intern-card-email" :title="intern.email">{{ intern.email || 'E-posta yok' }}</div>
+          <div class="intern-card-meta">
+            <div class="intern-card-date"><span>Başlangıç</span><strong>{{ formatDate(intern.startDate, 'Belirlenmedi') }}</strong></div>
+            <div class="intern-card-date"><span>Bitiş</span><strong>{{ formatDate(intern.endDate, 'Belirlenmedi') }}</strong></div>
           </div>
         </div>
-
-        <!-- Alt: işlemler -->
-        <div class="d-flex gap-2 px-3 pb-3 pt-1">
-          <RouterLink :to="`/staff/interns/${intern.internID}`" class="btn btn-sm btn-outline-primary flex-fill">Detaylar</RouterLink>
-          <button v-if="isActive(intern)" type="button" class="btn btn-sm btn-outline-danger flex-fill" @click="openSeparate(intern)">Staj Bitir</button>
+        <div class="intern-card-actions">
+          <RouterLink :to="`/staff/interns/${intern.internID}`" class="btn btn-sm btn-outline-primary">Detaylar</RouterLink>
+          <button v-if="isActive(intern)" type="button" class="btn btn-sm btn-outline-danger" @click="openSeparate(intern)">Staj Bitir</button>
         </div>
       </div>
     </div>

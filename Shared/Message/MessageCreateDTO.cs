@@ -29,7 +29,6 @@ namespace Shared.Message
 
             int conversationID,
             string content,
-            bool isStaff,
             int referencedContentID,
             short referencedContentType
            )

@@ -1,0 +1,34 @@
+/* Kurumsal ana renkler: durum mesajları ve başarı/ret renkleri Bootstrap'in orijinal renklerinde kalır. */
+:root {
+  --brand-primary: #822328;
+  --brand-primary-hover: #68191e;
+  --bs-primary: #822328;
+  --bs-primary-rgb: 130, 35, 40;
+  --bs-link-color: #822328;
+  --bs-link-hover-color: #68191e;
+  --bs-link-color-rgb: 130, 35, 40;
+  --bs-link-hover-color-rgb: 104, 25, 30;
+  --bs-primary-bg-subtle: #f8eded;
+}
+a { color: #822328; }
+a:hover { color: #68191e; }
+.btn-primary {
+  --bs-btn-bg: #822328; --bs-btn-border-color: #822328;
+  --bs-btn-hover-bg: #68191e; --bs-btn-hover-border-color: #68191e;
+  --bs-btn-active-bg: #68191e; --bs-btn-active-border-color: #68191e;
+  --bs-btn-disabled-bg: #822328; --bs-btn-disabled-border-color: #822328;
+}
+.btn-outline-primary {
+  --bs-btn-color: #822328; --bs-btn-border-color: #822328;
+  --bs-btn-hover-bg: #822328; --bs-btn-hover-border-color: #822328;
+  --bs-btn-active-bg: #68191e; --bs-btn-active-border-color: #68191e;
+}
+.form-control:focus,.form-select:focus {
+ border-color: #822328; box-shadow: 0 0 0 .2rem rgba(130,35,40,.12);
+}
+.bg-primary {background-color: #822328!important;}
+.text-primary {color: #822328!important;}
+.badge.bg-primary {background-color: #822328!important;}
+.page-link {color: #822328;}
+.active > .page-link,.page-link.active {background: #822328;border-color: #822328;}
+/* Dikkat: success/danger/warning sınıfları özellikle değiştirilmedi. */

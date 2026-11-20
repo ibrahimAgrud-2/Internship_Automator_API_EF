@@ -1,6 +1,14 @@
 <script setup>
 import { formatDate } from '@/utils/format'
 
+function isOverdue(task) {
+  if(task.completed || !task.dueDate) return false
+  const date=new Date(task.dueDate); if(Number.isNaN(date.getTime())) return false
+  const today=new Date(); today.setHours(0,0,0,0)
+  date.setHours(0,0,0,0)
+  return date < today
+}
+
 // Tek görev kartı (düz listede de, projeye göre gruplu görünümde de aynı kart).
 // Butonlar işlemi kendisi yapmaz; sadece üst sayfaya haber verir.
 defineProps({
@@ -13,11 +21,11 @@ defineEmits(['edit', 'complete', 'delete'])
 </script>
 
 <template>
-  <div class="border rounded p-3">
+  <div class="border rounded p-3 staff-task-card" :class="{ 'staff-task-overdue': isOverdue(task) }">
     <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
       <div class="fw-semibold text-break">{{ task.title }}</div>
-      <span class="badge" :class="task.completed ? 'text-bg-success' : 'text-bg-warning'">
-        {{ task.completed ? 'Tamamlandı' : 'Devam ediyor' }}
+      <span class="badge" :class="task.completed ? 'text-bg-success' : isOverdue(task) ? 'text-bg-danger' : 'text-bg-warning'">
+        {{ task.completed ? 'Tamamlandı' : isOverdue(task) ? 'Süresi geçti' : 'Devam ediyor' }}
       </span>
     </div>
 
@@ -64,3 +72,7 @@ defineEmits(['edit', 'complete', 'delete'])
     </div>
   </div>
 </template>
+
+<style scoped>
+.staff-task-card{background:#fff}.staff-task-overdue{border-left:4px solid #dc3545!important;background:#fffafa}
+</style>

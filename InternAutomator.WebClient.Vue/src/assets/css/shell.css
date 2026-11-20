@@ -1,51 +1,25 @@
-/* Uygulama iskeleti: üst çubuk + sol menü + içerik */
-.shell {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
 
-.shell-body {
-  position: relative;
-  display: flex;
-  flex: 1;
-}
-
-.shell-sidebar {
-  width: 240px;
-  flex: 0 0 240px;
-  transition: margin-left 0.2s ease;
-}
-
-.shell-content {
-  flex: 1 1 auto;
-  min-width: 0;
-  padding: 1.5rem;
-}
-
-/* Menü kapalıyken sola kayıp gizlenir */
-.sidebar-collapsed .shell-sidebar {
-  margin-left: -240px;
-}
-
-/* Dar ekranlarda menü içeriğin üstüne biner */
-@media (max-width: 767.98px) {
-  .shell-sidebar {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 10;
-  }
-
-  .shell:not(.sidebar-collapsed) .shell-sidebar {
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
-  }
-}
-
-/* Stajyer kartındaki baş harf dairesi (stajyer listesi ve mesajlar) */
-.avatar-circle {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-}
+.shell{display:flex;flex-direction:column;min-height:100vh;background:#f8f8f8;color:#222}
+.shell-topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:68px;padding:10px 24px;background:#fff;border-bottom:1px solid #ece7e7;position:relative;z-index:20}
+.shell-topbar-start,.shell-topbar-end{display:flex;align-items:center;gap:15px;min-width:0}
+.shell-brand{font-size:1.12rem;font-weight:700;color:#252525}
+.shell-menu-toggle{display:grid;place-items:center;width:38px;height:38px;border:1px solid #dfd0d0;border-radius:9px;background:#fff;color:#822328;cursor:pointer}
+.shell-menu-toggle:hover{background:#f3f0f0}
+.profile-avatar-button{width:42px;height:42px;display:grid;place-items:center;border:1px solid #822328;border-radius:50%;background:#822328;color:#fff;cursor:pointer}
+.profile-avatar-button:hover,.profile-avatar-button:focus-visible{background:#68191e;box-shadow:0 0 0 4px rgba(130,35,40,.14)}
+.profile-avatar-button::after{display:none}
+.shell-topbar .dropdown-menu{min-width:240px;border:1px solid #e9dcdc;border-radius:12px;padding:6px}
+.shell-topbar .dropdown-item{padding:10px 16px;border-radius:8px}
+.shell-topbar .dropdown-item:hover{color:#822328;background:#f8eded}
+.shell-body{display:flex;flex:1;min-height:0;position:relative}
+.shell-sidebar{width:240px;flex:0 0 240px;background:#fff;border-right:1px solid #ebe6e6;transition:margin-left .2s}
+.shell-sidebar-inner{padding:20px 14px}
+.shell-sidebar-label{padding:0 13px 10px;font-weight:700;font-size:.69rem;letter-spacing:.09em;color:#777}
+.shell-sidebar .nav-link{padding:11px 14px;border-radius:9px;color:#292929!important;font-weight:500;transition:background-color .15s ease,color .15s ease}
+.shell-sidebar .nav-link:hover{background:#f2f2f2!important;color:#292929!important}
+.shell-sidebar .nav-link.active,.shell-sidebar .nav-link.active:hover{background:#822328!important;color:#fff!important}
+.shell-content{flex:1;min-width:0;padding:28px}
+.sidebar-collapsed .shell-sidebar{margin-left:-240px}
+.avatar-circle{width:42px;height:42px;flex-shrink:0}
+@media(max-width:767.98px){.shell-topbar{padding:10px 14px}.shell-brand{font-size:1rem}.shell-sidebar{position:absolute;top:0;bottom:0;left:0;z-index:10}.shell:not(.sidebar-collapsed) .shell-sidebar{box-shadow:10px 12px 30px rgba(0,0,0,.12)}.shell-content{padding:20px 14px}}
+@media(prefers-reduced-motion:reduce){.shell-sidebar{transition:none}}

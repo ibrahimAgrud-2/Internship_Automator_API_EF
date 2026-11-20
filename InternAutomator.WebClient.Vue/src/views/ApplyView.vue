@@ -1,4 +1,3 @@
-
 <script setup>
 import { reactive, ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { submitApplication } from '@/api/applications'
@@ -195,25 +194,21 @@ async function submit() {
   }
 }
 </script>
-
 <template>
-
-<main class="container py-5 application-page" style="max-width: 780px">
-  <section class="application-card">
-
+  <div class="application-page">
     <header class="application-header">
-      <img
-        src="/company-logo.jpg"
-        alt="AE Yazılım Teknoloji"
-        class="application-logo"
-      />
-
-      <h3>Staj Başvuru Formu</h3>
+      <div class="application-header-inner">
+        <div class="application-heading">
+          <img src="/company-logo.jpg" alt="AE Yazılım Teknoloji" class="application-logo" />
+          <h3>Staj Başvuru Formu</h3>
+        </div>
+        <RouterLink to="/login" class="login-link">Giriş Yap</RouterLink>
+      </div>
     </header>
-
-    <div class="application-divider"></div>
-
+    <main class="container application-main">
+      <section class="application-card">
     <form @submit.prevent="submit">
+
 
       <h5 class="mb-3">Kişisel Bilgiler</h5>
 
@@ -474,11 +469,12 @@ async function submit() {
         class="mt-3"
       />
     </form>
-  </section>
-</main>
+      </section>
+    </main>
+  </div>
 </template>
-
 <style scoped>
+
 /* GENEL RENKLER */
 
 .application-page {
@@ -738,87 +734,15 @@ async function submit() {
 }
 
 
-/* BAŞVURU FORMUNUN DIŞ KARTI */
 
-.application-card {
-  width: 100%;
-  padding: 36px 42px 42px;
-
-  background-color: #ffffff;
-  border: 1px solid rgba(130, 35, 40, 0.18);
-  border-radius: 16px;
-
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
-}
-
-/* LOGO VE BAŞLIK */
-
-.application-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-
-  margin-bottom: 25px;
-}
-
-.application-logo {
-  width: 88px;
-  height: 88px;
-  flex-shrink: 0;
-
-  object-fit: contain;
-  background-color: #ffffff;
-}
-
-.application-header h3 {
-  margin: 0;
-
-  color: #1c1c1c;
-  font-size: 27px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-/* BAŞLIK ALTINDAKİ AYIRICI */
-
-.application-divider {
-  width: 100%;
-  height: 1px;
-
-  margin-bottom: 30px;
-  background-color: rgba(0, 0, 0, 0.972);
-}
-
-/* MOBİL UYUM */
-
-@media (max-width: 600px) {
-  .application-page {
-    padding: 20px 12px !important;
-  }
-
-  .application-card {
-    padding: 25px 20px 30px;
-    border-radius: 12px;
-  }
-
-  .application-header {
-    gap: 13px;
-    margin-bottom: 20px;
-  }
-
-  .application-logo {
-    width: 65px;
-    height: 65px;
-  }
-
-  .application-header h3 {
-    font-size: 21px;
-  }
-
-  .application-divider {
-    margin-bottom: 24px;
-  }
-}
-
+.application-page{min-height:100vh;background:#f8f8f8;color:#222}
+.application-header{width:100%;background:#fff;border-bottom:1px solid #e8e8e8;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.application-header-inner{display:flex;justify-content:space-between;align-items:center;gap:24px;width:100%;max-width:1200px;min-height:94px;margin:auto;padding:12px 30px}
+.application-heading{display:flex;align-items:center;gap:20px;min-width:0}.application-logo{width:78px;height:70px;object-fit:contain;background:#fff;flex-shrink:0}
+.application-header h3{margin:0;font-weight:700;font-size:25px;color:#1c1c1c}
+.login-link{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-height:42px;padding:10px 25px;background:#822328;border:1px solid #822328;border-radius:24px;color:#fff;font-size:14px;font-weight:600;text-decoration:none}
+.login-link:hover,.login-link:focus-visible{background:#68191e;border-color:#68191e;color:#fff}
+.application-main{max-width:780px;padding:46px 18px 65px}.application-card{width:100%;padding:36px 42px 42px;background:#fff;border:1px solid rgba(130,35,40,.12);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.06)}
+@media(max-width:600px){.application-header-inner{min-height:75px;padding:12px 16px;gap:10px}.application-heading{gap:9px}.application-logo{width:50px;height:50px}.application-header h3{font-size:17px}.login-link{min-height:36px;padding:7px 13px;font-size:12px}.application-main{padding:25px 12px 45px}.application-card{padding:25px 20px 30px}}
+@media(max-width:380px){.application-header h3{font-size:15px}.login-link{padding:7px 10px;font-size:11px}}
 </style>

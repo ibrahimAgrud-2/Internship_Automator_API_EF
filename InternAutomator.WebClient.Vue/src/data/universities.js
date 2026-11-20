@@ -1,4 +1,3 @@
-
 export const universities = `
 Abdullah Gül Üniversitesi
 Acıbadem Mehmet Ali Aydınlar Üniversitesi
@@ -203,7 +202,4 @@ Yıldız Teknik Üniversitesi
 Yozgat Bozok Üniversitesi
 Yüksek İhtisas Üniversitesi
 Zonguldak Bülent Ecevit Üniversitesi
-`
-  .trim()
-  .split('\n')
-  .sort((a, b) => a.localeCompare(b, 'tr'))
+`.trim().split("\n").sort((a,b)=>a.localeCompare(b,"tr"))

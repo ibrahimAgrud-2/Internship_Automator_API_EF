@@ -2,6 +2,7 @@
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { getInternConversations } from '@/api/conversations'
 import { getAllMessages, addMessage } from '@/api/messages'
+import { loadConversationRecency, orderConversations } from '@/utils/conversationOrder'
 import { getErrorMessages } from '@/api/http'
 import { getLatestAnnouncements } from '@/api/announcements'
 import { getAllProjects } from '@/api/projects'
@@ -19,6 +20,13 @@ const conversations = ref([])
 const isLoading = ref(true)
 const loadError = ref([])
 const selectedConversationID = ref(null)
+const lastMessageDates=ref({})
+const sortedConversations=computed(()=>orderConversations(conversations.value,lastMessageDates.value))
+async function refreshChatOrder(items){
+  await loadConversationRecency(items,(id,time)=>{
+    lastMessageDates.value={...lastMessageDates.value,[id]:time}
+  })
+}
 
 const selectedConversation = computed(
   () => conversations.value.find((conversation) => conversation.conversationID === selectedConversationID.value) ?? null,
@@ -44,7 +52,8 @@ async function loadConversations() {
   loadError.value = []
 
   try {
-    conversations.value = (await getInternConversations()) ?? []  } catch (error) {
+    conversations.value = (await getInternConversations()) ?? []
+    void refreshChatOrder(conversations.value)  } catch (error) {
     loadError.value = getErrorMessages(error)
   } finally {
     isLoading.value = false
@@ -107,6 +116,8 @@ async function loadMessages(showLoading = true) {
     const result = (await getAllMessages(conversationID)) ?? []
     if (currentRequest !== requestId) return
     messages.value = result
+    const dates=(Array.isArray(result)?result:[]).map(m=>new Date(m.createdDate).getTime()).filter(Number.isFinite)
+    lastMessageDates.value={...lastMessageDates.value,[conversationID]:dates.length?Math.max(...dates):0}
     await nextTick()
     if (messageList.value) messageList.value.scrollTop = messageList.value.scrollHeight // en yeni mesaj görünsün
   } catch (error) {
@@ -287,9 +298,9 @@ onMounted(async () => {
           <AlertMessages v-else-if="loadError.length" class="m-3" :messages="loadError" />
           <p v-else-if="conversations.length === 0" class="text-muted small text-center p-3 mb-0">Henüz sohbet yok.</p>
 
+          <template v-for="(conversation, index) in sortedConversations" :key="conversation.conversationID">
+          <div v-if="index === 0 || (sortedConversations[index-1]?.isGroup && !conversation.isGroup)" class="chat-list-section-title">{{ conversation.isGroup ? 'Gruplar' : 'Sohbetler' }}</div>
           <button
-            v-for="conversation in conversations"
-            :key="conversation.conversationID"
             type="button"
             class="chat-list-item"
             :class="{ active: conversation.conversationID === selectedConversationID }"
@@ -306,6 +317,7 @@ onMounted(async () => {
               <span class="chat-preview d-block small text-muted">{{ conversation.isGroup ? 'Grup sohbeti' : 'Birebir sohbet' }}</span>
             </span>
           </button>
+          </template>
         </div>
       </aside>
 

@@ -1,9 +1,12 @@
 <script setup>
 
 import { getAllProjects } from '@/api/projects'
+import { getAllInterns } from '@/api/interns'
+import BaseModal from '@/components/BaseModal.vue'
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { getAllConversations } from '@/api/conversations'
 import { getAllMessages, addMessage } from '@/api/messages'
+import { loadConversationRecency, orderConversations } from '@/utils/conversationOrder'
 import { getErrorMessages } from '@/api/http'
 import { getLatestAnnouncements } from '@/api/announcements'
 import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
@@ -17,7 +20,43 @@ const conversations = ref([])
 const isLoading = ref(true)
 const loadError = ref([])
 const selectedConversationID = ref(null)
+const lastMessageDates=ref({})
+const sortedConversations=computed(()=>orderConversations(conversations.value,lastMessageDates.value))
+async function refreshChatOrder(items){
+  await loadConversationRecency(items,(id,time)=>{
+    lastMessageDates.value={...lastMessageDates.value,[id]:time}
+  })
+}
 
+// Grup üyesi seçimi hazırdır; kayıt endpoint'i henüz API sözleşmesinde yoktur.
+const isMemberPickerOpen=ref(false)
+const memberList=ref([])
+const memberSearch=ref('')
+const selectedMemberID=ref(null)
+const isMemberListLoading=ref(false)
+const memberLoadErrors=ref([])
+const filteredMembers = computed(() => {
+  const query = memberSearch.value.toLocaleLowerCase('tr-TR')
+  return [...memberList.value]
+    .sort((a, b) => {
+      const activeA = a.isActive === true || a.isActive === 1
+      const activeB = b.isActive === true || b.isActive === 1
+      const activeCompare = Number(activeB) - Number(activeA)
+      if (activeCompare !== 0) return activeCompare
+      const nameA = `${a.firstName ?? ''} ${a.lastName ?? ''}`.trim().toLocaleLowerCase('tr-TR')
+      const nameB = `${b.firstName ?? ''} ${b.lastName ?? ''}`.trim().toLocaleLowerCase('tr-TR')
+      return nameA.localeCompare(nameB, 'tr')
+    })
+    .filter((i) => `${i.firstName ?? ''} ${i.lastName ?? ''} ${i.email ?? ''}`.toLocaleLowerCase('tr-TR').includes(query))
+})
+async function openMemberPicker(){
+  if(!selectedConversation.value?.isGroup)return
+  memberSearch.value='';selectedMemberID.value=null;memberLoadErrors.value=[]
+  isMemberPickerOpen.value=true;isMemberListLoading.value=true
+  try{const list=await getAllInterns();memberList.value=Array.isArray(list)?list:[]}
+  catch(error){memberLoadErrors.value=getErrorMessages(error)}
+  finally{isMemberListLoading.value=false}
+}
 const selectedConversation = computed(
   () => conversations.value.find((conversation) => conversation.conversationID === selectedConversationID.value) ?? null,
 )
@@ -39,6 +78,7 @@ async function loadConversations() {
 
   try {
     conversations.value = (await getAllConversations()) ?? []
+    void refreshChatOrder(conversations.value)
   } catch (error) {
     loadError.value = getErrorMessages(error)
   } finally {
@@ -102,6 +142,8 @@ async function loadMessages(showLoading = true) {
     const result = (await getAllMessages(conversationID)) ?? []
     if (currentRequest !== requestId) return
     messages.value = result
+    const dates=(Array.isArray(result)?result:[]).map(m=>new Date(m.createdDate).getTime()).filter(Number.isFinite)
+    lastMessageDates.value={...lastMessageDates.value,[conversationID]:dates.length?Math.max(...dates):0}
     await nextTick()
     if (messageList.value) messageList.value.scrollTop = messageList.value.scrollHeight // en yeni mesaj görünsün
   } catch (error) {
@@ -265,9 +307,9 @@ onMounted(async () => {
           <AlertMessages v-else-if="loadError.length" class="m-3" :messages="loadError" />
           <p v-else-if="conversations.length === 0" class="text-muted small text-center p-3 mb-0">Henüz sohbet yok.</p>
 
+          <template v-for="(conversation, index) in sortedConversations" :key="conversation.conversationID">
+          <div v-if="index === 0 || (sortedConversations[index-1]?.isGroup && !conversation.isGroup)" class="chat-list-section-title">{{ conversation.isGroup ? 'Gruplar' : 'Sohbetler' }}</div>
           <button
-            v-for="conversation in conversations"
-            :key="conversation.conversationID"
             type="button"
             class="chat-list-item"
             :class="{ active: conversation.conversationID === selectedConversationID }"
@@ -284,6 +326,7 @@ onMounted(async () => {
               <span class="chat-preview d-block small text-muted">{{ conversation.isGroup ? 'Grup sohbeti' : 'Birebir sohbet' }}</span>
             </span>
           </button>
+          </template>
         </div>
       </aside>
 
@@ -296,7 +339,8 @@ onMounted(async () => {
           >
             {{ getConversationInitials(selectedConversation.conversationName) }}
           </span>
-          <div class="fw-semibold text-break">{{ selectedConversation.conversationName }}</div>
+          <div class="fw-semibold text-break flex-grow-1">{{ selectedConversation.conversationName }}</div>
+          <button v-if="selectedConversation.isGroup" type="button" class="btn btn-sm btn-outline-primary" @click="openMemberPicker">+ Üye Ekle</button>
         </div>
 
         <template v-if="selectedConversation">
@@ -371,6 +415,31 @@ onMounted(async () => {
         </form>
       </section>
     </div>
+
+    <!-- Üye seçimi: grup üyeliği kaydetme endpoint'i henüz sağlanmadı. -->
+    <BaseModal v-model="isMemberPickerOpen" title="Gruba Üye Ekle" dialog-class="modal-dialog-scrollable">
+      <p class="small text-muted">{{ selectedConversation?.conversationName }} grubuna eklenecek stajyeri seçin.</p>
+      <AlertMessages v-if="isMemberListLoading" type="info" messages="Stajyerler yükleniyor..." />
+      <AlertMessages v-else-if="memberLoadErrors.length" :messages="memberLoadErrors" />
+      <template v-else>
+        <input v-model="memberSearch" type="search" class="form-control mb-3" placeholder="Stajyer ara..." aria-label="Stajyer ara" />
+        <div class="chat-member-picker" role="radiogroup" aria-label="Gruba eklenecek stajyer">
+          <label v-for="person in filteredMembers" :key="person.internID" class="chat-member-row" :class="{selected:selectedMemberID===person.internID}">
+            <input v-model="selectedMemberID" type="radio" name="member" :value="person.internID" />
+            <span><strong>{{person.firstName}} {{person.lastName}}</strong><small class="d-block text-muted">{{person.email}}</small></span>
+            <span class="badge" :class="person.isActive ? 'text-bg-success' : 'text-bg-secondary'">{{person.isActive?'Aktif':'Ayrıldı'}}</span>
+          </label>
+          <div v-if="filteredMembers.length===0" class="text-muted text-center py-3">Stajyer bulunamadı.</div>
+        </div>
+        <div v-if="selectedMemberID !== null" class="alert alert-warning mt-3 mb-0 small">
+          Seçim yapıldı. Ancak grup üyeliğini kaydedecek API endpoint'i henüz mevcut değil; işlem tamamlanamaz.
+        </div>
+      </template>
+      <template #footer>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Kapat</button>
+        <button type="button" class="btn btn-primary" disabled title="Gruba üye ekleme endpoint'i gerekli">Gruba Ekle</button>
+      </template>
+    </BaseModal>
 
     <ReferencePickerModal
       v-model="isPickerOpen"

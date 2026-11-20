@@ -4,6 +4,8 @@ import router from './router'
 
 // Bootstrap: stiller ve (modal, dropdown gibi bileşenler için) JavaScript
 import 'bootstrap/dist/css/bootstrap.min.css'
+import '@/assets/css/theme.css'
+import '@/assets/css/panel-polish.css'
 import 'bootstrap' // tek kopya: BaseModal'daki import { Modal } ile aynı Bootstrap örneği kullanılır
 
 const app = createApp(App)

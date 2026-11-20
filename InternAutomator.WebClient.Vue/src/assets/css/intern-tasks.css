@@ -69,3 +69,5 @@
 .task-body {
     min-width: 0;
 }
+/* Gecikmiş ancak tamamlanmamış görevler açıkça ayrılır. */
+.task-card-overdue{border:1px solid #dc3545;border-left:4px solid #dc3545;box-shadow:0 5px 17px rgba(220,53,69,.12)}

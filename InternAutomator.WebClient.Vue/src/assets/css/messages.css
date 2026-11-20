@@ -175,3 +175,15 @@
     .chat-reference.ref-task .chat-reference-type {
         color: var(--bs-purple);
     }
+/* Gruplar üstte, birebir konuşmalar son mesaj sırasına göre altta listelenir. */
+.chat-list-section-title{padding:13px 15px 7px;background:#f8f8f8;color:#555;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid #ededed}
+.chat-list-item{cursor:pointer;transition:background-color .15s ease}
+.chat-list-item:hover{background:#f8f4f4}
+.chat-list-item.active{background:#f9ecec;border-left-color:#822328}
+.chat-layout{height:calc(100vh - 126px);border:1px solid #eae2e2;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.06)}
+.chat-reference.ref-project{border-left-color:#822328}.chat-reference.ref-project .chat-reference-type{color:#822328}
+.chat-member-picker{max-height:350px;overflow-y:auto;border:1px solid #e8e0e0;border-radius:9px}
+.chat-member-row{display:flex;align-items:center;gap:13px;padding:12px 14px;border-bottom:1px solid #f0eded;cursor:pointer}
+.chat-member-row:last-child{border-bottom:0}.chat-member-row:hover,.chat-member-row.selected{background:#f9eeee}
+.chat-member-row>span:nth-child(2){flex:1;min-width:0}.chat-member-row .badge{flex-shrink:0}
+@media(max-width:767.98px){.chat-layout{height:auto;min-height:500px}.chat-list-panel{max-height:280px}.chat-panel{height:65vh}}
