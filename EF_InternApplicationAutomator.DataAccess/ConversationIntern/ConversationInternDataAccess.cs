@@ -3,6 +3,7 @@ using EF_InternApplicationAutomator.DataAccess.Data;
 using EF_InternApplicationAutomator.DataAccess.Message;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.VisualBasic;
 using Shared.Application;
 using Shared.Intern;
 
@@ -34,11 +35,28 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
 
         }
 
-        public bool DoesInternHasAPrivateChat(int internID)
+        public int DoesInternHasAPrivateChat(int internID)
         {
-            return _Context.vw_ConversationIntern.Any(c => c.InternID == internID && !c.IsGroup);
+            vw_ConversationIntern conversationIntern = _Context.vw_ConversationIntern.FirstOrDefault(c => c.InternID == internID && !c.IsGroup);
+            
+           
+            return (conversationIntern==null)?-1: conversationIntern.ConversationID;
         }
 
+        public bool AddInternToConversation(int conversationID,int internID)
+        {
+
+            ConversationInternEntity conversationEntity = new ConversationInternEntity(conversationID,internID);
+
+            EntityEntry<ConversationInternEntity> addedIntern = _Context.ConversationIntern.Add(conversationEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
 
     }

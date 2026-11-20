@@ -25,9 +25,9 @@ namespace EF_InternApplicationAutomator.Business.Conversation
 
 
          ConversationDataAccess _ConversationDataAccess;
-       MessagesDataAccess _MessagesDataAccess;
-       ConversationInternDataAccess _ConversationInternDataAccess;
-        public ConversationBL(ConversationDataAccess conversationDataAccess, MessagesDataAccess messagesDataAccess, ConversationInternDataAccess conversationInternDataAccess)
+           MessagesDataAccess _MessagesDataAccess;
+           ConversationInternDataAccess _ConversationInternDataAccess;
+            public ConversationBL(ConversationDataAccess conversationDataAccess, MessagesDataAccess messagesDataAccess, ConversationInternDataAccess conversationInternDataAccess)
         {
             _ConversationDataAccess = conversationDataAccess;
             _MessagesDataAccess = messagesDataAccess;
@@ -54,7 +54,6 @@ namespace EF_InternApplicationAutomator.Business.Conversation
         }
 
 
-
         public bool IsConversationExists( int conversationID)
         {
 
@@ -73,18 +72,35 @@ namespace EF_InternApplicationAutomator.Business.Conversation
             return _ConversationDataAccess.DoesInternExistsInConversations(internID,conversationID);
         }
    
-        public bool AddNewConversation(ConversationCreateDTO conversation)
+        public int AddNewConversation(ConversationCreateDTO conversation)
         {
             return _ConversationDataAccess.AddNewConversation(conversation);
         }
 
 
-        public bool DoesInternHasAPrivateChat(int internID)
+        public int DoesInternHasAPrivateChat(int internID)
         {
             return _ConversationInternDataAccess.DoesInternHasAPrivateChat(internID);
         }
 
-
-
+        //eğer bir stajyer sistemde yoksa, mesela olmayan stajyerin ID'si verilmişse bu çalışmayı etkilemicek
+        //Öyleki tüm ID'ler yanlış olsa bile hiç üye olmadan bir grup oluşacak. Personel isterse sonradan üye 
+        //ekleyebilir. Olmayan intern eklenmicek
+        public int AddNewGroupConversation(GroupConversationCreateDTO conversationCreateDTO)
+        {
+            int groupConversationID = AddNewConversation(new ConversationCreateDTO(conversationCreateDTO.ConversationName,true));
+            if(groupConversationID<1)
+            {
+                return -1;
+            } else
+            {
+                foreach (var internID in conversationCreateDTO.InterIDs)
+                {
+                  
+                    _ConversationInternDataAccess.AddInternToConversation(groupConversationID, internID);
+                }
+            }
+            return groupConversationID;
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using EF_InternApplicationAutomator.Business.Conversation;
+using EF_InternApplicationAutomator.Business.Intern;
 using EF_InternApplicationAutomator.DataAccess.Application;
 using EF_InternApplicationAutomator.DataAccess.Conversation;
 using EF_InternApplicationAutomator.DataAccess.ConversationIntern;
@@ -25,9 +27,13 @@ namespace EF_InternApplicationAutomator.Business.ConversationIntern
 
 
          ConversationInternDataAccess _ConversationInternDataAccess;
+         InternBL _InternBL;
+           ConversationBL _Conversation;
 
-        public ConversationInternBL(ConversationInternDataAccess conversationInternDataAccess)
+        public ConversationInternBL(ConversationInternDataAccess conversationInternDataAccess, InternBL internBL, ConversationBL conversationBL)
         {
+            _InternBL = internBL;
+            _Conversation = conversationBL;
             _ConversationInternDataAccess = conversationInternDataAccess;
     
         }
@@ -36,6 +42,19 @@ namespace EF_InternApplicationAutomator.Business.ConversationIntern
         {
             return _ConversationInternDataAccess.GetAllInternConversation(internID);
         }
-       
+
+
+        public bool AddInternToConversation(int conversationID, int internID)
+        {
+            if (!_InternBL.IsInternExists(internID) || !_Conversation.IsConversationExists(conversationID))
+            {
+                Console.WriteLine("Yeni eklenen stajyer sohbete dahil edilemedi. stajyer/sohbet silinmiş olabilir");
+                return false;
+            }
+            return _ConversationInternDataAccess.AddInternToConversation(conversationID, internID);
+        }
+
+
+
     }
 }

@@ -1,30 +1,39 @@
 <script setup>
-
-import { getAllProjects } from '@/api/projects'
-import { getAllInterns } from '@/api/interns'
-import BaseModal from '@/components/BaseModal.vue'
 import { ref, computed, nextTick, onMounted } from 'vue'
-import { getAllConversations } from '@/api/conversations'
+import { getAllConversations, createPrivateConversation } from '@/api/conversations'
+import { getAllInterns } from '@/api/interns'
 import { getAllMessages, addMessage } from '@/api/messages'
-import { loadConversationRecency, orderConversations } from '@/utils/conversationOrder'
-import { getErrorMessages } from '@/api/http'
+import { getAllProjects } from '@/api/projects'
 import { getLatestAnnouncements } from '@/api/announcements'
-import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
+import { getErrorMessages } from '@/api/http'
+import { loadConversationRecency, orderConversations } from '@/utils/conversationOrder'
+import {
+  INTERN_ACTIVE,
+  MESSAGE_LIMITS,
+  REFERENCE_NONE,
+  REFERENCE_TYPES,
+  REFERENCE_ANNOUNCEMENT,
+  REFERENCE_PROJECT,
+  REFERENCE_TASK,
+} from '@/constants'
 import { formatTime, formatDayLabel } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
+import BaseModal from '@/components/BaseModal.vue'
 import ReferencePickerModal from '@/components/ReferencePickerModal.vue'
 import '@/assets/css/messages.css'
-
 
 const conversations = ref([])
 const isLoading = ref(true)
 const loadError = ref([])
 const selectedConversationID = ref(null)
-const lastMessageDates=ref({})
-const sortedConversations=computed(()=>orderConversations(conversations.value,lastMessageDates.value))
-async function refreshChatOrder(items){
-  await loadConversationRecency(items,(id,time)=>{
-    lastMessageDates.value={...lastMessageDates.value,[id]:time}
+const lastMessageDates = ref({})
+const sortedConversations = computed(() =>
+  orderConversations(conversations.value, lastMessageDates.value)
+)
+
+async function refreshChatOrder(items) {
+  await loadConversationRecency(items, (id, time) => {
+    lastMessageDates.value = { ...lastMessageDates.value, [id]: time }
   })
 }
 
@@ -58,7 +67,7 @@ async function openMemberPicker(){
   finally{isMemberListLoading.value=false}
 }
 const selectedConversation = computed(
-  () => conversations.value.find((conversation) => conversation.conversationID === selectedConversationID.value) ?? null,
+  () => conversations.value.find((conversation) => Number(conversation.conversationID) === selectedConversationID.value) ?? null,
 )
 
 // "stajyerler Ortak Grup" -> "SO"
@@ -156,13 +165,22 @@ async function loadMessages(showLoading = true) {
 }
 
 function selectConversation(conversationID) {
-  if (conversationID === selectedConversationID.value) return
-  selectedConversationID.value = conversationID
-  // Yarım yazılan metin ve referans başka sohbete gitmesin
+  // API'den gelen numara bazen string olabilir.
+  const id = Number(conversationID)
+  if (!Number.isSafeInteger(id) || id <= 0) return
+
+  if (selectedConversationID.value === id) {
+    // Özellikle yeniden açılan mevcut bir sohbet için mesajları tazele.
+    void loadMessages(false)
+    return
+  }
+
+  selectedConversationID.value = id
+  // Yarım yazılan metin ve referans başka sohbete gitmesin.
   draft.value = ''
   reference.value = null
   sendError.value = []
-  loadMessages()
+  void loadMessages()
 }
 
 // ---------- Referans seçme (+ menüsü) ----------
@@ -284,6 +302,141 @@ function onEnter(event) {
   event.preventDefault()
   sendMessage()
 }
+// ---------- Yeni özel sohbet (yalnızca personel) ----------
+const isNewChatOpen = ref(false)
+const availableInterns = ref([])
+const selectedInternID = ref(null)
+const isInternsLoading = ref(false)
+const isCreatingChat = ref(false)
+const newChatErrors = ref([])
+const newChatSearchText = ref('')
+const appliedNewChatSearch = ref('')
+
+// Liste pencere açılır açılmaz görünür; Ara butonu filtreyi uygular.
+const filteredChatInterns = computed(() => {
+  const words = appliedNewChatSearch.value
+    .toLocaleLowerCase('tr-TR')
+    .split(/\s+/)
+    .filter(Boolean)
+
+  return availableInterns.value.filter((intern) => {
+    const searchableText = [
+      intern.firstName,
+      intern.lastName,
+      intern.email,
+    ].filter(Boolean).join(' ').toLocaleLowerCase('tr-TR')
+    return words.every((word) => searchableText.includes(word))
+  })
+})
+
+function searchNewChat() {
+  appliedNewChatSearch.value = newChatSearchText.value.trim()
+}
+
+function clearNewChatSearch() {
+  newChatSearchText.value = ''
+  appliedNewChatSearch.value = ''
+}
+
+const selectedIntern = computed(() =>
+  availableInterns.value.find(
+    (intern) => Number(intern.internID) === Number(selectedInternID.value)
+  ) ?? null
+)
+
+async function openNewChat() {
+  if (isInternsLoading.value || isCreatingChat.value) return
+
+  selectedInternID.value = null
+  availableInterns.value = []
+  newChatErrors.value = []
+  clearNewChatSearch()
+  isNewChatOpen.value = true
+  isInternsLoading.value = true
+
+  try {
+    const interns = await getAllInterns()
+    if (!Array.isArray(interns)) {
+      throw new Error('Stajyer listesi beklenen biçimde alınamadı.')
+    }
+
+    availableInterns.value = interns
+      .filter((intern) => intern.isActive === INTERN_ACTIVE)
+      .sort((a, b) =>
+        `${a.firstName ?? ''} ${a.lastName ?? ''}`.localeCompare(
+          `${b.firstName ?? ''} ${b.lastName ?? ''}`,
+          'tr'
+        )
+      )
+  } catch (error) {
+    newChatErrors.value = getErrorMessages(error)
+  } finally {
+    isInternsLoading.value = false
+  }
+}
+
+// API şu an başarılı istekte doğrudan "15" veya 15 döndürüyor.
+function parseConversationID(response) {
+  const value = response && typeof response === 'object'
+    ? response.conversationID
+    : response
+  const cleaned = typeof value === 'string'
+    ? value.trim().replace(/^"(.*)"$/, '$1')
+    : value
+  const id = Number(cleaned)
+
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new Error('API geçerli bir sohbet ID döndürmedi.')
+  }
+  return id
+}
+
+async function submitNewChat() {
+  if (isCreatingChat.value || isInternsLoading.value || !selectedIntern.value) return
+
+  const intern = selectedIntern.value
+  isCreatingChat.value = true
+  newChatErrors.value = []
+
+  try {
+    const conversationName = `${intern.firstName ?? ''} ${intern.lastName ?? ''}`.trim()
+    const response = await createPrivateConversation(Number(intern.internID), {
+      conversationName,
+      isGroup: false,
+    })
+    const conversationID = parseConversationID(response)
+
+    // API, mevcut sohbetin ID'sini veya yeni oluşturulan sohbetin ID'sini döndürür.
+    // Önce sunucudaki gerçek sohbet listesini yeniden alıyoruz.
+    const serverConversations = await getAllConversations()
+    if (!Array.isArray(serverConversations)) {
+      throw new Error('Sunucudan sohbet listesi alınamadı. Sohbet açılmadı.')
+    }
+
+    // İsim eşleştirmesi yapma: aynı isimli iki stajyer olabilir.
+    // API'dan gelen ID sunucu listesinde yoksa frontend'de sahte sohbet oluşturma.
+    const serverConversation = serverConversations.find(
+      (item) => Number(item.conversationID) === conversationID && item.isGroup === false
+    )
+    conversations.value = serverConversations
+    void refreshChatOrder(serverConversations)
+
+    if (!serverConversation) {
+      throw new Error(
+        `API ${conversationID} numaralı sohbeti döndürdü fakat bu sohbet Conversation/All listesinde bulunamadı. ` +
+        'Lütfen CreatePrivateConversation ve Conversation/All endpointlerini kontrol edin.'
+      )
+    }
+
+    // Hem mevcut hem yeni sohbet için sadece sunucuda doğrulanmış ID'yi aç.
+    isNewChatOpen.value = false
+    selectConversation(conversationID)
+  } catch (error) {
+    newChatErrors.value = getErrorMessages(error)
+  } finally {
+    isCreatingChat.value = false
+  }
+}
 
 onMounted(async () => {
   await loadConversations()
@@ -298,7 +451,14 @@ onMounted(async () => {
       <!-- Sol: sohbet listesi -->
       <aside class="chat-list-panel border-end">
         <div class="p-3 border-bottom d-grid gap-2">
-          <button type="button" class="btn btn-outline-primary" disabled>Yeni sohbet</button>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            :disabled="isInternsLoading || isCreatingChat"
+            @click="openNewChat"
+          >
+            Yeni sohbet
+          </button>
           <button type="button" class="btn btn-outline-primary" disabled>Grup ekle</button>
         </div>
 
@@ -312,7 +472,7 @@ onMounted(async () => {
           <button
             type="button"
             class="chat-list-item"
-            :class="{ active: conversation.conversationID === selectedConversationID }"
+            :class="{ active: Number(conversation.conversationID) === selectedConversationID }"
             @click="selectConversation(conversation.conversationID)"
           >
             <span
@@ -415,6 +575,114 @@ onMounted(async () => {
         </form>
       </section>
     </div>
+
+    <!-- Yeni sohbet: personel stajyer seçer, API sohbeti oluşturur veya mevcut ID'yi döndürür. -->
+    <BaseModal
+      v-model="isNewChatOpen"
+      title="Yeni Sohbet"
+      as-form
+      @submit="submitNewChat"
+    >
+      <label for="newChatSearch" class="form-label">
+        Sohbet başlatmak istediğiniz stajyeri seçin
+      </label>
+
+      <div class="input-group mb-3">
+        <input
+          id="newChatSearch"
+          v-model="newChatSearchText"
+          type="search"
+          class="form-control"
+          placeholder="Ad, soyad veya e-posta ara..."
+          autocomplete="off"
+          :disabled="isInternsLoading || isCreatingChat"
+          @keydown.enter.prevent="searchNewChat"
+        />
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          :disabled="isInternsLoading || isCreatingChat"
+          @click="searchNewChat"
+        >
+          Ara
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          :disabled="isInternsLoading || isCreatingChat || (!newChatSearchText && !appliedNewChatSearch)"
+          @click="clearNewChatSearch"
+        >
+          Temizle
+        </button>
+      </div>
+
+      <AlertMessages
+        v-if="isInternsLoading"
+        type="info"
+        messages="Stajyerler yükleniyor..."
+      />
+      <AlertMessages
+        v-else-if="newChatErrors.length"
+        :messages="newChatErrors"
+      />
+      <p
+        v-else-if="availableInterns.length === 0"
+        class="text-muted small mb-0"
+      >
+        Aktif stajyer bulunamadı.
+      </p>
+      <template v-else>
+        <p class="small text-muted mb-2">
+          {{ filteredChatInterns.length }} stajyer gösteriliyor
+        </p>
+        <div
+          class="chat-member-picker"
+          role="radiogroup"
+          aria-label="Sohbet başlatılacak stajyer"
+          style="max-height: 320px; overflow-y: auto"
+        >
+          <label
+            v-for="intern in filteredChatInterns"
+            :key="intern.internID"
+            class="chat-member-row"
+            :class="{ selected: selectedInternID === Number(intern.internID) }"
+          >
+            <input
+              v-model="selectedInternID"
+              type="radio"
+              name="newChatIntern"
+              :value="Number(intern.internID)"
+              :disabled="isCreatingChat"
+            />
+            <span>
+              <strong>{{ intern.firstName }} {{ intern.lastName }}</strong>
+              <small v-if="intern.email" class="d-block text-muted">{{ intern.email }}</small>
+            </span>
+          </label>
+          <p v-if="filteredChatInterns.length === 0" class="text-muted small text-center py-3 mb-0">
+            Aramanızla eşleşen stajyer bulunamadı.
+          </p>
+        </div>
+      </template>
+
+      <template #footer>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          :disabled="isCreatingChat"
+        >
+          Vazgeç
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          :disabled="!selectedIntern || isInternsLoading || isCreatingChat"
+        >
+          {{ isCreatingChat ? 'İşleniyor...' : 'Sohbeti Aç' }}
+        </button>
+      </template>
+    </BaseModal>
 
     <!-- Üye seçimi: grup üyeliği kaydetme endpoint'i henüz sağlanmadı. -->
     <BaseModal v-model="isMemberPickerOpen" title="Gruba Üye Ekle" dialog-class="modal-dialog-scrollable">

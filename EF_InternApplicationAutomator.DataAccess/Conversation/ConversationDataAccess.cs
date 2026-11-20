@@ -61,20 +61,20 @@ namespace EF_InternApplicationAutomator.DataAccess.Conversation
         }
 
 
-        public bool AddNewConversation(ConversationCreateDTO conversation)
+        public int AddNewConversation(ConversationCreateDTO conversation)
         {
 
 
             ConversationEntity conversationEntity = new ConversationEntity(0, conversation.ConversationName, conversation.IsGroup);
 
-            EntityEntry<ConversationEntity> addedIntern = _Context.Conversations.Add(conversationEntity);
+            EntityEntry<ConversationEntity> addedConversation = _Context.Conversations.Add(conversationEntity);
 
             if (_Context.SaveChanges() > 0)
             {
-                return true;
+                return conversationEntity.ConversationID;
             }
 
-            return false;
+            return -1;
         }
 
 

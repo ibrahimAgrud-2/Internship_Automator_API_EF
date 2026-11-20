@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
 {
-    [Table("ConversationInterns")]
-    public class ConversationInternEntity
+    [Table("vw_ConversationIntern")]
+    public class vw_ConversationIntern
     {
         [Key]
         public int ConversationID { get; set; }
@@ -22,12 +22,15 @@ namespace EF_InternApplicationAutomator.DataAccess.ConversationIntern
         [MaxLength(150)]
         public string ConversationName { get; set; }
 
-        public ConversationInternEntity(int conversationID, int internID, string conversationName)
+        [Required]
+        public bool IsGroup { get; set; }
+
+        public vw_ConversationIntern(int conversationID, int internID, string conversationName, bool isGroup)
         {
             ConversationID = conversationID;
             this.InternID = internID;
             ConversationName = conversationName;
-
+            IsGroup = isGroup;
         }
     }
 }
