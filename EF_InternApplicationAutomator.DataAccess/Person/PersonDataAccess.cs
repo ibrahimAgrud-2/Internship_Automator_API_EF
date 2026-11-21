@@ -33,7 +33,7 @@ namespace EF_InternApplicationAutomator.DataAccess
             }
         }
 
-        public PersonResponseSDTO? FindByEmail(string email)
+        public PersonResponseSDTO? Find(string email)
         {
             PersonEntity? Person = _Context.People.FirstOrDefault(p=>p.Email==email);
             if (Person == null)

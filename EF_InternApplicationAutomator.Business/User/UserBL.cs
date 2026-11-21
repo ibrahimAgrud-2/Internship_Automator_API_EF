@@ -33,18 +33,7 @@ namespace EF_InternApplicationAutomator.Business.User
         }
 
 
-        //public UserResponseDTO Find(int userID)
-        //{
-        //    return _userDataAccess.Find(userID);
-        //}
-        //public UserLoginResponseDTO? FindByPasswordAndUserName(string userName, string password)
-        //{
-        //    return  _userDataAccess.FindByPasswordAndUserName(userName, password);
-        //}
-        //public int UpdateUser(int userID, UserCreateDTO userCreateDTO)
-        //{
-        //    return _userDataAccess.UpdateUser(userID, userCreateDTO);
-        //}
+ 
 
         public int AddUser(UserCreateDTO newUser)
         {
@@ -82,6 +71,21 @@ namespace EF_InternApplicationAutomator.Business.User
             return _userDataAccess.DeleteUser(userID);
         }
 
+        public int UpdateUser(int userID, int personID,UserCreateDTO userCreateDTO)
+        {
+           
+            if(!P.IsPersonExist(personID))
+            {
+                return -1;
+            }
+
+            if (P.UpdatePerson(personID, userCreateDTO.PersonInfo)<1)
+            {
+                return -1;
+            }
+
+            return _userDataAccess.UpdateUser(userCreateDTO,userID);
+        }
 
 
 
@@ -104,6 +108,11 @@ namespace EF_InternApplicationAutomator.Business.User
             return _userDataAccess.IsUserExists(userName);
         }
 
+
+        public UserResponseDTO Find(int userID)
+        {
+            return _userDataAccess.Find(userID);
+        }
     }
 
 

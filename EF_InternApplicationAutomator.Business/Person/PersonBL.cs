@@ -28,7 +28,7 @@ namespace EF_InternApplicationAutomator.Business
         {
 
 
-            PersonResponseSDTO? p = _PersonDataAccess.FindByEmail(email);
+            PersonResponseSDTO? p = _PersonDataAccess.Find(email);
             if (p == null)
             {
                 return null;

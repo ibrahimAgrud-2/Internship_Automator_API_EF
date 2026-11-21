@@ -1,13 +1,13 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { getAllUsers, createUser } from '@/api/users'
-import { getErrorMessages } from '@/api/http'
+import { getAllUsers, createUser, deleteUser } from '@/api/users'
+import { ApiError, getErrorMessages } from '@/api/http'
 import { normalizeSearchText } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import { useNotice } from '@/composables/useNotice'
 
-// Kullanıcı listeleme ve yeni personel hesabı oluşturma.
+// Personel hesaplarının listelenmesi, oluşturulması ve silinmesi.
 const users = ref([])
 const isLoading = ref(true)
 const loadErrors = ref([])
@@ -20,13 +20,6 @@ const isCreateOpen = ref(false)
 const isCreating = ref(false)
 const createErrors = ref([])
 const firstNameInput = ref(null)
-// Kaydetmeden önce oluşturulacak hesabın kullanıcı adı tekrar yazılarak onaylanır.
-const confirmUserName = ref('')
-const isCreateConfirmed = computed(() => {
-  const userName = newUser.userName.trim()
-  return userName !== '' && confirmUserName.value.trim() === userName
-})
-
 function emptyUserForm() {
   return {
     firstName: '',
@@ -44,7 +37,6 @@ const newUser = reactive(emptyUserForm())
 
 function openCreate() {
   Object.assign(newUser, emptyUserForm())
-  confirmUserName.value = ''
   createErrors.value = []
   isCreateOpen.value = true
 }
@@ -71,7 +63,6 @@ async function submitCreate() {
   if (!data.firstName) errors.push('Ad alanı zorunludur.')
   if (!data.lastName) errors.push('Soyad alanı zorunludur.')
   if (!data.userName) errors.push('Kullanıcı adı zorunludur.')
-  if (!isCreateConfirmed.value) errors.push('Onay için kullanıcı adını aynen yazın.')
   if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.push('Geçerli bir e-posta adresi girin.')
   }
@@ -103,6 +94,63 @@ async function submitCreate() {
     createErrors.value = getErrorMessages(error)
   } finally {
     isCreating.value = false
+  }
+}
+
+// ---------- Kullanıcı silme ----------
+const isDeleteOpen = ref(false)
+const isDeleting = ref(false)
+const deleteErrors = ref([])
+const userToDelete = ref(null)
+const deleteConfirmation = ref('')
+const deleteConfirmationInput = ref(null)
+
+// İsim kontrolü yalnızca yanlışlıkla silmeyi önler; erişim iznini API doğrular.
+const isDeleteConfirmed = computed(() =>
+  Boolean(userToDelete.value?.userName) &&
+  deleteConfirmation.value === userToDelete.value.userName
+)
+
+function openDelete(user) {
+  userToDelete.value = user
+  deleteConfirmation.value = ''
+  deleteErrors.value = []
+  isDeleteOpen.value = true
+}
+
+function closeDelete() {
+  if (isDeleting.value) return
+  isDeleteOpen.value = false
+  userToDelete.value = null
+  deleteConfirmation.value = ''
+}
+
+async function submitDelete() {
+  if (isDeleting.value || !isDeleteConfirmed.value || !userToDelete.value) return
+
+  const id = Number(userToDelete.value.userID)
+  if (!Number.isSafeInteger(id) || id < 1) {
+    deleteErrors.value = ['Geçersiz kullanıcı numarası.']
+    return
+  }
+
+  isDeleting.value = true
+  deleteErrors.value = []
+  try {
+    await deleteUser(id)
+    isDeleteOpen.value = false
+    userToDelete.value = null
+    deleteConfirmation.value = ''
+    pushNotice('Kullanıcı silindi.')
+    await loadUsers()
+  } catch (error) {
+    deleteErrors.value = getErrorMessages(error)
+    // Başka oturumda silinmişse listeyi güncelle; onay alanı kaybolmaz.
+    if (error instanceof ApiError && error.status === 404) {
+      await loadUsers()
+    }
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -279,9 +327,9 @@ onMounted(loadUsers)
                     <button
                       type="button"
                       class="btn btn-sm btn-outline-danger users-action"
-                      disabled
-                      :aria-label="`${user.fullName || user.userName || 'Kullanıcı'} sil (yakında)`"
-                      title="Silme işlemi henüz aktif değil"
+                      :aria-label="`${user.fullName || user.userName || 'Kullanıcı'} sil`"
+                      title="Kullanıcıyı sil"
+                      @click="openDelete(user)"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <polyline points="3 6 5 6 21 6" />
@@ -343,33 +391,52 @@ onMounted(loadUsers)
             <label for="newUserActive" class="form-check-label">Aktif hesap</label>
           </div>
         </div>
-        <div class="col-12">
-          <div class="border-top pt-3 mt-1">
-            <label for="confirmNewUserName" class="form-label fw-semibold">Kullanıcı eklemeyi onayla <span class="text-danger">*</span></label>
-            <div class="form-text mb-2">
-              Onaylamak için <strong>{{ newUser.userName.trim() || 'kullanıcı adını' }}</strong> yazın.
-            </div>
-            <input
-              id="confirmNewUserName"
-              v-model="confirmUserName"
-              type="text"
-              class="form-control"
-              :class="{ 'is-valid': isCreateConfirmed }"
-              autocomplete="off"
-              autocapitalize="none"
-              spellcheck="false"
-              placeholder="Kullanıcı adını tekrar yazın"
-              :disabled="isCreating"
-            />
-          </div>
-        </div>
       </div>
 
       <template #footer>
         <button type="button" class="btn btn-outline-secondary" :disabled="isCreating" @click="closeCreate">Vazgeç</button>
-        <button type="submit" class="btn btn-primary" :disabled="isCreating || !isCreateConfirmed">
+        <button type="submit" class="btn btn-primary" :disabled="isCreating">
           <span v-if="isCreating" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
           {{ isCreating ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </template>
+    </BaseModal>
+
+    <BaseModal
+      v-model="isDeleteOpen"
+      title="Kullanıcı Sil"
+      header-class="text-danger"
+      as-form
+      @submit="submitDelete"
+      @shown="deleteConfirmationInput?.focus()"
+    >
+      <AlertMessages v-if="deleteErrors.length" :messages="deleteErrors" />
+
+      <p v-if="userToDelete" class="mb-3">
+        <strong>{{ userToDelete.fullName || userToDelete.userName }}</strong> adlı personel hesabı silinecek.
+      </p>
+      <label for="deleteUserConfirmation" class="form-label">
+        Silme işlemini onaylamak için <strong>{{ userToDelete?.userName }}</strong> kullanıcı adını aynen yazın.
+      </label>
+      <input
+        id="deleteUserConfirmation"
+        ref="deleteConfirmationInput"
+        v-model="deleteConfirmation"
+        type="text"
+        class="form-control"
+        autocomplete="off"
+        autocapitalize="none"
+        spellcheck="false"
+        placeholder="Kullanıcı adını yazın"
+        :disabled="isDeleting"
+        :class="{ 'is-valid': isDeleteConfirmed }"
+      />
+
+      <template #footer>
+        <button type="button" class="btn btn-outline-secondary" :disabled="isDeleting" @click="closeDelete">Vazgeç</button>
+        <button type="submit" class="btn btn-danger" :disabled="isDeleting || !isDeleteConfirmed">
+          <span v-if="isDeleting" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          {{ isDeleting ? 'Siliniyor...' : 'Kullanıcıyı Sil' }}
         </button>
       </template>
     </BaseModal>

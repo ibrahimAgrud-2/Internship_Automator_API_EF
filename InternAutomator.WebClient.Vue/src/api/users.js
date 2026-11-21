@@ -1,7 +1,12 @@
-// Personel hesapları: yalnızca kullanıcı listeleme.
-// Yetkilendirme ve JWT bilgileri ortak HTTP istemcisi tarafından yönetilir.
-import { apiGet, apiPost } from '@/api/http'
+// Personel kullanıcı yönetimi API çağrıları.
+// Yetkilendirme/JWT ortak HTTP istemcisinden sağlanır.
+import { apiGet, apiPost, apiDelete } from '@/api/http'
+
 // GET /api/User/All
-// Response: [{ userID, userName, personID, fullName, createdDate, isActive }]
 export const getAllUsers = () => apiGet('User/All')
-export const createUser = (userData) => apiPost('User', userData)
+
+// POST /api/User -> 200 OK + oluşturulan kullanıcı numarası
+export const createUser = (newUser) => apiPost('User', newUser)
+
+// DELETE /api/User/{userID} -> 204 No Content
+export const deleteUser = (userID) => apiDelete(`User/${encodeURIComponent(userID)}`)
