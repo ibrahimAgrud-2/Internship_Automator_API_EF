@@ -23,9 +23,9 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         public List<UserListResponseDTO> GetAllUser()
         {
             
-            return _Context.Users
+            return _Context.Users.Include(u=>u.Person)
                 .AsNoTracking()
-                .Select(user => new UserListResponseDTO(user.UserID, user.Person.PersonID, user.UserName, $"{user.Person.FirstName} {user.Person.LastName}", user.CreatedDate, user.IsActive))
+                .Select(user => new UserListResponseDTO(user.UserID, user.Person.PersonID,user.Person.Email,user.Person.Address,user.Person.Phone,user.Person.ImagePath, user.UserName, $"{user.Person.FirstName} {user.Person.LastName}", user.CreatedDate, user.IsActive))
                 .ToList();
 
         

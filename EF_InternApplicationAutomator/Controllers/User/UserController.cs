@@ -64,25 +64,25 @@ namespace EF_InternApplicationAutomator.API.Controllers.User
 
 
 
+        [Authorize(Roles = "User")]
+        [HttpGet("{ID}", Name = "FindUser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<UserResponseDTO> Find(int ID)
+        {
+            if (ID < 1)
+            {
+                return BadRequest($"Not Accepted ID {ID}");
+            }
+            UserResponseDTO p = _User.Find(ID);
+            if (p == null)
+            {
+                return NotFound($"No Person With ID {ID}");
+            }
+            return Ok(p);
 
-        //[HttpGet("{ID}", Name = "FindUser")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public ActionResult<UserResponseDTO> Find(int ID)
-        //{
-        //    if (ID < 1)
-        //    {
-        //        return BadRequest($"Not Accepted ID {ID}");
-        //    }
-        //    UserResponseDTO p = _User.Find(ID);
-        //    if (p == null)
-        //    {
-        //        return NotFound($"No Person With ID {ID}");
-        //    }
-        //    return Ok(p);
-
-        //}
+        }
 
 
 

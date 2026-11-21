@@ -2119,6 +2119,51 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.User.UserController",
+    "Method": "Find",
+    "RelativePath": "api/User/{ID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Shared.User.UserResponseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "EndpointName": "FindUser"
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.User.UserController",
     "Method": "DeleteUser",
     "RelativePath": "api/User/{userID}",
     "HttpMethod": "DELETE",
