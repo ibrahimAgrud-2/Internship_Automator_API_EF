@@ -25,7 +25,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
             
             return _Context.Users.Include(u=>u.Person)
                 .AsNoTracking()
-                .Select(user => new UserListResponseDTO(user.UserID, user.Person.PersonID,user.Person.Email,user.Person.Address,user.Person.Phone,user.Person.ImagePath, user.UserName, $"{user.Person.FirstName} {user.Person.LastName}", user.CreatedDate, user.IsActive))
+                .Select(user => new UserListResponseDTO(user.UserID, user.Person.PersonID,user.Person.FirstName,user.Person.LastName,user.Person.Email,user.Person.Address,user.Person.Phone,user.Person.ImagePath, user.UserName, user.CreatedDate, user.IsActive))
                 .ToList();
 
         
@@ -110,7 +110,7 @@ namespace EF_InternApplicationAutomator.DataAccess.User
             user.IsActive = userDTO.IsActive;
             if (_Context.SaveChanges() > 0)
             {
-                return userID;
+                return user.UserID;
             }
 
             return -1;

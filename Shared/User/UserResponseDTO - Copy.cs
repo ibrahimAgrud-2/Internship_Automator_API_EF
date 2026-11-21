@@ -17,6 +17,10 @@ namespace Shared.User
         [Required]
         public string UserName { get; set; }
         [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
         public string Email { get; set; }
         [Required]
         public string Phone { get; set; }
@@ -26,15 +30,12 @@ namespace Shared.User
         public string ImagePath { get; set; }
 
         [Required]
-        public string FullName { get; set; }
-
-        [Required]
         public DateTime CreatedDate { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
 
-        public UserListResponseDTO(int userID, int personID,string email,string address,string phone,string imagePath,string userName, string fullName, DateTime createdDate, bool isActive)
+        public UserListResponseDTO(int userID, int personID, string firstName,string lastName, string email,string address,string phone,string imagePath,string userName,DateTime createdDate, bool isActive)
         {
 
             PersonID = personID;
@@ -42,11 +43,12 @@ namespace Shared.User
             IsActive = isActive;
             UserName = userName;
             this.UserID = userID;
-            this.FullName = fullName;
             this.ImagePath = imagePath;
             this.Phone = phone;
             this.Address = address;
             this.Email = email;
+            this.FirstName = firstName;
+            this.LastName = lastName;
         }
 
     }

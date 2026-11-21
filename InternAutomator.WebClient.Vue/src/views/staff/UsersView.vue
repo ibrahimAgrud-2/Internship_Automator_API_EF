@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { getAllUsers, createUser, deleteUser } from '@/api/users'
+import { getAllUsers, createUser, updateUser, deleteUser } from '@/api/users'
 import { ApiError, getErrorMessages } from '@/api/http'
 import { normalizeSearchText } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
@@ -33,6 +33,10 @@ function emptyUserForm() {
   }
 }
 
+// Liste API'si artık adı ve soyadı ayrı döndürüyor (fullName yok).
+const getFullName = (user) =>
+  `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim()
+
 const newUser = reactive(emptyUserForm())
 
 function openCreate() {
@@ -63,7 +67,9 @@ async function submitCreate() {
   if (!data.firstName) errors.push('Ad alanı zorunludur.')
   if (!data.lastName) errors.push('Soyad alanı zorunludur.')
   if (!data.userName) errors.push('Kullanıcı adı zorunludur.')
-  if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+  if (!data.email) {
+    errors.push('E-posta alanı zorunludur.')
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.push('Geçerli bir e-posta adresi girin.')
   }
   if (errors.length) {
@@ -94,6 +100,95 @@ async function submitCreate() {
     createErrors.value = getErrorMessages(error)
   } finally {
     isCreating.value = false
+  }
+}
+
+// ---------- Kullanıcı düzenleme ----------
+const isEditOpen = ref(false)
+const isUpdating = ref(false)
+const editErrors = ref([])
+const userToEditID = ref(null)
+const editFirstNameInput = ref(null)
+const editUser = reactive(emptyUserForm())
+
+function openEdit(user) {
+  const id = Number(user?.userID)
+  if (!Number.isSafeInteger(id) || id < 1) return
+
+  userToEditID.value = id
+  Object.assign(editUser, {
+    firstName: user.firstName ?? '',
+    lastName: user.lastName ?? '',
+    email: user.email ?? '',
+    phone: user.phone ?? '',
+    address: user.address ?? '',
+    imagePath: user.imagePath ?? '',
+    userName: user.userName ?? '',
+    isActive: user.isActive === true,
+  })
+  editErrors.value = []
+  isEditOpen.value = true
+}
+
+function closeEdit() {
+  if (isUpdating.value) return
+  isEditOpen.value = false
+  userToEditID.value = null
+}
+
+async function submitEdit() {
+  if (isUpdating.value || userToEditID.value === null) return
+
+  const data = {
+    firstName: editUser.firstName.trim(),
+    lastName: editUser.lastName.trim(),
+    userName: editUser.userName.trim(),
+    email: editUser.email.trim(),
+    phone: editUser.phone.trim(),
+    address: editUser.address.trim(),
+    imagePath: editUser.imagePath.trim(),
+  }
+
+  const errors = []
+  if (!data.firstName) errors.push('Ad alanı zorunludur.')
+  if (!data.lastName) errors.push('Soyad alanı zorunludur.')
+  if (!data.userName) errors.push('Kullanıcı adı zorunludur.')
+  if (!data.email) {
+    errors.push('E-posta alanı zorunludur.')
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.push('Geçerli bir e-posta adresi girin.')
+  }
+  if (errors.length) {
+    editErrors.value = errors
+    return
+  }
+
+  editErrors.value = []
+  isUpdating.value = true
+  try {
+    await updateUser(userToEditID.value, {
+      personInfo: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        imagePath: data.imagePath,
+      },
+      userName: data.userName,
+      isActive: Boolean(editUser.isActive),
+    })
+    isEditOpen.value = false
+    userToEditID.value = null
+    pushNotice('Kullanıcı güncellendi.')
+    await loadUsers()
+  } catch (error) {
+    editErrors.value = getErrorMessages(error)
+    if (error instanceof ApiError && error.status === 404) {
+      await loadUsers()
+    }
+  } finally {
+    isUpdating.value = false
   }
 }
 
@@ -161,7 +256,7 @@ const filteredUsers = computed(() => {
     if (statusFilter.value === 'active' && user.isActive !== true) return false
     if (statusFilter.value === 'inactive' && user.isActive === true) return false
 
-    const searchable = normalizeSearchText(`${user.fullName ?? ''} ${user.userName ?? ''}`)
+    const searchable = normalizeSearchText(`${getFullName(user)} ${user.userName ?? ''}`)
     return words.every((word) => searchable.includes(word))
   })
 })
@@ -299,8 +394,8 @@ onMounted(loadUsers)
               <tr v-for="user in filteredUsers" :key="user.userID">
                 <td>
                   <div class="d-flex align-items-center gap-3">
-                    <span class="users-avatar" aria-hidden="true">{{ (user.fullName || '?').trim().slice(0, 1).toLocaleUpperCase('tr-TR') }}</span>
-                    <div class="fw-semibold text-break">{{ user.fullName || 'Ad belirtilmemiş' }}</div>
+                    <span class="users-avatar" aria-hidden="true">{{ (getFullName(user) || '?').slice(0, 1).toLocaleUpperCase('tr-TR') }}</span>
+                    <div class="fw-semibold text-break">{{ getFullName(user) || 'Ad belirtilmemiş' }}</div>
                   </div>
                 </td>
                 <td class="text-break">{{ user.userName || '—' }}</td>
@@ -311,13 +406,13 @@ onMounted(loadUsers)
                   </span>
                 </td>
                 <td class="text-end">
-                  <div class="d-inline-flex gap-1" role="group" :aria-label="`${user.fullName || user.userName || 'Kullanıcı'} için işlemler`">
+                  <div class="d-inline-flex gap-1" role="group" :aria-label="`${getFullName(user) || user.userName || 'Kullanıcı'} için işlemler`">
                     <button
                       type="button"
                       class="btn btn-sm btn-outline-secondary users-action"
-                      disabled
-                      :aria-label="`${user.fullName || user.userName || 'Kullanıcı'} düzenle (yakında)`"
-                      title="Düzenleme işlemi henüz aktif değil"
+                      :aria-label="`${getFullName(user) || user.userName || 'Kullanıcı'} düzenle`"
+                      title="Kullanıcıyı düzenle"
+                      @click="openEdit(user)"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M12 20h9" />
@@ -327,7 +422,7 @@ onMounted(loadUsers)
                     <button
                       type="button"
                       class="btn btn-sm btn-outline-danger users-action"
-                      :aria-label="`${user.fullName || user.userName || 'Kullanıcı'} sil`"
+                      :aria-label="`${getFullName(user) || user.userName || 'Kullanıcı'} sil`"
                       title="Kullanıcıyı sil"
                       @click="openDelete(user)"
                     >
@@ -370,8 +465,8 @@ onMounted(loadUsers)
           <input id="newUserUserName" v-model="newUser.userName" type="text" class="form-control" autocapitalize="none" spellcheck="false" :disabled="isCreating" />
         </div>
         <div class="col-md-6">
-          <label for="newUserEmail" class="form-label">E-posta</label>
-          <input id="newUserEmail" v-model="newUser.email" type="email" class="form-control" autocomplete="email" :disabled="isCreating" />
+          <label for="newUserEmail" class="form-label">E-posta <span class="text-danger">*</span></label>
+          <input id="newUserEmail" v-model="newUser.email" type="email" class="form-control" autocomplete="email" required :disabled="isCreating" />
         </div>
         <div class="col-md-6">
           <label for="newUserPhone" class="form-label">Telefon</label>
@@ -403,6 +498,62 @@ onMounted(loadUsers)
     </BaseModal>
 
     <BaseModal
+      v-model="isEditOpen"
+      title="Kullanıcı Düzenle"
+      dialog-class="modal-dialog-centered modal-lg"
+      as-form
+      @submit="submitEdit"
+      @shown="editFirstNameInput?.focus()"
+    >
+      <AlertMessages v-if="editErrors.length" :messages="editErrors" />
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="editUserFirstName" class="form-label">Ad <span class="text-danger">*</span></label>
+          <input id="editUserFirstName" ref="editFirstNameInput" v-model="editUser.firstName" type="text" class="form-control" autocomplete="given-name" :disabled="isUpdating" />
+        </div>
+        <div class="col-md-6">
+          <label for="editUserLastName" class="form-label">Soyad <span class="text-danger">*</span></label>
+          <input id="editUserLastName" v-model="editUser.lastName" type="text" class="form-control" autocomplete="family-name" :disabled="isUpdating" />
+        </div>
+        <div class="col-md-6">
+          <label for="editUserUserName" class="form-label">Kullanıcı Adı <span class="text-danger">*</span></label>
+          <input id="editUserUserName" v-model="editUser.userName" type="text" class="form-control" autocapitalize="none" spellcheck="false" :disabled="isUpdating" />
+        </div>
+        <div class="col-md-6">
+          <label for="editUserEmail" class="form-label">E-posta <span class="text-danger">*</span></label>
+          <input id="editUserEmail" v-model="editUser.email" type="email" class="form-control" autocomplete="email" required :disabled="isUpdating" />
+        </div>
+        <div class="col-md-6">
+          <label for="editUserPhone" class="form-label">Telefon</label>
+          <input id="editUserPhone" v-model="editUser.phone" type="tel" class="form-control" autocomplete="tel" :disabled="isUpdating" />
+        </div>
+        <div class="col-md-6">
+          <label for="editUserImage" class="form-label">Profil görseli yolu</label>
+          <input id="editUserImage" v-model="editUser.imagePath" type="text" class="form-control" :disabled="isUpdating" />
+        </div>
+        <div class="col-12">
+          <label for="editUserAddress" class="form-label">Adres</label>
+          <textarea id="editUserAddress" v-model="editUser.address" rows="2" class="form-control" autocomplete="street-address" :disabled="isUpdating"></textarea>
+        </div>
+        <div class="col-12">
+          <div class="form-check form-switch">
+            <input id="editUserActive" v-model="editUser.isActive" class="form-check-input" type="checkbox" role="switch" :disabled="isUpdating" />
+            <label for="editUserActive" class="form-check-label">Aktif hesap</label>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <button type="button" class="btn btn-outline-secondary" :disabled="isUpdating" @click="closeEdit">Vazgeç</button>
+        <button type="submit" class="btn btn-primary" :disabled="isUpdating">
+          <span v-if="isUpdating" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          {{ isUpdating ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet' }}
+        </button>
+      </template>
+    </BaseModal>
+
+    <BaseModal
       v-model="isDeleteOpen"
       title="Kullanıcı Sil"
       header-class="text-danger"
@@ -413,7 +564,7 @@ onMounted(loadUsers)
       <AlertMessages v-if="deleteErrors.length" :messages="deleteErrors" />
 
       <p v-if="userToDelete" class="mb-3">
-        <strong>{{ userToDelete.fullName || userToDelete.userName }}</strong> adlı personel hesabı silinecek.
+        <strong>{{ getFullName(userToDelete) || userToDelete.userName }}</strong> adlı personel hesabı silinecek.
       </p>
       <label for="deleteUserConfirmation" class="form-label">
         Silme işlemini onaylamak için <strong>{{ userToDelete?.userName }}</strong> kullanıcı adını aynen yazın.
