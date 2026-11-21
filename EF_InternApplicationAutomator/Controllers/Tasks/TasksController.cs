@@ -53,8 +53,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             return Ok(tasks);
         }
 
-        //user tarafında herhangi bir intern'in tüm görevlerini listelelemek
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpGet("AllInternTasks")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -62,7 +61,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
         public ActionResult<IEnumerable<TaskResponseDTO>> GetAllInternTasks(int internID)
         {
 
-
+            Console.WriteLine("****************************");
             if (internID <= 0)
             {
                 return BadRequest();

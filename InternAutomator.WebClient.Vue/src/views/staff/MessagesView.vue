@@ -6,11 +6,11 @@ import {
   createGroupConversation,
   addInternToConversation,
   getAllConversationInterns,
-  removeInternFromConversation,
 } from '@/api/conversations'
 import { getAllInterns } from '@/api/interns'
 import { getAllMessages, addMessage } from '@/api/messages'
 import { getAllProjects } from '@/api/projects'
+import { getInternTasks } from '@/api/tasks'
 import { getLatestAnnouncements } from '@/api/announcements'
 import { getErrorMessages } from '@/api/http'
 import { loadConversationRecency, orderConversations } from '@/utils/conversationOrder'
@@ -68,57 +68,6 @@ const isAddingMember = ref(false)
 const memberLoadErrors = ref([])
 const memberSaveErrors = ref([])
 const memberSuccess = ref('')
-
-// Üye çıkarma: onay aynı üye satırında gösterilir, ikinci modal açılmaz.
-const pendingRemovalInternID = ref(null)
-const isRemovingMember = ref(false)
-const removeMemberErrors = ref([])
-
-function requestRemoveMember(member) {
-  if (isRemovingMember.value || isGroupMembersLoading.value || groupMembersErrors.value.length) return
-  const internID = Number(member?.internID)
-  if (!Number.isSafeInteger(internID) || internID <= 0) return
-  if (!existingGroupMemberIDs.value.has(internID)) return
-  pendingRemovalInternID.value = internID
-  removeMemberErrors.value = []
-  memberSuccess.value = ''
-}
-
-function cancelRemoveMember() {
-  if (isRemovingMember.value) return
-  pendingRemovalInternID.value = null
-  removeMemberErrors.value = []
-}
-
-async function confirmRemoveMember() {
-  if (isRemovingMember.value || isGroupMembersLoading.value || !isGroupInfoOpen.value) return
-  const conversationID = Number(groupInfoConversation.value?.conversationID)
-  const internID = Number(pendingRemovalInternID.value)
-  if (!Number.isSafeInteger(conversationID) || conversationID <= 0) return
-  if (!Number.isSafeInteger(internID) || internID <= 0) return
-  if (!existingGroupMemberIDs.value.has(internID)) return
-
-  isRemovingMember.value = true
-  removeMemberErrors.value = []
-  memberSuccess.value = ''
-  try {
-    await removeInternFromConversation(conversationID, internID)
-    // Üye yalnızca backend yanıtıyla yenilenen listeden kaybolur.
-    pendingRemovalInternID.value = null
-    const refreshed = await loadGroupMembers(conversationID)
-    if (!refreshed) {
-      memberSuccess.value = 'Çıkarma isteği başarılı; üye listesi yenilenemedi. Yeniden Dene ile listeyi güncelleyin.'
-    } else if (existingGroupMemberIDs.value.has(internID)) {
-      memberSuccess.value = 'API başarılı yanıt verdi ancak stajyer hâlâ üye listesinde. Sunucu kaydını kontrol edin.'
-    } else {
-      memberSuccess.value = 'Stajyer gruptan çıkarıldı.'
-    }
-  } catch (error) {
-    removeMemberErrors.value = getErrorMessages(error)
-  } finally {
-    isRemovingMember.value = false
-  }
-}
 
 const filteredMembers = computed(() => {
   const words = memberSearch.value.toLocaleLowerCase('tr-TR').trim().split(/\s+/).filter(Boolean)
@@ -186,18 +135,14 @@ async function openGroupInfo() {
   groupMembers.value = []
   memberSuccess.value = ''
   memberSaveErrors.value = []
-  pendingRemovalInternID.value = null
-  removeMemberErrors.value = []
   isGroupInfoOpen.value = true
   await loadGroupMembers(conversationID)
 }
 
 async function openMemberPicker() {
   if (isGroupMembersLoading.value || groupMembersErrors.value.length || isAddingMember.value) return
-  if (!groupInfoConversation.value || isRemovingMember.value) return
+  if (!groupInfoConversation.value) return
 
-  pendingRemovalInternID.value = null
-  removeMemberErrors.value = []
   groupInfoView.value = 'add'
   memberSearch.value = ''
   selectedMemberID.value = null
@@ -365,7 +310,10 @@ function selectConversation(conversationID) {
 
   selectedConversationID.value = id
   memberSuccess.value = ''
-  // Yarım yazılan metin ve referans başka sohbete gitmesin.
+  // Önceki sohbetten seçici / ipucu / referans taşınmasın.
+  ++pickerRequestId
+  isPickerOpen.value = false
+  isTaskRuleVisible.value = false
   draft.value = ''
   reference.value = null
   sendError.value = []
@@ -376,6 +324,10 @@ function selectConversation(conversationID) {
 // Mesaja eklenecek içerik: { id, type, title } ya da null. Gönderilene kadar yazma satırının üstünde durur.
 const reference = ref(null)
 
+// Görev referansları yalnızca özel sohbetlerde kullanılabilir.
+const isTaskReferenceDisabled = computed(() => !selectedConversation.value || selectedConversation.value.isGroup)
+const isTaskRuleVisible = ref(false)
+
 const isPickerOpen = ref(false)
 const pickerType = ref(REFERENCE_ANNOUNCEMENT)
 const pickerSections = ref([])
@@ -383,8 +335,16 @@ const isPickerLoading = ref(false)
 const pickerErrors = ref([])
 let pickerRequestId = 0
 
-const PICKER_TITLES = { [REFERENCE_ANNOUNCEMENT]: 'Duyuru seç', [REFERENCE_PROJECT]: 'Proje seç' }
-const PICKER_EMPTY_TEXTS = { [REFERENCE_ANNOUNCEMENT]: 'Henüz duyuru yok.', [REFERENCE_PROJECT]: 'Henüz proje yok.' }
+const PICKER_TITLES = {
+  [REFERENCE_ANNOUNCEMENT]: 'Duyuru seç',
+  [REFERENCE_PROJECT]: 'Proje seç',
+  [REFERENCE_TASK]: 'Görev seç',
+}
+const PICKER_EMPTY_TEXTS = {
+  [REFERENCE_ANNOUNCEMENT]: 'Henüz duyuru yok.',
+  [REFERENCE_PROJECT]: 'Henüz proje yok.',
+  [REFERENCE_TASK]: 'Bu stajyere henüz görev verilmemiş.',
+}
 // Duyurular tek bölüm: API'nın verdiği son duyurular, yeniden eskiye
 async function loadAnnouncementSections() {
   const announcements = await getLatestAnnouncements()
@@ -419,12 +379,48 @@ async function loadProjectSections() {
   ]
 }
 
-// Görev buraya eklenecek: her tür kendi bölümlerini döndürür
+// Özel sohbetteki tek stajyeri bulup yalnızca ona atanmış görevleri gösterir.
+async function loadTaskSections() {
+  const conversation = selectedConversation.value
+  if (!conversation || conversation.isGroup) return []
+
+  const conversationID = Number(conversation.conversationID)
+  const members = await getAllConversationInterns(conversationID)
+  if (!Array.isArray(members)) {
+    throw new Error('Sohbetin stajyer bilgileri alınamadı.')
+  }
+
+  const internIDs = [...new Set(
+    members
+      .map((member) => Number(member.internID))
+      .filter((id) => Number.isSafeInteger(id) && id > 0)
+  )]
+  if (internIDs.length !== 1) {
+    throw new Error('Özel sohbete ait stajyer belirlenemedi.')
+  }
+
+  const tasks = await getInternTasks(internIDs[0])
+  if (!Array.isArray(tasks)) {
+    throw new Error('Görev listesi beklenen biçimde alınamadı.')
+  }
+
+  return [{
+    items: tasks.map((task) => ({
+      id: task.taskID,
+      title: task.title,
+      subtitle: task.description,
+    })),
+  }]
+}
+
 const PICKER_LOADERS = {
   [REFERENCE_ANNOUNCEMENT]: loadAnnouncementSections,
   [REFERENCE_PROJECT]: loadProjectSections,
+  [REFERENCE_TASK]: loadTaskSections,
 }
 async function openPicker(type) {
+  // Gruptan programatik olarak da görev seçicisi açılamasın.
+  if (type === REFERENCE_TASK && isTaskReferenceDisabled.value) return
   const current = ++pickerRequestId
   pickerType.value = type
   pickerSections.value = []
@@ -869,7 +865,42 @@ onMounted(async () => {
               <li><h6 class="dropdown-header">Referans ver</h6></li>
               <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_ANNOUNCEMENT)">Duyuru</button></li>
               <li><button type="button" class="dropdown-item" @click="openPicker(REFERENCE_PROJECT)">Proje</button></li>
-              <li><button type="button" class="dropdown-item" disabled>Görev</button></li>
+              <li v-if="!isTaskReferenceDisabled">
+                <button
+                  type="button"
+                  class="dropdown-item"
+                  @click="openPicker(REFERENCE_TASK)"
+                >
+                  Görev
+                </button>
+              </li>
+              <li
+                v-else
+                class="task-reference-rule-item"
+                @mouseenter="isTaskRuleVisible = true"
+                @mouseleave="isTaskRuleVisible = false"
+              >
+                <!-- Gerçek disabled yerine aria-disabled kullanılır: açıklama odak ve tıklamada da açılır. -->
+                <button
+                  type="button"
+                  class="dropdown-item task-reference-disabled"
+                  aria-disabled="true"
+                  aria-describedby="task-reference-rule"
+                  @focus="isTaskRuleVisible = true"
+                  @blur="isTaskRuleVisible = false"
+                  @click.stop.prevent="isTaskRuleVisible = true"
+                >
+                  Görev <span class="task-reference-info-icon" aria-hidden="true">ⓘ</span>
+                </button>
+                <div
+                  v-show="isTaskRuleVisible"
+                  id="task-reference-rule"
+                  class="task-reference-rule-tooltip"
+                  role="tooltip"
+                >
+                  Görevler kişiye özeldir. Görevlere yalnızca birebir sohbetlerde referans verebilirsiniz.
+                </div>
+              </li>
             </ul>
           </div>
           <textarea
@@ -1139,7 +1170,7 @@ onMounted(async () => {
           <button
             type="button"
             class="btn btn-sm btn-outline-primary"
-            :disabled="isGroupMembersLoading || groupMembersErrors.length > 0 || isAddingMember || isRemovingMember"
+            :disabled="isGroupMembersLoading || groupMembersErrors.length > 0 || isAddingMember"
             @click="openMemberPicker"
           >
             + Yeni Üye Ekle
@@ -1165,63 +1196,17 @@ onMounted(async () => {
           <div
             v-for="member in groupMembers"
             :key="member.internID"
-            class="chat-member-row flex-wrap"
+            class="chat-member-row"
           >
-            <div class="d-flex align-items-center gap-3 w-100">
-              <span
-                class="avatar-circle rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold"
-                style="width: 36px; height: 36px; flex-shrink: 0"
-              >
-                {{ getConversationInitials(`${member.firstName ?? ''} ${member.lastName ?? ''}`) }}
-              </span>
-              <span class="fw-medium text-break flex-grow-1">
-                {{ `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || `Stajyer #${member.internID}` }}
-              </span>
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center"
-                style="width: 32px; height: 32px; flex-shrink: 0"
-                :aria-label="`${member.firstName ?? ''} ${member.lastName ?? ''} adlı stajyeri gruptan çıkar`"
-                :aria-expanded="pendingRemovalInternID === Number(member.internID)"
-                :aria-controls="`remove-member-confirm-${member.internID}`"
-                title="Gruptan çıkar"
-                :disabled="isRemovingMember || isGroupMembersLoading"
-                @click.stop="requestRemoveMember(member)"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M3 6h18" />
-                  <path d="M8 6V4h8v2" />
-                  <path d="M19 6l-1 14H6L5 6" />
-                  <path d="M10 10v6" />
-                  <path d="M14 10v6" />
-                </svg>
-              </button>
-            </div>
-            <!-- İkinci modal yerine, ilgili üyenin altında açılan küçük onay alanı. -->
-            <div
-              v-if="pendingRemovalInternID === Number(member.internID)"
-              :id="`remove-member-confirm-${member.internID}`"
-              class="w-100 d-flex justify-content-end mt-2"
+            <span
+              class="avatar-circle rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold"
+              style="width: 36px; height: 36px; flex-shrink: 0"
             >
-              <div class="border rounded bg-body-tertiary p-2 shadow-sm" style="width: min(100%, 310px)" role="group" aria-label="Üyeyi çıkarma onayı">
-                <p class="small mb-2">Bu stajyeri gruptan çıkarmak istiyor musunuz?</p>
-                <AlertMessages v-if="removeMemberErrors.length" :messages="removeMemberErrors" class="mb-2" />
-                <div class="d-flex justify-content-end gap-2">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                    :disabled="isRemovingMember"
-                    @click="cancelRemoveMember"
-                  >Vazgeç</button>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-primary"
-                    :disabled="isRemovingMember"
-                    @click="confirmRemoveMember"
-                  >{{ isRemovingMember ? 'Çıkarılıyor...' : 'Evet, çıkar' }}</button>
-                </div>
-              </div>
-            </div>
+              {{ getConversationInitials(`${member.firstName ?? ''} ${member.lastName ?? ''}`) }}
+            </span>
+            <span class="fw-medium text-break">
+              {{ `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || `Stajyer #${member.internID}` }}
+            </span>
           </div>
         </div>
       </template>
@@ -1277,7 +1262,7 @@ onMounted(async () => {
 
       <template #footer>
         <template v-if="groupInfoView === 'members'">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" :disabled="isRemovingMember">Kapat</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
         </template>
         <template v-else>
           <button
@@ -1311,3 +1296,42 @@ onMounted(async () => {
     />
   </div>
 </template>
+
+<style scoped>
+.task-reference-rule-item {
+  position: relative;
+}
+
+.task-reference-disabled {
+  color: var(--bs-secondary-color, #6c757d);
+  cursor: help;
+}
+
+.task-reference-disabled:hover,
+.task-reference-disabled:focus {
+  color: var(--bs-secondary-color, #6c757d);
+  background-color: var(--bs-tertiary-bg, #f8f9fa);
+}
+
+.task-reference-info-icon {
+  margin-left: 0.3rem;
+  font-size: 0.9em;
+}
+
+.task-reference-rule-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0.5rem;
+  z-index: 1100;
+  width: min(260px, 75vw);
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.4rem;
+  background: #252b33;
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: normal;
+  pointer-events: none;
+  box-shadow: 0 5px 15px rgb(0 0 0 / 18%);
+}
+</style>
