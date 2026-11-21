@@ -94,7 +94,7 @@ namespace EF_InternApplicationAutomator.Business.Application
         {
 
 
-            return _emailService.SendEmail(person, tempPassword); ; 
+            return _emailService.SendEmail(person.FirstName,person.LastName,person.Email, tempPassword); ; 
              
         }
 

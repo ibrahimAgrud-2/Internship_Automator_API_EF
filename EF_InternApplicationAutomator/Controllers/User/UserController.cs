@@ -1,8 +1,10 @@
 ﻿
+using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business;
 using EF_InternApplicationAutomator.Business.User;
 using EF_InternApplicationAutomator.DataAccess;
 using EF_InternApplicationAutomator.DataAccess.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.Intern;
@@ -10,153 +12,184 @@ using Shared.User;
 using System;
 
 namespace EF_InternApplicationAutomator.API.Controllers.User
+{
+
+
+    [Route("api/User")]
+    [ApiController]
+    public class UserController : ControllerBase
     {
-    //TODO: User işlemleri (add, update delete vs) en son bir sayfada yapılacak
+        UserBL _User; 
+        PersonBL _People;
 
-    //    [Route("api/User")]
-    //    [ApiController]
-    //    public class UserController: ControllerBase
-    //    {
-    //        UserBL _User;
-    //        public UserController(UserBL u)
-    //        {
-    //            _User = u;
-    //        }
+        public UserController(UserBL u,PersonBL p)
+        {
+            _User = u;
+            _People = p;
+        }
 
-    //        [HttpGet("All")]
-    //        [ProducesResponseType(StatusCodes.Status200OK)]
-    //        [ProducesResponseType(StatusCodes.Status404NotFound)]
-    //        public ActionResult<IEnumerable<UserResponseDTO>> GetAllUser()
-    //        {
+        [Authorize(Roles ="User")]
+        [HttpGet("All")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<UserListResponseDTO>> GetAllUser()
+        {
 
-    //            List<UserResponseDTO> StudentList = _User.GetAllUser();
-    //            if (StudentList.Count == 0)
-    //            {
-    //                return NotFound("No Data Available in the Table");
-    //            }
-
-    //            return Ok(StudentList);
-    //        }
-
-     
-    //    [HttpGet("{ID}", Name = "FindUser")]
-    //    [ProducesResponseType(StatusCodes.Status200OK)]
-    //    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    //    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //    public ActionResult<UserResponseDTO> Find(int ID)
-    //    {
-    //        if (ID < 1)
-    //        {
-    //            return BadRequest($"Not Accepted ID {ID}");
-    //        }
-    //        UserResponseDTO p = _User.Find(ID);
-    //        if (p == null)
-    //        {
-    //            return NotFound($"No Person With ID {ID}");
-    //        }
-    //        return Ok(p);
-
-    //    }
+            List<UserListResponseDTO> StudentList = _User.GetAllUser();
+            return Ok(StudentList);
+        }
 
 
-    //    //here we use http put method for update
-    //    [HttpPut("{id}", Name = "UpdateUser")]
-    //    [ProducesResponseType(StatusCodes.Status200OK)]
-    //    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    //    public ActionResult<UserResponseDTO> UpdateUser(int id, UserCreateDTO userResponseDTO)
-    //    {
-    //        if (id < 1 || userResponseDTO == null)
-    //        {
-    //            return BadRequest("Invalid user data.");
-    //        }
+        [HttpPost]
+        [Authorize(Roles = "User")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<int> AddNewUser(UserCreateDTO createDTO)
+        {
+
+            if(createDTO==null)
+            {
+                return BadRequest("Girilen veriler doğru değil");
+            }
+
+            if(string.IsNullOrEmpty(createDTO.UserName)||_User.IsUserExists(createDTO.UserName))
+            {
+                return BadRequest("Kullanici ismi geçerli değil veya zaten kullanılıyor");
+            }
+           
+            int ID = _User.AddUser(createDTO);
+
+            if (ID < 1)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            return Ok(ID);
+
+        }
 
 
 
-    //        if (!_User.IsUserExists(id))
-    //        {
-    //            return NotFound($"No User With ID {id}");
-    //        }
+
+        //[HttpGet("{ID}", Name = "FindUser")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public ActionResult<UserResponseDTO> Find(int ID)
+        //{
+        //    if (ID < 1)
+        //    {
+        //        return BadRequest($"Not Accepted ID {ID}");
+        //    }
+        //    UserResponseDTO p = _User.Find(ID);
+        //    if (p == null)
+        //    {
+        //        return NotFound($"No Person With ID {ID}");
+        //    }
+        //    return Ok(p);
+
+        //}
 
 
-    //        if (_User.UpdateUser(id, userResponseDTO) > 0)
-    //        {
-    //            return Ok(userResponseDTO);
-    //        }
-    //        else
-    //        {
-
-    //            return BadRequest("Cloud Not Updated");
-    //        }
-
-    //    }
-
-    //    [HttpPost]
-    //    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //    [ProducesResponseType(StatusCodes.Status201Created)]
-    //    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    //    public ActionResult<UserResponseDTO> AddNewUser(UserCreateDTO newUser)
-    //    {
-
-    //        if (newUser == null)
-    //        {
-    //            return BadRequest("Invalid User data.");
-    //        }
-    //        int ID = _User.AddUser(newUser);
-
-    //        if (ID < 1)
-    //        {
-    //            //TODO: use proper status code instead of bad request
-    //            return BadRequest("Could no added");
-    //        }
-
-    //        return CreatedAtRoute("FindUser", new { id = ID }, newUser);
-
-    //    }
-
-    //    [HttpDelete("{id}", Name = "DeleteUser")]
-    //    [ProducesResponseType(StatusCodes.Status200OK)]
-    //    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    //    public ActionResult DeleteUser(int id)
-    //    {
-    //        if (id < 1)
-    //        {
-    //            return BadRequest($"Not accepted ID {id}");
-    //        }
-
-    //        if (!_User.IsUserExists(id))
-    //        {
-    //            return NotFound($"No User With ID {id}");
-    //        }
-
-    //        if (_User.DeleteUser(id))
-
-    //            return NoContent();
-    //        else
-    //            return NotFound($"Delete Process terminated. No rows deleted!");
-    //    }
+        ////here we use http put method for update
+        //[HttpPut("{userID}", Name = "UpdateUser")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public ActionResult<UserResponseDTO> UpdateUser(int userID, UserCreateDTO userResponseDTO)
+        //{
+        //    if (userID < 1 || userResponseDTO == null)
+        //    {
+        //        return BadRequest("Invalid user data.");
+        //    }
 
 
-    //    [HttpGet("exists/{userID}")]
-    //    public bool IsUserExists(int userID)
-    //    {
-    //        if (userID < 1)
-    //        {
-    //            return false;
-    //        }
-      
 
-    //        if (_User.IsUserExists(userID))
-    //        {
-    //            return true;
-    //        }
-    //        return false;
-              
-    //    }
+        //    if (!_User.IsUserExists(userID))
+        //    {
+        //        return NotFound($"No User With ID {userID}");
+        //    }
 
 
-    //}
+        //    if (_User.UpdateUser(userID, userResponseDTO) > 0)
+        //    {
+        //        return Ok(userResponseDTO);
+        //    }
+        //    else
+        //    {
+
+        //        return BadRequest("Cloud Not Updated");
+        //    }
+
+        //}
+
+
+
+        //[HttpDelete("{userID}", Name = "DeleteUser")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public ActionResult DeleteUser(int userID)
+        //{
+        //    if (userID < 1)
+        //    {
+        //        return BadRequest($"Not accepted ID {userID}");
+        //    }
+
+        //    if (!_User.IsUserExists(userID))
+        //    {
+        //        return NotFound($"No User With ID {userID}");
+        //    }
+
+        //    if (_User.DeleteUser(userID))
+
+        //        return NoContent();
+        //    else
+        //        return NotFound($"Delete Process terminated. No rows deleted!");
+        //}
+
+
+        //[HttpGet("exists/{userID}")]
+        //public bool IsUserExists(int userID)
+        //{
+        //    if (userID < 1)
+        //    {
+        //        return false;
+        //    }
+
+
+        //    if (_User.IsUserExists(userID))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+
+        //}
+
+        [Authorize(Roles ="User")]
+        [HttpDelete("{userID}", Name = "DeleteUser")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult DeleteUser(int userID)
+        {
+            if (userID < 1)
+            {
+                return BadRequest($"User ID Geçerli değil {userID}");
+            }
+
+            if (!_User.IsUserExists(userID))
+            {
+                return NotFound($"User ID bulunamadi {userID}");
+            }
+
+            if (_User.DeleteUser(userID))
+
+                return NoContent();
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 
 
 }

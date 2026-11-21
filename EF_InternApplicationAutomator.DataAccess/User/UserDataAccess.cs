@@ -3,6 +3,7 @@ using EF_InternApplicationAutomator.DataAccess.Intern;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared;
+using Shared.Conversation;
 using Shared.Intern;
 using Shared.User;
 
@@ -19,19 +20,16 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         }
 
 
-        //public List<UserResponseDTO> GetAllUser()
-        //{
-        //    List<UserEntity> userList = _Context.Users.ToList();
-   
-        //    List<UserResponseDTO> userDTOs = new List<UserResponseDTO>();
+        public List<UserListResponseDTO> GetAllUser()
+        {
+            
+            return _Context.Users
+                .AsNoTracking()
+                .Select(user => new UserListResponseDTO(user.UserID, user.Person.PersonID, user.UserName, $"{user.Person.FirstName} {user.Person.LastName}", user.CreatedDate, user.IsActive))
+                .ToList();
 
-        //    //mapping
-        //    foreach (var user in userList)
-        //    {
-        //        userDTOs.Add(new UserResponseDTO(user.UserID,user.PersonID,user.UserName,user.CreatedDate,user.IsActive));
-        //    }
-        //    return userDTOs;
-        //}
+        
+        }
 
 
         //public UserResponseDTO Find(int userID)
@@ -51,16 +49,16 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         //{
 
         //    UserEntity userEntity = _Context.Users.AsNoTracking().Where(i => i.UserName==userName && i.PasswordHash == Shared.Common.CommonTools.ComputeHash(password)).Include(i => i.Person).FirstOrDefault();
-           
+
         //    if (userEntity == null||userEntity.Person==null)
         //    {
 
         //        return null;
         //    }
         //   return new UserLoginResponseDTO(userEntity.UserID,userEntity.PersonID, userEntity.Person.FirstName, userEntity.Person.LastName, userEntity.IsActive);
-     
 
-            
+
+
         //}
         //public int UpdateUser(int userID, UserCreateDTO userDTO)
         //{
@@ -84,32 +82,42 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         //    return -1;
         //}
 
-        ////useradd işlemi en son bir ayrı bir sayfada listeleme/ekleme silem işlemleri yapıldığı zaman add aktif olur
-        ////public int AddUser(UserCreateDTO user)
-        ////{
-        ////    UserEntity userEntity = new UserEntity(0,user.PersonID,user.UserName,user.CreatedDate,user.IsActive);
-        ////    EntityEntry<UserEntity> pw = _Context.Users.Add(userEntity);
-
-        ////    if (_Context.SaveChanges() > 0)
-        ////    {
-        ////        return userEntity.UserID;
-        ////    }
-
-        ////    return -1;
-        ////}
-        //public bool DeleteUser(int userID)
-        //{
-        //    return _Context.Users
-        //            .Where(u => u.UserID == userID)
-        //            .ExecuteDelete() > 0;
-        //}
 
 
 
-        //any, objeyi yüklemez. Sadece var/yok kontrolü yapar
+
+     
+
+        public int AddUser(UserCreateDTO user,int personID)
+        {
+            UserEntity userEntity = new UserEntity(0, personID, user.UserName, DateTime.Now.Date, user.IsActive);
+            EntityEntry<UserEntity> pw = _Context.Users.Add(userEntity);
+
+            if (_Context.SaveChanges() > 0)
+            {
+                return userEntity.UserID;
+            }
+
+            return -1;
+        }
+
+
+
+        public bool DeleteUser(int userID)
+        {
+            return _Context.Users
+                    .Where(u => u.UserID == userID)
+                    .ExecuteDelete() > 0;
+        }
+
         public bool IsUserExists(int userID)
         {
            return _Context.Users.Any(u => u.UserID == userID);
+        }
+
+        public bool IsUserExists(string userName)
+        {
+            return _Context.Users.Any(u => u.UserName == userName);
         }
         public int GetUserIDByPersonID(int personID)
         {

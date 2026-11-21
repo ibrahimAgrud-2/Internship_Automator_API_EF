@@ -1,7 +1,9 @@
 ﻿using EF_InternApplicationAutomator.DataAccess;
 using EF_InternApplicationAutomator.DataAccess.Intern;
 using EF_InternApplicationAutomator.DataAccess.User;
+using Microsoft.EntityFrameworkCore;
 using Shared;
+using Shared.Common;
 using Shared.Intern;
 using Shared.User;
 using System;
@@ -15,17 +17,20 @@ namespace EF_InternApplicationAutomator.Business.User
     public  class UserBL
     {
         UserDataAccess _userDataAccess;
+        PersonDataAccess P;
+        Shared.Common.EmailService _emailService;
 
-
-        public UserBL(UserDataAccess personDataAccess)
+        public UserBL(UserDataAccess personDataAccess, PersonDataAccess p, EmailService emailService)
         {
             _userDataAccess = personDataAccess;
+            P = p;
+            _emailService = emailService;
         }
 
-        //public List<UserResponseDTO> GetAllUser()
-        //{
-        //    return _userDataAccess.GetAllUser();
-        //}
+        public List<UserListResponseDTO> GetAllUser()
+        {
+            return _userDataAccess.GetAllUser();
+        }
 
 
         //public UserResponseDTO Find(int userID)
@@ -41,15 +46,45 @@ namespace EF_InternApplicationAutomator.Business.User
         //    return _userDataAccess.UpdateUser(userID, userCreateDTO);
         //}
 
-        //public int AddUser(UserCreateDTO newUser)
-        //{
-        //    return _userDataAccess.AddUser(newUser);
-        //}
+        public int AddUser(UserCreateDTO newUser)
+        {
+            if (newUser != null)
+            {
+                string password = CommonTools.GenerateRandomPassword(11);
+                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newUser.PersonInfo.FirstName, newUser.PersonInfo.LastName, newUser.PersonInfo.Email, newUser.PersonInfo.Phone, newUser.PersonInfo.Address, newUser.PersonInfo.ImagePath, "User",CommonTools.HashPassword(password));
 
-        //public bool DeleteUser(int userID)
-        //{
-        //    return _userDataAccess.DeleteUser(userID);
-        //}
+                 int insertedPersonID =  P.AddPerson(personCreate);
+                if(insertedPersonID<1)
+                {
+                    return -1;
+                }
+                int insertedUserID = _userDataAccess.AddUser(newUser, insertedPersonID);
+                if (insertedUserID < 1)
+                {
+                    return -1;
+                }
+                //if (_emailService.SendEmail(personCreate.FirstName, personCreate.LastName, personCreate.Email, password))
+                //{
+                //    return insertedPersonID;
+                //}
+                //else
+                //{
+                //    Console.WriteLine($"Yeni kullanıcıya (Kullanici adi:  {newUser.UserName}) email gönderilemedi");
+                //}
+                return insertedUserID;
+            }
+
+            return -1;
+        }
+
+        public bool DeleteUser(int userID)
+        {
+            return _userDataAccess.DeleteUser(userID);
+        }
+
+
+
+
         public bool IsUserExists(int userID)
         {
             return _userDataAccess.IsUserExists(userID);
@@ -63,6 +98,10 @@ namespace EF_InternApplicationAutomator.Business.User
         public bool IsUserActive(int userID)
         {
             return _userDataAccess.IsUserActive(userID);
+        }
+        public bool IsUserExists(string userName)
+        {
+            return _userDataAccess.IsUserExists(userName);
         }
 
     }

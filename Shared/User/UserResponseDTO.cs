@@ -30,7 +30,6 @@ namespace Shared.User
             PersonID = personID;
             CreatedDate = createdDate;
             IsActive = isActive;
-           
             UserName = userName;
             this.UserID = userID;
         }

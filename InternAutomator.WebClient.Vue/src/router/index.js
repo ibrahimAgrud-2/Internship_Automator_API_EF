@@ -39,6 +39,7 @@ const router = createRouter({
 
         { path: 'announcements', component: () => import('@/views/staff/AnnouncementsView.vue'), meta: { title: 'Duyurular' } },
         { path: 'messages', component: () => import('@/views/staff/MessagesView.vue'), meta: { title: 'Mesajlar' } },
+        { path: 'users', component: () => import('@/views/staff/UsersView.vue'), meta: { title: 'Kullanıcılar' } },
       ],
     },
 

@@ -11,26 +11,22 @@ namespace Shared.User
     {
 
         [Required]
+        public PersonCreateSDTO PersonInfo { get; set; }
+
+        [Required]
         public string UserName { get; set; }
-
-        [Required]
-        public int PersonID { get; set; }
-
-
-        [Required]
-        public DateTime CreatedDate { get; set; }
-
+       
+ 
         [Required]
         public bool IsActive { get; set; }
 
-        public UserCreateDTO( int personID, string userName, DateTime createdDate, bool isActive)
+        public UserCreateDTO(PersonCreateSDTO personInfo, string userName, bool isActive)
         {
 
-            PersonID = personID;
-          
-            CreatedDate = createdDate;
+        
             IsActive = isActive;
             UserName = userName;
+            this.PersonInfo = personInfo;
         }
 
 

@@ -126,9 +126,9 @@ namespace Shared.Common
             _configuration = configuration;
         }
 
-        public bool SendEmail(PersonResponseSDTO person,string tempPassword)
+        public bool SendEmail(string firstName,string lastName,string email,string tempPassword)
         {
-            if (person == null || string.IsNullOrWhiteSpace(person.Email))
+            if (string.IsNullOrWhiteSpace(email))
                 return false;
 
             try
@@ -148,9 +148,9 @@ namespace Shared.Common
 
                 // 2. Şablondaki alanları doldur
                 body = body
-                    .Replace("{FirstName}", person.FirstName ?? "")
-                    .Replace("{LastName}", person.LastName ?? "")
-                    .Replace("{Email}", person.Email)
+                    .Replace("{FirstName}", firstName ?? "")
+                    .Replace("{LastName}", lastName ?? "")
+                    .Replace("{Email}", email)
                     .Replace("{Password}", tempPassword);
 
                 // 3. E-postayı oluştur
@@ -160,7 +160,7 @@ namespace Shared.Common
                     _settings.FromName,
                     _settings.FromAddress));
 
-                message.To.Add(MailboxAddress.Parse(person.Email));
+                message.To.Add(MailboxAddress.Parse(email));
 
                 message.Subject = subject;
 
