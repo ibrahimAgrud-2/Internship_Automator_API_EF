@@ -241,23 +241,38 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
 
 
-        //[Authorize(Roles = "User")]
-        //[HttpGet("{ApplicationID}/CV")]
-        //public bool GetCV(int ApplicationID)
-        //{
-        //    if (ApplicationID < 1)
-        //    {
-        //        return false;
-        //    }
+        
+       // [Authorize(Roles = "User")]
+        [HttpGet("{ApplicationID}/CV")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetCV(int ApplicationID)
+        {
+            if (ApplicationID < 1)
+            {
+                return BadRequest($"Girdiğiniz başvuru numarası geçersiz - {ApplicationID}");
+            }
+            if (!_application.IsApplicationExists(ApplicationID))
+            {
+                return NotFound("Başvuru bulunamadi");
+            }
+            string? fileName = _application.GetCvPath(ApplicationID);
+            if(fileName==null)
+            {
+                return NotFound("CV bulunamadi");
+            }
 
 
-        //    if (!_application.IsApplicationExists(ApplicationID))
-        //    {
-        //        return true;
-        //    }
-        //    return false;
+            string fullPath = Path.Combine(_uploadDirectory, fileName);
 
-        //}
+            // Kayıt var ama dosya diskte yok
+            if (!System.IO.File.Exists(fullPath))
+            {
+                return NotFound("CV bulunamadi");
+            }
+
+            return PhysicalFile(fullPath, "application/pdf");
+
+        }
 
 
     }

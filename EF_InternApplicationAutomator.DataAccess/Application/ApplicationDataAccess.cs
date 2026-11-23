@@ -91,5 +91,11 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             return _Context.Applications.Any(app=>app.ApplicationID==appID);
         }
 
+        public string? GetCVPath(int appID)
+        {
+            ApplicationEntity? app = _Context.Applications.Find(appID);
+            return (app == null) ? null : app.CVPath;
+        }
+
     }
 }

@@ -236,6 +236,32 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
+    "Method": "GetCV",
+    "RelativePath": "api/Application/{ApplicationID}/CV",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ApplicationID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
     "Method": "DeleteApplication",
     "RelativePath": "api/Application/{id}",
     "HttpMethod": "DELETE",

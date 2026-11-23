@@ -141,5 +141,18 @@ namespace EF_InternApplicationAutomator.Business.Application
         {
             return _ApplicationDataAccess.IsApplicationExists(appID);
         }
+    
+        
+        public string? GetCvPath(int appID)
+        {
+            if(!IsApplicationExists(appID))
+            {
+                return null;
+
+            }
+            return _ApplicationDataAccess.GetCVPath(appID);
+        }
+    
+    
     }
 }
