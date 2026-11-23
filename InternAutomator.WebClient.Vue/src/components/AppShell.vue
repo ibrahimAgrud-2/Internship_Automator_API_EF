@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getSession, clearSession, ROLE_INTERN, ROLE_STAFF } from '@/auth/session'
+import { getSession, clearSession } from '@/auth/session'
 import '@/assets/css/shell.css'
 
 const INTERN_MENU = [
   { text: 'Projelerim', to: '/intern/projects' },
   { text: 'Görevlerim', to: '/intern/tasks' },
-  { text: 'Mesaj', to: '/intern/messages' },
+  { text: 'Mesajlar', to: '/intern/messages' },
   { text: 'Duyurular', to: '/intern/announcements' },
 ]
 
@@ -22,149 +22,83 @@ const STAFF_MENU = [
 
 const route = useRoute()
 const router = useRouter()
-
-// Bu bileşene yalnızca giriş yapan kullanıcılar erişebilir.
 const session = getSession()
-const role = route.meta.requiresRole
-const isIntern = role === ROLE_INTERN
-const menu = role === ROLE_STAFF ? STAFF_MENU : INTERN_MENU
-const fullName = computed(() => `${session?.firstName ?? ''} ${session?.lastName ?? ''}`.trim())
-
+const isStaff = computed(() => route.path.startsWith('/staff'))
+const menu = computed(() => (isStaff.value ? STAFF_MENU : INTERN_MENU))
+const fullName = computed(() => `${session?.firstName ?? ''} ${session?.lastName ?? ''}`.trim() || 'Hesabım')
 const isCollapsed = ref(window.innerWidth < 768)
 
 function logout() {
   clearSession()
   router.replace('/login')
 }
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth < 768) isCollapsed.value = true
+}
 </script>
 
 <template>
   <div class="shell" :class="{ 'sidebar-collapsed': isCollapsed }">
-    <header class="navbar bg-light border-bottom px-3">
-      <div class="d-flex align-items-center">
+    <header class="shell-topbar">
+      <div class="shell-topbar-start">
         <button
           type="button"
-          class="btn btn-outline-secondary btn-sm me-3"
-          aria-label="Menüyü aç/kapat"
+          class="shell-menu-toggle"
+          aria-label="Yan menüyü aç veya kapat"
+          :aria-expanded="!isCollapsed"
           @click="isCollapsed = !isCollapsed"
         >
-          &#9776;
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
         </button>
-        <span class="navbar-brand mb-0 h1">Staj Otomasyonu</span>
+        <span class="shell-brand">Staj Otomasyonu</span>
       </div>
 
-      <!-- Stajyer: sağ üstte profil simgesi ve açılır menü -->
-      <div v-if="isIntern" class="d-flex align-items-center gap-2">
-        <span class="profile-name d-none d-sm-inline">{{ fullName }}</span>
-
+      <div class="shell-topbar-end">
         <div class="dropdown">
           <button
-            id="internProfileMenu"
+            id="profileMenu"
             type="button"
             class="profile-avatar-button dropdown-toggle"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             aria-label="Profil menüsünü aç"
-            title="Profil"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="23"
-              height="23"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="8" r="4" />
               <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
             </svg>
           </button>
 
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2" aria-labelledby="internProfileMenu">
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2" aria-labelledby="profileMenu">
             <li class="dropdown-header">
-              <span class="d-block fw-semibold text-dark">{{ fullName }}</span>
-              <span>Stajyer hesabı</span>
+              <strong class="d-block text-dark">{{ fullName }}</strong>
+              {{ isStaff ? 'Personel hesabı' : 'Stajyer hesabı' }}
             </li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
-              <RouterLink class="dropdown-item" to="/change-password">Şifremi Güncelle</RouterLink>
-            </li>
+            <li><RouterLink to="/change-password" class="dropdown-item">Şifremi Güncelle</RouterLink></li>
             <li><hr class="dropdown-divider" /></li>
-            <li>
-              <button type="button" class="dropdown-item" @click="logout">Çıkış</button>
-            </li>
+            <li><button type="button" class="dropdown-item" @click="logout">Çıkış Yap</button></li>
           </ul>
         </div>
-      </div>
-
-      <!-- Personel: mevcut üst menü aynı kalıyor -->
-      <div v-else>
-        <span class="me-3">{{ fullName }}</span>
-        <button type="button" class="btn btn-outline-secondary btn-sm" @click="logout">Çıkış</button>
       </div>
     </header>
 
     <div class="shell-body">
-      <nav class="shell-sidebar border-end bg-white">
-        <ul class="nav nav-pills flex-column p-3 gap-1">
-          <li v-for="item in menu" :key="item.text" class="nav-item">
-            <RouterLink v-if="item.to" :to="item.to" class="nav-link" active-class="active">
-              {{ item.text }}
-            </RouterLink>
-
-            <span v-else class="nav-link disabled d-flex justify-content-between align-items-center" aria-disabled="true">
-              <span>{{ item.text }}</span>
-              <span class="badge text-bg-light border">Yakında</span>
-            </span>
-          </li>
-        </ul>
+      <nav class="shell-sidebar" aria-label="Ana menü">
+        <div class="shell-sidebar-inner">
+          <div class="shell-sidebar-label">MENÜ</div>
+          <ul class="nav nav-pills flex-column gap-1">
+            <li v-for="item in menu" :key="item.text" class="nav-item">
+              <RouterLink :to="item.to" class="nav-link" active-class="active" @click="closeSidebarOnMobile">{{ item.text }}</RouterLink>
+            </li>
+          </ul>
+        </div>
       </nav>
 
-      <main class="shell-content">
-        <RouterView />
-      </main>
+      <main class="shell-content"><RouterView /></main>
     </div>
   </div>
 </template>
-
-<style scoped>
-.profile-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #3b4655;
-}
-
-.profile-avatar-button {
-  display: inline-flex;
-  width: 42px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  background: #334e78;
-  color: #fff;
-  box-shadow: 0 0 0 1px #d8e0e9;
-  cursor: pointer;
-  transition: background-color 0.15s, box-shadow 0.15s;
-}
-
-.profile-avatar-button:hover,
-.profile-avatar-button:focus-visible {
-  background: #253c60;
-  box-shadow: 0 0 0 3px #cbd8ec;
-}
-
-/* Bootstrap'in dropdown okunu yuvarlak profil simgesinde göstermiyoruz. */
-.profile-avatar-button::after {
-  display: none;
-}
-
-.dropdown-menu {
-  min-width: 210px;
-}
-</style>

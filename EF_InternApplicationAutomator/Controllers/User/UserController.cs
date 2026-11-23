@@ -92,9 +92,6 @@ namespace EF_InternApplicationAutomator.API.Controllers.User
                 return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-
-
-
         [Authorize(Roles = "User")]
         [HttpPut("{userID}", Name = "UpdateUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
