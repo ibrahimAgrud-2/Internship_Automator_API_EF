@@ -429,6 +429,9 @@
                   "CV": {
                     "type": "string",
                     "format": "binary"
+                  },
+                  "HasCv": {
+                    "type": "boolean"
                   }
                 }
               },
@@ -470,6 +473,9 @@
                   "style": "form"
                 },
                 "CV": {
+                  "style": "form"
+                },
+                "HasCv": {
                   "style": "form"
                 }
               }
@@ -4167,6 +4173,7 @@
           "classYear",
           "department",
           "gitHubURL",
+          "hasCv",
           "linkedinURL",
           "notes",
           "status",
@@ -4211,6 +4218,9 @@
           "gitHubURL": {
             "minLength": 1,
             "type": "string"
+          },
+          "hasCv": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

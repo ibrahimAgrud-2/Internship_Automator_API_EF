@@ -22,7 +22,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
 
             return _Context.Applications
               .AsNoTracking()
-              .Select(a => new ApplicationDetailedListDTO(a.ApplicationID, a.Status, a.ApplicationDate, a.University, a.Department, a.ClassYear, a.Notes, a.LinkedInUrl, a.GitHubUrl))
+              .Select(a => new ApplicationDetailedListDTO(a.ApplicationID, a.Status, a.ApplicationDate, a.University, a.Department, a.ClassYear, a.Notes, a.LinkedInUrl, a.GitHubUrl,a.HasCv))
               .ToList();
         }
 
@@ -41,9 +41,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         }
         public int AddApplication(ApplicationCreateDTO app)
         {
+           
 
             ApplicationEntity appEntity = new ApplicationEntity(
-                0,app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status,app.Notes,app.LinkedinURL,app.GithubURL,app.CVPath
+                0,app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status,app.Notes,app.LinkedinURL,app.GithubURL,app.CVPath,app.HasCV
             );
 
             EntityEntry<ApplicationEntity> pw = _Context.Applications.Add(appEntity);

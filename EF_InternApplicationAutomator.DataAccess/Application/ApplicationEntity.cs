@@ -52,7 +52,10 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         public string GitHubUrl { get; set; }
         public string CVPath { get; set; }
 
-        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate, string university, string department, short classYear, byte status, string notes, string linkedInUrl, string gitHubUrl, string cVPath )
+
+        [Required]
+        public bool HasCv { get; set; }
+        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate, string university, string department, short classYear, byte status, string notes, string linkedInUrl, string gitHubUrl, string cVPath, bool hasCv)
         {
             ApplicationID = applicationID;
             PersonID = personID;
@@ -67,6 +70,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             this.LinkedInUrl = linkedInUrl;
             this.Notes = notes;
             CVPath = cVPath;
+            HasCv = hasCv;
         }
     }
 }

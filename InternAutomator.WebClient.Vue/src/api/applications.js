@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut, ApiError } from './http'
+import { apiGet, apiGetBlob, apiPost, apiPut, ApiError } from './http'
 
 // ---- Başvurular ----
 // Başvuru + PDF özgeçmiş aynı multipart/form-data isteğinde gönderilir.
@@ -41,4 +41,9 @@ export function updateApplicationStatus(applicationID, status, notes) {
 
 export function acceptApplication(applicationID, status, notes) {
   return apiPut('Application/Update/AppStatus/accepted', { applicationID, status, notes })
+}
+
+// Personel yetkisi gerektiren PDF yanıtı (JWT ortak http.js üzerinden eklenir).
+export function getApplicationCV(applicationID) {
+  return apiGetBlob(`Application/${applicationID}/CV`)
 }

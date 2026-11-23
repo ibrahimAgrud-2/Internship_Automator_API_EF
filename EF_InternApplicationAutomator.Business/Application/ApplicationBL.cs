@@ -125,7 +125,7 @@ namespace EF_InternApplicationAutomator.Business.Application
 
             //mapping
             //applicaiton ilk Add yapıldığında reviewed değildir. IsActive new'dır yani review edilmeyi bekli
-            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,null, null, DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear, (byte)enStatus.newApp,newApplicationDTO.Notes,newApplicationDTO.LinkedinURL,newApplicationDTO.GithubURL,CVPath);
+            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,null, null, DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear, (byte)enStatus.newApp,newApplicationDTO.Notes,newApplicationDTO.LinkedinURL,newApplicationDTO.GithubURL,CVPath,newApplicationDTO.HasCv);
 
 
 

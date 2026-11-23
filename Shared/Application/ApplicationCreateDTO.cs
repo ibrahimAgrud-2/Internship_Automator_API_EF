@@ -43,9 +43,11 @@ namespace Shared.Application
         public string GithubURL { get; set; }
         public string CVPath { get; set; }
 
+        [Required]
+        public bool HasCV { get; set; }
         public ApplicationCreateDTO(int personID, PersonCreateSDTO PersonInfo, int? reviewedByUserID,
             DateTime? reviewDate, DateTime applicationDate, string university, string department,
-            short classYear, byte status, string notes, string linkedinURL, string githubURL, string cVPath)
+            short classYear, byte status, string notes, string linkedinURL, string githubURL, string cVPath, bool hasCV)
         {
 
 
@@ -62,6 +64,7 @@ namespace Shared.Application
             this.LinkedinURL = linkedinURL;
             this.GithubURL = githubURL;
             CVPath = cVPath;
+            HasCV = hasCV;
         }
     }
 }

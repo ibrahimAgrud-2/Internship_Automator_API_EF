@@ -1,3 +1,5 @@
+import { getSession } from '@/auth/session'
+
 // API ile konuşmanın tek kapısı. API adresini sadece bu dosya bilir.
 // (Eski client'taki core/api.js'in modül hâli: aynı mantık, import/export ile.)
 
@@ -36,17 +38,31 @@ async function readErrorMessages(response) {
   return [text || `İstek reddedildi (kod: ${response.status}).`]
 }
 
-async function request(method, path, body) {
+async function request(method, path, body, responseType = 'json') {
   const options = { method }
+  const headers = {}
+
+  // Herkese açık endpoint'lere eski/sona ermiş token gönderme.
+  const isPublicEndpoint = path === 'Person/Login' || path === 'Application/Apply'
+  if (!isPublicEndpoint) {
+    const token = getSession()?.token
+    if (typeof token === 'string' && token.trim()) {
+      headers.Authorization = `Bearer ${token.trim()}`
+    }
+  }
 
   if (body !== undefined) {
     if (body instanceof FormData) {
       // Multipart boundary'yi tarayıcı kendisi ekler; Content-Type elle verilmez.
       options.body = body
     } else {
-      options.headers = { 'Content-Type': 'application/json' }
+      headers['Content-Type'] = 'application/json'
       options.body = JSON.stringify(body)
     }
+  }
+
+  if (Object.keys(headers).length > 0) {
+    options.headers = headers
   }
 
   let response
@@ -61,6 +77,9 @@ async function request(method, path, body) {
     throw new ApiError(response.status, await readErrorMessages(response))
   }
 
+  // PDF gibi ikili yanıtlarda JSON/text dönüşümü yapılmaz.
+  if (responseType === 'blob') return response.blob()
+
   const text = await response.text()
   if (!text) return null
 
@@ -72,6 +91,7 @@ async function request(method, path, body) {
 }
 
 export const apiGet = (path) => request('GET', path)
+export const apiGetBlob = (path) => request('GET', path, undefined, 'blob')
 export const apiPost = (path, body) => request('POST', path, body)
 export const apiPut = (path, body) => request('PUT', path, body)
 export const apiDelete = (path) => request('DELETE', path)

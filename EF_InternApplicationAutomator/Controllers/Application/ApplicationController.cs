@@ -242,7 +242,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
 
         
-       // [Authorize(Roles = "User")]
+       [Authorize(Roles = "User")]
         [HttpGet("{ApplicationID}/CV")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetCV(int ApplicationID)

@@ -39,23 +39,24 @@ namespace Shared.Application
 
         public IFormFile CV { get; set; }
 
-
+        public bool HasCv { get; set; }
         public ApplicationCreateSecure()
         {
            
         }
         public ApplicationCreateSecure(PersonCreateSDTO PersonInfo, string university, string department,
-            short classYear, string notes, string linkedinURL, string githubURL)
+            short classYear, string notes, string linkedinURL, string githubURL, bool hasCv)
         {
-            
+
 
             this.PersonInfo = PersonInfo;
             this.University = university;
             this.Department = department;
             this.ClassYear = classYear;
-             this.Notes = notes;
+            this.Notes = notes;
             this.LinkedinURL = linkedinURL;
             this.GithubURL = githubURL;
+            HasCv = hasCv;
         }
     }
 }
