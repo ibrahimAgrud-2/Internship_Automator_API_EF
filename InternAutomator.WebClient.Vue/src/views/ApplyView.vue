@@ -25,6 +25,17 @@ function emptyForm() {
 const form = reactive(emptyForm())
 const isSubmitting = ref(false)
 const message = ref(null)
+// API başarıyla yanıt verdikten sonra tam ekran onay penceresi açılır.
+const showSuccessDialog = ref(false)
+const successDialogRef = ref(null)
+const firstNameInput = ref(null)
+
+function closeSuccessDialog() {
+  if (!showSuccessDialog.value) return
+  showSuccessDialog.value = false
+  // Klavye kullanan ziyaretçi için odağı tekrar forma döndür.
+  nextTick(() => firstNameInput.value?.focus({ preventScroll: true }))
+}
 
 // CV seçimi: doğrulama arayüzdedir, gerçek dosya kontrolü API'de yapılır.
 const selectedCv = ref(null)
@@ -198,13 +209,16 @@ async function submit() {
       return
     }
 
-    message.value = { type: 'success', lines: ['Başvurunuz alınmıştır.'] }
     Object.assign(form, emptyForm())
     universitySearch.value = ''
     dropdownOpen.value = false
     selectedCv.value = null
     cvError.value = ''
     if (cvInput.value) cvInput.value.value = ''
+
+    showSuccessDialog.value = true
+    await nextTick()
+    successDialogRef.value?.focus({ preventScroll: true })
   } catch (error) {
     message.value = { type: 'danger', lines: getErrorMessages(error) }
   } finally {
@@ -230,7 +244,7 @@ async function submit() {
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="firstName" class="form-label">Ad</label>
-            <input id="firstName" v-model="form.firstName" type="text" class="form-control" maxlength="20" autocomplete="given-name" required />
+            <input id="firstName" ref="firstNameInput" v-model="form.firstName" type="text" class="form-control" maxlength="20" autocomplete="given-name" required />
           </div>
           <div class="col-md-6 mb-3">
             <label for="lastName" class="form-label">Soyad</label>
@@ -249,7 +263,7 @@ async function submit() {
         </div>
 
         <div class="mb-4">
-          <label for="address" class="form-label">Adres <span class="optional">(opsiyonel)</span></label>
+          <label for="address" class="form-label">Adres <span class="optional"></span></label>
           <textarea id="address" v-model="form.address" class="form-control" rows="2" maxlength="250" autocomplete="street-address"></textarea>
         </div>
 
@@ -415,6 +429,43 @@ async function submit() {
       </form>
     </section>
   </main>
+
+  <!-- Yalnızca API başvurunun başarıyla alındığını onayladığında görünür. -->
+  <Teleport to="body">
+    <Transition name="application-success">
+      <div
+        v-if="showSuccessDialog"
+        ref="successDialogRef"
+        class="application-success-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="application-success-title"
+        aria-describedby="application-success-description"
+        tabindex="-1"
+        @click="closeSuccessDialog"
+        @keydown.esc.prevent="closeSuccessDialog"
+      >
+        <div class="application-success-panel">
+          <span class="application-success-confetti confetti-a" aria-hidden="true">✦</span>
+          <span class="application-success-confetti confetti-b" aria-hidden="true">✧</span>
+          <span class="application-success-confetti confetti-c" aria-hidden="true">✦</span>
+          <span class="application-success-confetti confetti-d" aria-hidden="true">✧</span>
+
+          <div class="application-success-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m17 33 11 11 21-23" />
+            </svg>
+          </div>
+          <div class="application-success-emoji" aria-hidden="true">🎉</div>
+          <h2 id="application-success-title">Başvurunuz başarıyla alındı!</h2>
+          <p class="application-success-thanks">Başvurunuz için teşekkürler.</p>
+          <p id="application-success-description" class="application-success-description">
+            En kısa sürede başvurunuzu değerlendirip sonucu tarafınıza ileteceğiz.
+          </p>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -648,5 +699,136 @@ async function submit() {
   .dropdown-chevron,
   .cv-dropzone,
   .login-link { transition: none; }
+}
+
+/* Başvurunun gönderildiğini vurgulayan ekran ortası onay penceresi */
+.application-success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(23, 19, 26, .66);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+.application-success-overlay:focus { outline: none; }
+.application-success-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 470px);
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+  padding: 41px 36px 29px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 26px 75px rgba(0, 0, 0, .27);
+  text-align: center;
+  color: #282629;
+}
+.application-success-panel::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 8px;
+  background: linear-gradient(90deg, #822328, #d15b68, #e6a15d, #822328);
+}
+.application-success-icon {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 13px;
+  border: 8px solid #e6f5eb;
+  border-radius: 50%;
+  background: #d6efe0;
+  color: #16834f;
+  box-shadow: 0 8px 25px rgba(22, 131, 79, .13);
+}
+.application-success-icon svg { width: 43px; height: 43px; }
+.application-success-emoji { font-size: 30px; line-height: 1.3; margin-bottom: 10px; }
+.application-success-panel h2 {
+  max-width: 360px;
+  margin: 0 auto 14px;
+  font-size: clamp(22px, 4vw, 27px);
+  line-height: 1.25;
+  font-weight: 800;
+  color: #242124;
+}
+.application-success-thanks {
+  margin: 0 0 7px;
+  color: #822328;
+  font-size: 16px;
+  font-weight: 700;
+}
+.application-success-description {
+  max-width: 365px;
+  margin: 0 auto 27px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #5d5860;
+}
+.application-success-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 285px;
+  min-height: 46px;
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 26px;
+  background: #822328;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  transition: background .18s ease, transform .18s ease;
+}
+.application-success-button:hover,
+.application-success-button:focus-visible { background: #68191e; transform: translateY(-1px); }
+.application-success-button:focus-visible { outline: 3px solid rgba(130, 35, 40, .25); outline-offset: 3px; }
+.application-success-dismiss {
+  margin: 18px 0 0;
+  color: #928d93;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.application-success-confetti {
+  position: absolute;
+  pointer-events: none;
+  font-weight: 800;
+  line-height: 1;
+  animation: application-success-float 2.5s ease-in-out infinite alternate;
+}
+.confetti-a { top: 45px; left: 42px; font-size: 23px; color: #bd5268; }
+.confetti-b { top: 96px; right: 39px; font-size: 31px; color: #e5a34a; animation-delay: .4s; }
+.confetti-c { top: 173px; left: 28px; font-size: 13px; color: #91bcb6; animation-delay: .8s; }
+.confetti-d { top: 222px; right: 33px; font-size: 17px; color: #bc7595; animation-delay: 1s; }
+@keyframes application-success-float { from { transform: translateY(0) rotate(-7deg); } to { transform: translateY(-9px) rotate(7deg); } }
+.application-success-enter-active,
+.application-success-leave-active { transition: opacity .23s ease; }
+.application-success-enter-active .application-success-panel,
+.application-success-leave-active .application-success-panel { transition: transform .27s ease, opacity .27s ease; }
+.application-success-enter-from,
+.application-success-leave-to { opacity: 0; }
+.application-success-enter-from .application-success-panel,
+.application-success-leave-to .application-success-panel { transform: translateY(18px) scale(.95); opacity: 0; }
+@media (max-width: 480px) {
+  .application-success-panel { padding: 35px 23px 25px; border-radius: 20px; }
+  .confetti-a { left: 17px; }
+  .confetti-b { right: 14px; }
+  .confetti-c { left: 12px; }
+  .confetti-d { right: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .application-success-confetti { animation: none; }
+  .application-success-enter-active,
+  .application-success-leave-active,
+  .application-success-enter-active .application-success-panel,
+  .application-success-leave-active .application-success-panel,
+  .application-success-button { transition: none; }
 }
 </style>
