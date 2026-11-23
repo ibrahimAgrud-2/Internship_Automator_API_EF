@@ -67,3 +67,18 @@ export function splitTechnologies(technologies) {
 export function isHttpUrl(url) {
   return /^https?:\/\//i.test(url ?? '')
 }
+
+
+// Zaman çizgisi tasarımı için: "2026-11-18T..." -> { day: '18', month: 'KAS', year: '2026' }
+export function formatDateParts(isoDate) {
+  if (!isoDate) return { day: '–', month: '', year: '' }
+  const date = new Date(isoDate)
+  return {
+    day: String(date.getDate()).padStart(2, '0'),
+    month: date.toLocaleDateString('tr-TR', { month: 'short' }).replace('.', ''),
+    year: String(date.getFullYear()),
+  }
+}
+
+// Son 7 gün içinde yayınlanan duyuru "Yeni" sayılır
+export const isRecent = (isoDate, days = 7) => !!isoDate && Date.now() - new Date(isoDate).getTime() < days * 864e5

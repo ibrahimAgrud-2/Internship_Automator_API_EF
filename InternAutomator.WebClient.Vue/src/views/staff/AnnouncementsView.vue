@@ -3,7 +3,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { getAllAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement } from '@/api/announcements'
 import { ApiError, getErrorMessages } from '@/api/http'
 import { ANNOUNCEMENT_LIMITS } from '@/constants'
-import { formatDate } from '@/utils/format'
+import { formatDate, formatDateParts, isRecent } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
@@ -144,24 +144,29 @@ onMounted(loadAnnouncements)
     <AlertMessages v-else-if="loadErrors.length" :messages="loadErrors" />
     <AlertMessages v-else-if="!hasAnnouncements" type="secondary" messages="Henüz duyuru yok." />
 
-    <div v-else class="d-flex flex-column gap-3 reveal-list">
-      <div v-for="(item, index) in announcements" :key="item.announcementID ?? index" class="card announcement-card">
-        <div class="announcement-layout">
-          <div class="announcement-date">{{ formatDate(item.createdDate, '-') }}</div>
+    <div v-else class="announcement-timeline">
+      <article v-for="(item, index) in announcements" :key="item.announcementID ?? index" class="announcement-item" :class="{ 'is-recent': isRecent(item.createdDate) }">
+        <div class="announcement-date-block" :title="formatDate(item.createdDate, '-')">
+          <strong>{{ formatDateParts(item.createdDate).day }}</strong>
+          <span>{{ formatDateParts(item.createdDate).month }}</span>
+          <small>{{ formatDateParts(item.createdDate).year }}</small>
+        </div>
+        <div class="announcement-rail" aria-hidden="true"><span class="announcement-dot"></span></div>
+        <div class="card announcement-card">
           <div class="card-body">
-            <h5 class="card-title text-break mb-3">{{ item.title }}</h5>
+            <div class="announcement-meta">
+              <span class="announcement-date-inline">{{ formatDate(item.createdDate, '-') }}</span>
+              <span v-if="isRecent(item.createdDate)" class="announcement-new">Yeni</span>
+            </div>
+            <h5 class="card-title text-break mb-2">{{ item.title }}</h5>
             <p class="card-text text-break announcement-content mb-0">{{ item.content }}</p>
-
-            <div class="d-flex align-items-center justify-content-between gap-3 mt-3">
-              <span></span>
-              <div v-if="item.announcementID" class="d-flex gap-2">
-                <button type="button" class="btn btn-sm btn-outline-primary" @click="openEdit(item)">Düzenle</button>
-                <button type="button" class="btn btn-sm btn-outline-danger" @click="openDelete(item)">Sil</button>
-              </div>
+            <div v-if="item.announcementID" class="announcement-actions">
+              <button type="button" class="btn btn-sm btn-outline-primary" @click="openEdit(item)">Düzenle</button>
+              <button type="button" class="btn btn-sm btn-outline-danger" @click="openDelete(item)">Sil</button>
             </div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
 
     <BaseModal v-model="isFormOpen" :title="isEditing ? 'Duyuruyu Düzenle' : 'Yeni Duyuru'" as-form @submit="submitForm" @shown="titleInput.focus()">

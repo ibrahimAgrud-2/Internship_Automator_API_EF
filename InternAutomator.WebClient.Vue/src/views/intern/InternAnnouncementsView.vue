@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { getLatestAnnouncements } from '@/api/announcements'
 import { getErrorMessages } from '@/api/http'
-import { formatDate } from '@/utils/format'
+import { formatDate, formatDateParts, isRecent } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import '@/assets/css/announcements.css'
 
@@ -36,16 +36,25 @@ onMounted(loadAnnouncements)
     <AlertMessages v-else-if="loadErrors.length" :messages="loadErrors" />
     <AlertMessages v-else-if="!hasAnnouncements" type="secondary" messages="Henüz duyuru yok." />
 
-    <div v-else class="d-flex flex-column gap-3 reveal-list">
-      <div v-for="(item, index) in announcements" :key="item.announcementID ?? index" class="card announcement-card">
-        <div class="announcement-layout">
-          <div class="announcement-date">{{ formatDate(item.createdDate, '-') }}</div>
+    <div v-else class="announcement-timeline">
+      <article v-for="(item, index) in announcements" :key="item.announcementID ?? index" class="announcement-item" :class="{ 'is-recent': isRecent(item.createdDate) }">
+        <div class="announcement-date-block" :title="formatDate(item.createdDate, '-')">
+          <strong>{{ formatDateParts(item.createdDate).day }}</strong>
+          <span>{{ formatDateParts(item.createdDate).month }}</span>
+          <small>{{ formatDateParts(item.createdDate).year }}</small>
+        </div>
+        <div class="announcement-rail" aria-hidden="true"><span class="announcement-dot"></span></div>
+        <div class="card announcement-card">
           <div class="card-body">
-            <h5 class="card-title text-break mb-3">{{ item.title }}</h5>
+            <div class="announcement-meta">
+              <span class="announcement-date-inline">{{ formatDate(item.createdDate, '-') }}</span>
+              <span v-if="isRecent(item.createdDate)" class="announcement-new">Yeni</span>
+            </div>
+            <h5 class="card-title text-break mb-2">{{ item.title }}</h5>
             <p class="card-text text-break announcement-content mb-0">{{ item.content }}</p>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   </div>
 </template>
