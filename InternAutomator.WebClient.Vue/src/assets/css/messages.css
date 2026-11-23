@@ -176,14 +176,26 @@
         color: var(--bs-purple);
     }
 /* Gruplar üstte, birebir konuşmalar son mesaj sırasına göre altta listelenir. */
-.chat-list-section-title{padding:13px 15px 7px;background:#f8f8f8;color:#555;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid #ededed}
-.chat-list-item{cursor:pointer;transition:background-color .15s ease}
-.chat-list-item:hover{background:#f8f4f4}
-.chat-list-item.active{background:#f9ecec;border-left-color:#822328}
-.chat-layout{height:calc(100vh - 126px);border:1px solid #eae2e2;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.06)}
-.chat-reference.ref-project{border-left-color:#822328}.chat-reference.ref-project .chat-reference-type{color:#822328}
-.chat-member-picker{max-height:350px;overflow-y:auto;border:1px solid #e8e0e0;border-radius:9px}
-.chat-member-row{display:flex;align-items:center;gap:13px;padding:12px 14px;border-bottom:1px solid #f0eded;cursor:pointer}
-.chat-member-row:last-child{border-bottom:0}.chat-member-row:hover,.chat-member-row.selected{background:#f9eeee}
+.chat-list-section-title{padding:13px 15px 7px;background:var(--surface-muted);color:var(--text-muted);font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border-soft)}
+.chat-list-item{cursor:pointer;transition:background-color var(--dur-fast) ease,border-left-color var(--dur) ease}
+.chat-list-item:hover{background:var(--brand-primary-softer)}
+.chat-list-item.active{background:var(--brand-primary-soft);border-left-color:var(--brand-primary)}
+.chat-layout{height:calc(100vh - 126px);border:1px solid var(--border-soft);border-radius:16px;box-shadow:var(--shadow-sm)}
+.chat-reference.ref-project{border-left-color:var(--brand-primary)}.chat-reference.ref-project .chat-reference-type{color:var(--brand-primary)}
+.chat-member-picker{max-height:350px;overflow-y:auto;border:1px solid var(--border-soft);border-radius:12px}
+.chat-member-row{display:flex;align-items:center;gap:13px;padding:12px 14px;border-bottom:1px solid var(--border-soft);cursor:pointer;transition:background-color var(--dur-fast) ease}
+.chat-member-row:last-child{border-bottom:0}.chat-member-row:hover{background:var(--brand-primary-softer)}.chat-member-row.selected{background:var(--brand-primary-soft)}
 .chat-member-row>span:nth-child(2){flex:1;min-width:0}.chat-member-row .badge{flex-shrink:0}
 @media(max-width:767.98px){.chat-layout{height:auto;min-height:500px}.chat-list-panel{max-height:280px}.chat-panel{height:65vh}}
+
+/* Kişi avatarları sıcak umber tonunda kalır; bordo yalnızca aksiyonlar ve seçili durum için ayrılır. */
+.chat-layout .bg-primary { background-color: var(--brand-secondary) !important; }
+.chat-layout .text-primary { color: var(--brand-secondary) !important; }
+/* Personel mesajı bordonun açık tonu, stajyer mesajı beyaz */
+.chat-layout .chat-bubble.from-staff { background-color: #F8E8E5; }
+.chat-layout .chat-messages { background-color: var(--surface-canvas); }
+.chat-layout .chat-bubble { border-radius: 14px; box-shadow: var(--shadow-xs); animation: bubble-in var(--dur) var(--ease-out) backwards; }
+.chat-layout .chat-bubble.from-staff { border-bottom-right-radius: 4px; }
+.chat-layout .chat-bubble.from-intern { border-bottom-left-radius: 4px; }
+.chat-day { box-shadow: var(--shadow-xs); }
+@keyframes bubble-in { from { opacity: 0; translate: 0 8px; scale: .97; } to { opacity: 1; translate: 0 0; scale: 1; } }

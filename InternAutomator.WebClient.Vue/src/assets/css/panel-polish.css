@@ -1,5 +1,7 @@
-.shell-content h4,.shell-content h5{color:#292929}
-.shell-content > div > .card,.shell-content .card{border-color:#e9e3e3}
-.shell-content .form-control,.shell-content .form-select{border-radius:8px}
+/* Panel içi ince ayarlar: başlıklar, kartlar, form alanları */
+.shell-content h4,.shell-content h5{color:var(--text-strong);letter-spacing:-.005em}
+.shell-content h4{font-weight:700}
+.shell-content > div > .card,.shell-content .card{border-color:var(--border-soft)}
+.shell-content .form-control,.shell-content .form-select{border-radius:10px}
 .shell-content .btn{font-weight:500}
-/* Anlamlı durum renkleri yeşil/kırmızı/sarı olarak kalır; ana aksiyonlar bordo olur. */
+/* Anlamlı durum renkleri (başarı/uyarı/hata) işlevlerini korur; ana aksiyonlar bordo olur. */

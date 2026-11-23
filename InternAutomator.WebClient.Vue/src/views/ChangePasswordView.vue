@@ -184,7 +184,7 @@ async function submit() {
 </template>
 
 <style scoped>
-.change-password-page .card{border:1px solid #e9dddd;border-radius:16px;box-shadow:0 16px 38px rgba(0,0,0,.11)!important}
-.password-heading{display:flex;align-items:center;gap:16px;margin-bottom:24px}.password-heading img{height:58px;width:63px;object-fit:contain}.password-heading h4{font-size:1.4rem;font-weight:750;color:#222}
-.change-password-page .btn-link{color:#822328}
+.change-password-page .card{border:1px solid var(--border-soft);border-radius:18px;box-shadow:var(--shadow-md)!important;animation:rise-in .6s var(--ease-out) backwards}
+.password-heading{display:flex;align-items:center;gap:16px;margin-bottom:24px}.password-heading img{height:58px;width:63px;object-fit:contain}.password-heading h4{font-size:1.4rem;font-weight:750;color:var(--text-strong)}
+.change-password-page .btn-link{color:var(--brand-primary)}
 </style>

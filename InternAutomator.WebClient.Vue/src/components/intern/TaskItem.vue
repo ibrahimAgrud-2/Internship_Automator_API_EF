@@ -74,5 +74,5 @@ defineEmits(['edit', 'complete', 'delete'])
 </template>
 
 <style scoped>
-.staff-task-card{background:#fff}.staff-task-overdue{border-left:4px solid #dc3545!important;background:#fffafa}
+.staff-task-card{background:var(--surface);transition:box-shadow var(--dur) var(--ease-out),border-color var(--dur) ease}.staff-task-card:hover{box-shadow:var(--shadow-sm)}.staff-task-overdue{border-left:4px solid var(--danger)!important;background:#FFFAF9}
 </style>

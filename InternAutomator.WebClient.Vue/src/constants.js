@@ -12,7 +12,7 @@ export const APPLICATION_NEW = 0
 export const APPLICATION_REJECTED = 2
 export const APPLICATION_APPROVED = 3
 export const APPLICATION_STATUS = {
-  0: { text: 'Yeni', badge: 'bg-primary' },
+  0: { text: 'Yeni', badge: 'application-status-new' },
   1: { text: 'İptal', badge: 'bg-secondary' },
   2: { text: 'Reddedildi', badge: 'bg-danger' },
   3: { text: 'Onaylandı', badge: 'bg-success' },

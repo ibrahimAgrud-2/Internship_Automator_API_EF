@@ -98,7 +98,14 @@ function closeSidebarOnMobile() {
         </div>
       </nav>
 
-      <main class="shell-content"><RouterView /></main>
+      <main class="shell-content">
+        <!-- Menüden menüye geçerken yalnızca içerik alanı yumuşakça değişir; üst çubuk ve yan menü sabit kalır -->
+        <RouterView v-slot="{ Component }">
+          <Transition name="page" mode="out-in">
+            <component :is="Component" />
+          </Transition>
+        </RouterView>
+      </main>
     </div>
   </div>
 </template>

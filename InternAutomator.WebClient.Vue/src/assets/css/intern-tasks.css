@@ -1,6 +1,11 @@
 /* Stajyer görev kartı: solda kalan günü gösteren renkli kutu, sağda görev bilgisi */
 .task-card {
     overflow: hidden;
+    transition: box-shadow var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+
+.task-card:hover {
+    box-shadow: var(--shadow-md);
 }
 
 .task-days {
@@ -37,17 +42,17 @@
 }
 
 .task-days-yellow {
-    background-color: #ffc107;
-    color: #212529;
+    background-color: #F0C25A;
+    color: #3B2A08;
 }
 
 .task-days-orange {
-    background-color: #d9480f;
+    background-color: #D2692B;
     color: #fff;
 }
 
 .task-days-red {
-    background-color: #dc3545;
+    background-color: var(--danger);
     color: #fff;
 }
 
@@ -70,4 +75,4 @@
     min-width: 0;
 }
 /* Gecikmiş ancak tamamlanmamış görevler açıkça ayrılır. */
-.task-card-overdue{border:1px solid #dc3545;border-left:4px solid #dc3545;box-shadow:0 5px 17px rgba(220,53,69,.12)}
+.task-card-overdue{border:1px solid var(--danger);border-left:4px solid var(--danger);box-shadow:0 5px 17px rgba(209,63,63,.12)}

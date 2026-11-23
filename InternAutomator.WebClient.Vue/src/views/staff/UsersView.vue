@@ -601,9 +601,9 @@ onMounted(loadUsers)
 }
 
 .users-list-card {
-  border: 1px solid #e3e8ef;
+  border: 1px solid var(--border-soft);
   border-radius: 14px;
-  box-shadow: 0 2px 10px rgb(28 45 70 / 4%);
+  box-shadow: var(--shadow-sm);
 }
 
 .users-search-field {
@@ -615,21 +615,21 @@ onMounted(loadUsers)
 }
 
 .users-table {
-  --bs-table-hover-bg: #f7f9fd;
+  --bs-table-hover-bg: var(--surface-hover);
 }
 
 .users-table thead th {
-  color: #65748b;
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 600;
-  border-bottom-color: #e3e8ef;
+  border-bottom-color: var(--border-soft);
   white-space: nowrap;
   padding: 0.9rem 0.8rem;
 }
 
 .users-table tbody td {
   padding: 0.85rem 0.8rem;
-  border-color: #edf1f5;
+  border-color: var(--border-soft);
 }
 
 .users-avatar {
@@ -639,8 +639,8 @@ onMounted(loadUsers)
   flex: 0 0 38px;
   align-items: center;
   justify-content: center;
-  background: #e7eef8;
-  color: #385b86;
+  background: var(--brand-primary-soft);
+  color: var(--brand-primary);
   border-radius: 12px;
   font-weight: 700;
 }
@@ -669,9 +669,9 @@ onMounted(loadUsers)
 }
 
 .users-empty {
-  border: 1px dashed #d9e1eb;
+  border: 1px dashed var(--border-strong);
   border-radius: 12px;
-  background: #fafbfd;
+  background: var(--surface-hover);
 }
 
 @media (max-width: 575.98px) {

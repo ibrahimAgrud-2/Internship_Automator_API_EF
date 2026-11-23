@@ -144,7 +144,7 @@ onMounted(loadAnnouncements)
     <AlertMessages v-else-if="loadErrors.length" :messages="loadErrors" />
     <AlertMessages v-else-if="!hasAnnouncements" type="secondary" messages="Henüz duyuru yok." />
 
-    <div v-else class="d-flex flex-column gap-3">
+    <div v-else class="d-flex flex-column gap-3 reveal-list">
       <div v-for="(item, index) in announcements" :key="item.announcementID ?? index" class="card announcement-card">
         <div class="announcement-layout">
           <div class="announcement-date">{{ formatDate(item.createdDate, '-') }}</div>

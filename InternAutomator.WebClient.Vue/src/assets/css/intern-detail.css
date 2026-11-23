@@ -24,39 +24,39 @@
 }
 /* Projeye göre gruplama: her proje kendi rengiyle gösterilir (renk tek başına anlam taşımaz, grup başlığında proje adı yazar) */
 .project-color-0 {
-    --pc: #822328;
+    --pc: #982B2C;
 }
 
 .project-color-1 {
-    --pc: #fd7e14;
+    --pc: #C98A2E;
 }
 
 .project-color-2 {
-    --pc: #6f42c1;
+    --pc: #5E8068;
 }
 
 .project-color-3 {
-    --pc: #20c997;
+    --pc: #4E6E8E;
 }
 
 .project-color-4 {
-    --pc: #d63384;
+    --pc: #8B5A7B;
 }
 
 .project-color-5 {
-    --pc: #8d5524;
+    --pc: #8A6A4F;
 }
 
 .project-color-6 {
-    --pc: #0dcaf0;
+    --pc: #3F8F8B;
 }
 
 .project-color-7 {
-    --pc: #6610f2;
+    --pc: #B8576B;
 }
 
 .project-color-other {
-    --pc: #adb5bd;
+    --pc: #B8ACA5;
 }
 
 /* Gruplama açıkken soldaki proje kartları da aynı renkle işaretlenir */

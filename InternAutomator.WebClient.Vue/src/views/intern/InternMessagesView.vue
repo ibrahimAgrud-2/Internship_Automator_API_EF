@@ -8,7 +8,7 @@ import { getLatestAnnouncements } from '@/api/announcements'
 import { getAllProjects } from '@/api/projects'
 import { getMyTasks } from '@/api/tasks'
 import { MESSAGE_LIMITS, REFERENCE_NONE, REFERENCE_TYPES, REFERENCE_ANNOUNCEMENT, REFERENCE_PROJECT, REFERENCE_TASK } from '@/constants'
-import { formatTime, formatDate, formatDayLabel } from '@/utils/format'
+import { formatTime, formatDate, formatDayLabel, splitTechnologies } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import ReferencePickerModal from '@/components/ReferencePickerModal.vue'
 import '@/assets/css/messages.css'
@@ -171,22 +171,20 @@ async function loadAnnouncementSections() {
   ]
 }
 
-// Projeler tek bölüm: API en çok stajyerin çalıştığından en aza doğru sıralı verir, sıra olduğu gibi korunur.
-// Çalışan stajyeri olan projeler renkli, hiç alınmayanlar gri görünür.
+// Projeler en çok alınandan en aza doğru gösterilir. Kartta sadece başlık ve kullanılan
+// teknolojiler görünür; kaç kişinin aldığı bilgisi gösterilmez.
 async function loadProjectSections() {
   const projects = await getAllProjects()
   return [
     {
-      items: projects.map((project) => {
-        const count = Number(project.takenByInternCount) || 0
-        return {
+      items: [...projects]
+        .sort((a, b) => (Number(b.takenByInternCount) || 0) - (Number(a.takenByInternCount) || 0))
+        .map((project) => ({
           id: project.projectID,
           title: project.title,
-          subtitle: project.technologies,
-          badge: { text: `${count} stajyer`, tone: count > 0 ? 'primary' : 'secondary' },
-          muted: count === 0,
-        }
-      }),
+          chips: splitTechnologies(project.technologies),
+          subtitle: splitTechnologies(project.technologies).length === 0 ? 'Teknoloji bilgisi belirtilmemiş.' : '',
+        })),
     },
   ]
 }

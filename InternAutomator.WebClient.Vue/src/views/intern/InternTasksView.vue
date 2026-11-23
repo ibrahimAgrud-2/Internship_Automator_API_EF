@@ -79,7 +79,7 @@ onMounted(loadTasks)
     <AlertMessages v-else-if="loadErrors.length" :messages="loadErrors" />
     <AlertMessages v-else-if="!hasTasks" type="secondary" messages="Henüz size verilmiş bir görev yok." />
 
-    <div v-else class="d-flex flex-column gap-3">
+    <div v-else class="d-flex flex-column gap-3 reveal-list">
       <div v-for="task in sortedTasks" :key="task.taskID" class="card task-card" :class="{ 'task-card-done': task.completed, 'task-card-overdue': !task.completed && getDaysBox(task).label === 'gün gecikti' }">
         <div class="d-flex">
           <!-- Sol: kalan gün kutusu -->

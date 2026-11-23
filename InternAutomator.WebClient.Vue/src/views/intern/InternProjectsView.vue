@@ -53,6 +53,6 @@ onMounted(loadProjects)
   </div>
 </template>
 <style scoped>
-.intern-project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.intern-project-item{min-width:0}.intern-project-item .card{border:1px solid #eae4e4;border-radius:13px;box-shadow:0 6px 18px rgba(0,0,0,.06)}.intern-project-item .card-title{font-size:1rem;font-weight:700}
+.intern-project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.intern-project-item{min-width:0}.intern-project-item .card{border:1px solid var(--border-soft);border-radius:13px;box-shadow:0 6px 18px rgba(0,0,0,.06)}.intern-project-item .card-title{font-size:1rem;font-weight:700}
 @media(max-width:500px){.intern-project-grid{grid-template-columns:1fr}}
 </style>

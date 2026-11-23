@@ -428,9 +428,9 @@ async function submit() {
         <AlertMessages v-if="message" :type="message.type" :messages="message.lines" class="mt-3" />
       </form>
     </section>
-  </main>
 
-  <!-- Yalnızca API başvurunun başarıyla alındığını onayladığında görünür. -->
+    <!-- Yalnızca API başvurunun başarıyla alındığını onayladığında görünür.
+         Teleport <main> içinde durur: sayfa tek kök elemanlı kalır ve geçiş animasyonu çalışır. -->
   <Teleport to="body">
     <Transition name="application-success">
       <div
@@ -465,49 +465,50 @@ async function submit() {
         </div>
       </div>
     </Transition>
-  </Teleport>
+    </Teleport>
+  </main>
 </template>
 
 <style scoped>
 .application-page {
-  --brand-red: #822328;
-  --brand-red-hover: #68191e;
-  color: #1c1c1c;
-  background: #fff;
+  --brand-red: var(--brand-primary);
+  --brand-red-hover: var(--brand-primary-hover);
+  color: var(--text-strong);
+  background: var(--surface-canvas);
 }
 
 .application-page h3,
 .application-page h5 {
-  color: #1c1c1c;
+  color: var(--text-strong);
   font-weight: 700;
 }
 
 .application-page .form-label {
-  color: #1c1c1c;
+  color: var(--text-strong);
   font-weight: 500;
 }
 
-.optional { color: #666; font-weight: 400; }
+.optional { color: var(--text-muted); font-weight: 400; }
 .required-indicator { color: var(--brand-red); }
 
 .application-page .form-control,
 .application-page .form-select {
   min-height: 43px;
   background: #fff;
-  color: #1c1c1c;
-  border: 1px solid #d5d5d5;
-  border-radius: 7px;
+  color: var(--text-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
 }
 
 .application-page .form-control:focus,
 .application-page .form-select:focus {
-  color: #1c1c1c;
+  color: var(--text-strong);
   background: #fff;
-  border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(130, 35, 40, .12);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-ring);
 }
 
-.application-page .form-control::placeholder { color: #777; }
+.application-page .form-control::placeholder { color: var(--text-muted); }
 
 /* Üniversite seçimi */
 .university-dropdown { position: relative; width: 100%; }
@@ -520,9 +521,9 @@ async function submit() {
   min-height: 44px;
   padding: 10px 14px;
   background: #fff;
-  border: 1px solid #d5d5d5;
+  border: 1px solid var(--border-strong);
   border-radius: 7px;
-  color: #1c1c1c;
+  color: var(--text-strong);
   font-size: 15px;
   line-height: 1.4;
   text-align: left;
@@ -532,11 +533,11 @@ async function submit() {
 
 .university-trigger:hover,
 .university-trigger.is-open,
-.university-trigger:focus-visible { border-color: var(--brand-red); }
+.university-trigger:focus-visible { border-color: var(--brand-primary); }
 .university-trigger:focus-visible,
-.university-trigger.is-open { outline: none; box-shadow: 0 0 0 3px rgba(130, 35, 40, .12); }
+.university-trigger.is-open { outline: none; box-shadow: 0 0 0 3px var(--brand-primary-ring); }
 .university-trigger:disabled { opacity: .65; cursor: not-allowed; }
-.university-placeholder { color: #777; }
+.university-placeholder { color: var(--text-muted); }
 .dropdown-chevron { flex-shrink: 0; transition: transform .2s ease; }
 .dropdown-chevron.rotated { transform: rotate(180deg); }
 
@@ -548,46 +549,49 @@ async function submit() {
   z-index: 1000;
   overflow: hidden;
   background: #fff;
-  border: 1px solid #d5d5d5;
+  border: 1px solid var(--border-strong);
   border-radius: 9px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
+  box-shadow: var(--shadow-md);
+  animation: menu-in .2s var(--ease-out);
+  transform-origin: top center;
 }
 
-.university-search-container { padding: 10px; background: #fff; border-bottom: 1px solid #e4e4e4; }
+.university-search-container { padding: 10px; background: #fff; border-bottom: 1px solid var(--border-soft); }
 .university-search {
   width: 100%;
   min-height: 40px;
   padding: 8px 12px;
   background: #fff;
-  color: #1c1c1c;
-  border: 1px solid #ccc;
+  color: var(--text-strong);
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
   outline: none;
   font-size: 14px;
 }
-.university-search:focus { border-color: var(--brand-red); box-shadow: 0 0 0 3px rgba(130, 35, 40, .1); }
+.university-search:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px var(--brand-primary-ring); }
 .university-options { max-height: 270px; overflow-y: auto; overscroll-behavior: contain; }
 .university-option {
   display: block;
   width: 100%;
   padding: 11px 14px;
   border: none;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-soft);
   background: #fff;
-  color: #1c1c1c;
+  color: var(--text-strong);
   font-size: 14px;
   line-height: 1.5;
   text-align: left;
   cursor: pointer;
 }
 .university-option:last-child { border-bottom: none; }
+.university-option { transition: background-color .12s ease, color .12s ease, padding-left .2s var(--ease-out); }
 .university-option:hover,
-.university-option.highlighted { background: var(--brand-red); color: #fff; }
+.university-option.highlighted { background: var(--brand-primary-soft); color: var(--brand-primary); padding-left: 18px; }
 .university-option.selected { font-weight: 700; }
-.university-empty { padding: 18px 14px; color: #555; font-size: 14px; text-align: center; }
+.university-empty { padding: 18px 14px; color: var(--text-muted); font-size: 14px; text-align: center; }
 
 /* CV alanı */
-.cv-hint { color: #666; font-size: 13px; line-height: 1.5; }
+.cv-hint { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
 .cv-dropzone {
   display: flex;
   align-items: center;
@@ -596,40 +600,40 @@ async function submit() {
   gap: 9px;
   min-height: 165px;
   padding: 20px;
-  background: #fbfaf9;
-  border: 1.5px dashed #bdb6b5;
+  background: var(--surface-hover);
+  border: 1.5px dashed var(--border-strong);
   border-radius: 11px;
   text-align: center;
   transition: background .15s ease, border-color .15s ease;
 }
-.cv-dropzone.is-dragging { background: #f9ebeb; border-color: var(--brand-red); }
-.cv-dropzone.has-file { min-height: 88px; flex-direction: row; justify-content: flex-start; text-align: left; gap: 14px; background: #fff; border-style: solid; border-color: #d7cac8; }
-.cv-dropzone.has-error { border-color: #b42332; }
-.cv-upload-icon { display: inline-flex; color: var(--brand-red); }
+.cv-dropzone.is-dragging { background: var(--brand-primary-soft); border-color: var(--brand-primary); }
+.cv-dropzone.has-file { min-height: 88px; flex-direction: row; justify-content: flex-start; text-align: left; gap: 14px; background: #fff; border-style: solid; border-color: var(--brand-primary-border); }
+.cv-dropzone.has-error { border-color: var(--danger); }
+.cv-upload-icon { display: inline-flex; color: var(--brand-primary); }
 .cv-upload-icon svg { width: 30px; height: 30px; }
-.cv-prompt { color: #424242; font-size: 14px; }
+.cv-prompt { color: var(--text-body); font-size: 14px; }
 .cv-pick-button {
-  border: 1px solid var(--brand-red);
+  border: 1px solid var(--brand-primary);
   border-radius: 18px;
   padding: 5px 20px;
   background: #fff;
-  color: var(--brand-red);
+  color: var(--brand-primary);
   font-size: 13px;
   font-weight: 700;
 }
 .cv-pick-button:hover,
-.cv-pick-button:focus-visible { color: #fff; background: var(--brand-red); }
+.cv-pick-button:focus-visible { color: #fff; background: var(--brand-primary); }
 .cv-pick-button:disabled { cursor: not-allowed; opacity: .5; }
-.cv-format { color: #777; font-size: 12px; }
-.cv-file-icon { display: inline-flex; flex-shrink: 0; width: 42px; height: 42px; padding: 8px; background: #f8ecec; color: var(--brand-red); border-radius: 9px; }
+.cv-format { color: var(--text-muted); font-size: 12px; }
+.cv-file-icon { display: inline-flex; flex-shrink: 0; width: 42px; height: 42px; padding: 8px; background: var(--brand-primary-soft); color: var(--brand-primary); border-radius: 9px; }
 .cv-file-icon svg { width: 100%; height: 100%; }
 .cv-file-meta { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 4px; }
 .cv-filename { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
-.cv-file-size { color: #666; font-size: 12px; }
+.cv-file-size { color: var(--text-muted); font-size: 12px; }
 .cv-remove { border: 0; background: transparent; color: var(--brand-red); font-size: 13px; font-weight: 600; padding: 8px; }
 .cv-remove:hover { text-decoration: underline; }
 .cv-remove:disabled { opacity: .5; cursor: not-allowed; }
-.cv-error { margin: 7px 0 0; color: #b42332; font-size: 13px; }
+.cv-error { margin: 7px 0 0; color: var(--danger); font-size: 13px; }
 
 /* Başvuru butonu ve bildirimler */
 .submit-button {
@@ -646,16 +650,17 @@ async function submit() {
 .submit-button:focus-visible,
 .submit-button:active { background: var(--brand-red-hover) !important; border-color: var(--brand-red-hover) !important; color: #fff !important; }
 .submit-button:disabled { background: var(--brand-red); border-color: var(--brand-red); color: #fff; opacity: .7; }
-.application-page :deep(.alert) { background: #fff; color: #1c1c1c; border: 1px solid var(--brand-red); }
+.application-page :deep(.alert) { background: #fff; color: var(--text-strong); border: 1px solid var(--border-soft); }
 
 /* Sayfa kartı ve üst bölüm */
 .application-card {
   width: 100%;
   padding: 36px 42px 42px;
   background: #fff;
-  border: 1px solid rgba(130, 35, 40, .18);
+  border: 1px solid var(--border-soft);
   border-radius: 16px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, .08);
+  box-shadow: var(--shadow-md);
+  animation: rise-in .6s var(--ease-out) backwards;
 }
 .application-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 25px; }
 .application-heading { display: flex; align-items: center; gap: 18px; min-width: 0; }
@@ -668,17 +673,17 @@ async function submit() {
   flex-shrink: 0;
   min-height: 38px;
   padding: 8px 20px;
-  border: 1px solid var(--brand-red);
+  border: 1px solid var(--brand-primary);
   border-radius: 22px;
   background: #fff;
-  color: var(--brand-red);
+  color: var(--brand-primary);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   transition: background-color .2s ease, color .2s ease;
 }
 .login-link:hover,
-.login-link:focus-visible { background: var(--brand-red); color: #fff; }
+.login-link:focus-visible { background: var(--brand-primary); color: #fff; }
 
 @media (max-width: 600px) {
   .application-page { padding: 20px 12px !important; }
@@ -709,7 +714,7 @@ async function submit() {
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(23, 19, 26, .66);
+  background: rgba(43, 26, 24, .58);
   backdrop-filter: blur(5px);
   cursor: pointer;
 }
@@ -726,7 +731,7 @@ async function submit() {
   border-radius: 24px;
   box-shadow: 0 26px 75px rgba(0, 0, 0, .27);
   text-align: center;
-  color: #282629;
+  color: var(--text-strong);
 }
 .application-success-panel::before {
   content: '';
@@ -734,7 +739,7 @@ async function submit() {
   z-index: -1;
   inset: 0 0 auto;
   height: 8px;
-  background: linear-gradient(90deg, #822328, #d15b68, #e6a15d, #822328);
+  background: linear-gradient(90deg, var(--brand-primary), #C2706B, #D9A66B, #EBD3A8);
 }
 .application-success-icon {
   display: grid;
@@ -756,11 +761,11 @@ async function submit() {
   font-size: clamp(22px, 4vw, 27px);
   line-height: 1.25;
   font-weight: 800;
-  color: #242124;
+  color: var(--text-strong);
 }
 .application-success-thanks {
   margin: 0 0 7px;
-  color: #822328;
+  color: var(--brand-primary);
   font-size: 16px;
   font-weight: 700;
 }
@@ -769,7 +774,7 @@ async function submit() {
   margin: 0 auto 27px;
   font-size: 15px;
   line-height: 1.65;
-  color: #5d5860;
+  color: var(--text-muted);
 }
 .application-success-button {
   display: inline-flex;
@@ -781,18 +786,18 @@ async function submit() {
   padding: 10px 22px;
   border: 0;
   border-radius: 26px;
-  background: #822328;
+  background: var(--brand-primary);
   color: #fff;
   font-size: 15px;
   font-weight: 700;
   transition: background .18s ease, transform .18s ease;
 }
 .application-success-button:hover,
-.application-success-button:focus-visible { background: #68191e; transform: translateY(-1px); }
-.application-success-button:focus-visible { outline: 3px solid rgba(130, 35, 40, .25); outline-offset: 3px; }
+.application-success-button:focus-visible { background: var(--brand-primary-hover); transform: translateY(-1px); }
+.application-success-button:focus-visible { outline: 3px solid rgba(152, 43, 44, .25); outline-offset: 3px; }
 .application-success-dismiss {
   margin: 18px 0 0;
-  color: #928d93;
+  color: var(--text-faint);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -805,7 +810,7 @@ async function submit() {
 }
 .confetti-a { top: 45px; left: 42px; font-size: 23px; color: #bd5268; }
 .confetti-b { top: 96px; right: 39px; font-size: 31px; color: #e5a34a; animation-delay: .4s; }
-.confetti-c { top: 173px; left: 28px; font-size: 13px; color: #91bcb6; animation-delay: .8s; }
+.confetti-c { top: 173px; left: 28px; font-size: 13px; color: #D9A66B; animation-delay: .8s; }
 .confetti-d { top: 222px; right: 33px; font-size: 17px; color: #bc7595; animation-delay: 1s; }
 @keyframes application-success-float { from { transform: translateY(0) rotate(-7deg); } to { transform: translateY(-9px) rotate(7deg); } }
 .application-success-enter-active,

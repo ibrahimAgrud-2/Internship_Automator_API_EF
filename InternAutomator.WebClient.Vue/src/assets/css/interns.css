@@ -2,21 +2,22 @@
 .intern-search{width:245px;max-width:100%}
 .intern-status-filter{width:175px;max-width:100%}
 .intern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:14px;align-items:stretch}
-.intern-card{min-width:0;border:1px solid #e7e2e2;border-radius:15px;box-shadow:0 7px 18px rgba(0,0,0,.06);background:#fff;overflow:hidden;transition:box-shadow .2s ease,transform .2s ease}
-.intern-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.12)}
+.intern-card{min-width:0;border:1px solid var(--border-soft);border-radius:16px;box-shadow:var(--shadow-sm);background:var(--surface);overflow:hidden;transition:box-shadow var(--dur) var(--ease-out),transform var(--dur) var(--ease-out),border-color var(--dur) ease}
+.intern-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--brand-primary-border)}
 .intern-card-left{opacity:.84}
 .intern-card-body{padding:16px 15px 14px;min-width:0;flex:1;display:flex;flex-direction:column}
 .intern-card-identity{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:13px}
-.intern-avatar{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#f7e9e9;color:#822328;font-weight:700;font-size:12px}
-.intern-card-name{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 7px;color:#242424}
-.intern-card-email{font-size:.79rem;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:13px}
+.intern-avatar{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--brand-primary-soft);color:var(--brand-primary);font-weight:700;font-size:12px;box-shadow:inset 0 0 0 1px var(--brand-primary-border);transition:background-color var(--dur) ease,color var(--dur) ease}
+.intern-card:hover .intern-avatar{background:var(--brand-primary);color:#fff}
+.intern-card-name{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 7px;color:var(--text-strong)}
+.intern-card-email{font-size:.79rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:13px}
 .intern-card-meta{display:grid;gap:8px;margin-top:auto}
-.intern-card-date{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:#faf7f7;border:1px solid #f0e6e6}
-.intern-card-date span{font-size:.7rem;color:#777;text-transform:uppercase;letter-spacing:.04em}
-.intern-card-date strong{font-size:.8rem;color:#333;font-weight:600}
+.intern-card-date{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:var(--surface-muted);border:1px solid var(--border-soft)}
+.intern-card-date span{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+.intern-card-date strong{font-size:.8rem;color:var(--text-body);font-weight:600}
 .intern-card-actions{display:flex;gap:7px;padding:0 12px 14px}
 .intern-card-actions .btn{flex:1;min-width:0;font-size:.75rem;padding:7px 4px}
 @media(min-width:1560px){.intern-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(max-width:600px){.intern-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.intern-search{width:100%}}
 @media(max-width:390px){.intern-grid{grid-template-columns:1fr}}
-@media(prefers-reduced-motion:reduce){.intern-card{transition:none}}
+@media(prefers-reduced-motion:reduce){.intern-card{transition:none}.intern-card:hover{transform:none}}
