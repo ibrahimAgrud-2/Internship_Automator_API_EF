@@ -17,6 +17,12 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         [Required]
         public int PersonID { get; set; }
 
+
+        [ForeignKey(nameof(PersonID))]
+        public PersonEntity Person { get; set; }
+
+
+
         public int? ReviewedByUserID { get; set; }
 
         public DateTime? ReviewDate { get; set; }

@@ -23,6 +23,13 @@ namespace Shared.Application
         public string University { get; set; }
 
         [Required]
+        [MaxLength(100)]
+        public string ApplicantEmail { get; set; }
+
+        [Required]
+        public string ApplicantFullName { get; set; }
+
+        [Required]
         [MaxLength(30)]
         public string Department { get; set; }
 
@@ -42,7 +49,7 @@ namespace Shared.Application
 
         [Required]
         public bool HasCv { get; set; }
-        public ApplicationDetailedListDTO(int applicationID, short status,DateTime applicationDate, string university, string department,short classYear,string notes,string linkedinURL,string gitHubURL,bool hasCv)
+        public ApplicationDetailedListDTO(int applicationID,string applicantFullName,string applicantEmail, short status,DateTime applicationDate, string university, string department,short classYear,string notes,string linkedinURL,string gitHubURL,bool hasCv)
         {
 
             this.University = university;
@@ -55,6 +62,8 @@ namespace Shared.Application
             this.GitHubURL = gitHubURL;
             this.Notes = notes;
             this.HasCv = hasCv;
+            this.ApplicantFullName = applicantFullName;
+            this.ApplicantEmail = applicantEmail;
 
         }
     }

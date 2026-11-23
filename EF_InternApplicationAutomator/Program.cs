@@ -135,11 +135,11 @@ builder.Services.AddTransient<EmailService>(sp =>
     var configuration = sp.GetRequiredService<IConfiguration>();
 
     var settings = configuration
-        .GetSection("Email")
+        .GetSection("ApplicantEmail")
         .Get<EmailSettings>() ?? new EmailSettings();
 
     settings.Password =
-        configuration["Email:AppPassword"] ?? "";
+        configuration["ApplicantEmail:AppPassword"] ?? "";
 
     return new EmailService(settings, configuration);
 });

@@ -4168,6 +4168,8 @@
       },
       "ApplicationDetailedListDTO": {
         "required": [
+          "applicantEmail",
+          "applicantFullName",
           "applicationDate",
           "applicationID",
           "classYear",
@@ -4195,6 +4197,15 @@
           },
           "university": {
             "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "applicantEmail": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "applicantFullName": {
             "minLength": 1,
             "type": "string"
           },

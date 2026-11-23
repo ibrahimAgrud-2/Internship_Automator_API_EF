@@ -6,6 +6,7 @@ import {
   createGroupConversation,
   addInternToConversation,
   getAllConversationInterns,
+  removeInternFromConversation,
 } from '@/api/conversations'
 import { getAllInterns } from '@/api/interns'
 import { getAllMessages, addMessage } from '@/api/messages'
@@ -69,6 +70,59 @@ const memberLoadErrors = ref([])
 const memberSaveErrors = ref([])
 const memberSuccess = ref('')
 
+// Üye çıkarma: onay aynı üye satırında gösterilir, ikinci modal açılmaz.
+const pendingRemovalInternID = ref(null)
+const isRemovingMember = ref(false)
+const removeMemberErrors = ref([])
+
+function requestRemoveMember(member) {
+  if (!groupInfoConversation.value?.isGroup || !isGroupInfoOpen.value) return
+  if (isRemovingMember.value || isGroupMembersLoading.value || groupMembersErrors.value.length) return
+  const internID = Number(member?.internID)
+  if (!Number.isSafeInteger(internID) || internID <= 0) return
+  if (!existingGroupMemberIDs.value.has(internID)) return
+  pendingRemovalInternID.value = internID
+  removeMemberErrors.value = []
+  memberSuccess.value = ''
+}
+
+function cancelRemoveMember() {
+  if (isRemovingMember.value) return
+  pendingRemovalInternID.value = null
+  removeMemberErrors.value = []
+}
+
+async function confirmRemoveMember() {
+  if (!groupInfoConversation.value?.isGroup) return
+  if (isRemovingMember.value || isGroupMembersLoading.value || !isGroupInfoOpen.value) return
+  const conversationID = Number(groupInfoConversation.value?.conversationID)
+  const internID = Number(pendingRemovalInternID.value)
+  if (!Number.isSafeInteger(conversationID) || conversationID <= 0) return
+  if (!Number.isSafeInteger(internID) || internID <= 0) return
+  if (!existingGroupMemberIDs.value.has(internID)) return
+
+  isRemovingMember.value = true
+  removeMemberErrors.value = []
+  memberSuccess.value = ''
+  try {
+    await removeInternFromConversation(conversationID, internID)
+    // Üye yalnızca backend yanıtıyla yenilenen listeden kaybolur.
+    pendingRemovalInternID.value = null
+    const refreshed = await loadGroupMembers(conversationID)
+    if (!refreshed) {
+      memberSuccess.value = 'Çıkarma isteği başarılı; üye listesi yenilenemedi. Yeniden Dene ile listeyi güncelleyin.'
+    } else if (existingGroupMemberIDs.value.has(internID)) {
+      memberSuccess.value = 'API başarılı yanıt verdi ancak stajyer hâlâ üye listesinde. Sunucu kaydını kontrol edin.'
+    } else {
+      memberSuccess.value = 'Stajyer gruptan çıkarıldı.'
+    }
+  } catch (error) {
+    removeMemberErrors.value = getErrorMessages(error)
+  } finally {
+    isRemovingMember.value = false
+  }
+}
+
 const filteredMembers = computed(() => {
   const words = memberSearch.value.toLocaleLowerCase('tr-TR').trim().split(/\s+/).filter(Boolean)
   return [...memberList.value]
@@ -89,7 +143,7 @@ const filteredMembers = computed(() => {
 })
 
 const selectedMember = computed(() =>
-  memberList.value.find((intern) => Number(intern.internID) === Number(selectedMemberID.value)) ?? null
+  filteredMembers.value.find((intern) => Number(intern.internID) === Number(selectedMemberID.value)) ?? null
 )
 
 async function loadGroupMembers(conversationID) {
@@ -121,28 +175,37 @@ async function loadGroupMembers(conversationID) {
   }
 }
 
-async function openGroupInfo() {
+async function openConversationInfo() {
   const conversation = selectedConversation.value
-  if (!conversation?.isGroup) return
+  if (!conversation) return
   const conversationID = Number(conversation.conversationID)
   if (!Number.isSafeInteger(conversationID) || conversationID <= 0) return
 
   groupInfoConversation.value = {
     conversationID,
     conversationName: conversation.conversationName,
+    isGroup: conversation.isGroup === true,
   }
   groupInfoView.value = 'members'
   groupMembers.value = []
   memberSuccess.value = ''
   memberSaveErrors.value = []
+  pendingRemovalInternID.value = null
+  removeMemberErrors.value = []
   isGroupInfoOpen.value = true
   await loadGroupMembers(conversationID)
 }
 
 async function openMemberPicker() {
-  if (isGroupMembersLoading.value || groupMembersErrors.value.length || isAddingMember.value) return
-  if (!groupInfoConversation.value) return
+  if (isGroupMembersLoading.value || groupMembersErrors.value.length || isAddingMember.value || isRemovingMember.value) return
+  if (!groupInfoConversation.value?.isGroup) return
 
+  // Bir üye başka yerden eklenmişse eski liste üzerinden seçim yaptırma.
+  const refreshed = await loadGroupMembers(Number(groupInfoConversation.value.conversationID))
+  if (!refreshed || !groupInfoConversation.value?.isGroup || !isGroupInfoOpen.value) return
+
+  pendingRemovalInternID.value = null
+  removeMemberErrors.value = []
   groupInfoView.value = 'add'
   memberSearch.value = ''
   selectedMemberID.value = null
@@ -169,7 +232,7 @@ async function openMemberPicker() {
 }
 
 async function submitAddMember() {
-  if (isAddingMember.value || isMemberListLoading.value || !selectedMember.value) return
+  if (!groupInfoConversation.value?.isGroup || isAddingMember.value || isMemberListLoading.value || !selectedMember.value) return
   const conversationID = Number(groupInfoConversation.value?.conversationID)
   const internID = Number(selectedMember.value.internID)
   if (!Number.isSafeInteger(conversationID) || conversationID <= 0) return
@@ -786,29 +849,20 @@ onMounted(async () => {
       <section class="chat-panel">
         <div v-if="selectedConversation" class="d-flex align-items-center gap-3 px-3 py-2 border-bottom">
           <button
-            v-if="selectedConversation.isGroup"
             type="button"
             class="btn btn-link text-decoration-none text-body d-flex align-items-center gap-3 p-0 text-start flex-grow-1"
-            aria-label="Grup profilini ve üyelerini görüntüle"
-            title="Grup bilgilerini görüntüle"
-            @click="openGroupInfo"
+            :aria-label="selectedConversation.isGroup ? 'Grup bilgilerini görüntüle' : 'Sohbet bilgilerini görüntüle'"
+            :title="selectedConversation.isGroup ? 'Grup bilgileri' : 'Sohbet bilgileri'"
+            @click="openConversationInfo"
           >
             <span
-              class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold bg-success"
+              class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
+              :class="selectedConversation.isGroup ? 'bg-success' : 'bg-primary'"
             >
               {{ getConversationInitials(selectedConversation.conversationName) }}
             </span>
             <span class="fw-semibold text-break">{{ selectedConversation.conversationName }}</span>
-            <span class="small text-muted ms-auto">Grup bilgileri</span>
           </button>
-          <template v-else>
-            <span
-              class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold bg-primary"
-            >
-              {{ getConversationInitials(selectedConversation.conversationName) }}
-            </span>
-            <div class="fw-semibold text-break flex-grow-1">{{ selectedConversation.conversationName }}</div>
-          </template>
         </div>
 
         <template v-if="selectedConversation">
@@ -1146,31 +1200,33 @@ onMounted(async () => {
       </template>
     </BaseModal>
 
-    <!-- Grup başlığına/avatarına tıklandığında açılır; sadece grup sohbetlerinde görünür. -->
+    <!-- Grup ve özel sohbet başlığına/avatarına tıklandığında aynı bilgi penceresi açılır. -->
     <BaseModal
       v-model="isGroupInfoOpen"
-      :title="groupInfoView === 'members' ? 'Grup Bilgileri' : 'Gruba Üye Ekle'"
+      :title="groupInfoView === 'add' ? 'Gruba Üye Ekle' : (groupInfoConversation?.isGroup ? 'Grup Bilgileri' : 'Sohbet Bilgileri')"
       dialog-class="modal-dialog-scrollable"
     >
       <template v-if="groupInfoView === 'members'">
         <div class="d-flex align-items-center gap-3 mb-3">
           <span
-            class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold bg-success"
+            class="avatar-circle rounded-circle text-white d-flex align-items-center justify-content-center fw-semibold"
+            :class="groupInfoConversation?.isGroup ? 'bg-success' : 'bg-primary'"
           >
             {{ getConversationInitials(groupInfoConversation?.conversationName) }}
           </span>
           <div>
             <div class="fw-semibold text-break">{{ groupInfoConversation?.conversationName }}</div>
-            <div class="small text-muted">Grup sohbeti</div>
+            <div class="small text-muted">{{ groupInfoConversation?.isGroup ? 'Grup sohbeti' : 'Özel sohbet' }}</div>
           </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-          <span class="fw-semibold">Üyeler ({{ groupMembers.length }})</span>
+          <span class="fw-semibold">{{ groupInfoConversation?.isGroup ? 'Üyeler' : 'Stajyer' }} ({{ groupMembers.length }})</span>
           <button
+            v-if="groupInfoConversation?.isGroup"
             type="button"
             class="btn btn-sm btn-outline-primary"
-            :disabled="isGroupMembersLoading || groupMembersErrors.length > 0 || isAddingMember"
+            :disabled="isGroupMembersLoading || groupMembersErrors.length > 0 || isAddingMember || isRemovingMember"
             @click="openMemberPicker"
           >
             + Yeni Üye Ekle
@@ -1190,23 +1246,71 @@ onMounted(async () => {
           </button>
         </template>
         <p v-else-if="groupMembers.length === 0" class="text-muted small mb-0 py-3 text-center">
-          Bu grupta henüz stajyer bulunmuyor. Yeni üye ekleyebilirsiniz.
+          {{ groupInfoConversation?.isGroup ? 'Bu grupta henüz stajyer bulunmuyor. Yeni üye ekleyebilirsiniz.' : 'Bu sohbete ait stajyer bilgisi bulunamadı.' }}
         </p>
-        <div v-else class="chat-member-picker" style="max-height: 350px; overflow-y: auto" aria-label="Grubun üyeleri">
+        <div v-else class="chat-member-picker" style="max-height: 350px; overflow-y: auto" :aria-label="groupInfoConversation?.isGroup ? 'Grubun üyeleri' : 'Özel sohbetin stajyeri'">
           <div
             v-for="member in groupMembers"
             :key="member.internID"
-            class="chat-member-row"
+            class="chat-member-row flex-wrap"
           >
-            <span
-              class="avatar-circle rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold"
-              style="width: 36px; height: 36px; flex-shrink: 0"
+            <div class="d-flex align-items-center gap-3 w-100">
+              <span
+                class="avatar-circle rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold"
+                style="width: 36px; height: 36px; flex-shrink: 0"
+              >
+                {{ getConversationInitials(`${member.firstName ?? ''} ${member.lastName ?? ''}`) }}
+              </span>
+              <span class="flex-grow-1 text-break">
+                <span class="fw-medium d-block">{{ `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || `Stajyer #${member.internID}` }}</span>
+                <small v-if="member.email" class="text-muted d-block">{{ member.email }}</small>
+              </span>
+              <button
+                v-if="groupInfoConversation?.isGroup"
+                type="button"
+                class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center"
+                style="width: 32px; height: 32px; flex-shrink: 0"
+                :aria-label="`${member.firstName ?? ''} ${member.lastName ?? ''} adlı stajyeri gruptan çıkar`"
+                :aria-expanded="pendingRemovalInternID === Number(member.internID)"
+                :aria-controls="`remove-member-confirm-${member.internID}`"
+                title="Gruptan çıkar"
+                :disabled="isRemovingMember || isGroupMembersLoading"
+                @click.stop="requestRemoveMember(member)"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 6h18" />
+                  <path d="M8 6V4h8v2" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 10v6" />
+                  <path d="M14 10v6" />
+                </svg>
+              </button>
+            </div>
+            <!-- İkinci modal yerine, ilgili üyenin altında açılan küçük onay alanı. -->
+            <div
+              v-if="groupInfoConversation?.isGroup && pendingRemovalInternID === Number(member.internID)"
+              :id="`remove-member-confirm-${member.internID}`"
+              class="w-100 d-flex justify-content-end mt-2"
             >
-              {{ getConversationInitials(`${member.firstName ?? ''} ${member.lastName ?? ''}`) }}
-            </span>
-            <span class="fw-medium text-break">
-              {{ `${member.firstName ?? ''} ${member.lastName ?? ''}`.trim() || `Stajyer #${member.internID}` }}
-            </span>
+              <div class="border rounded bg-body-tertiary p-2 shadow-sm" style="width: min(100%, 310px)" role="group" aria-label="Üyeyi çıkarma onayı">
+                <p class="small mb-2">Bu stajyeri gruptan çıkarmak istiyor musunuz?</p>
+                <AlertMessages v-if="removeMemberErrors.length" :messages="removeMemberErrors" class="mb-2" />
+                <div class="d-flex justify-content-end gap-2">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    :disabled="isRemovingMember"
+                    @click="cancelRemoveMember"
+                  >Vazgeç</button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-primary"
+                    :disabled="isRemovingMember"
+                    @click="confirmRemoveMember"
+                  >{{ isRemovingMember ? 'Çıkarılıyor...' : 'Evet, çıkar' }}</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </template>
@@ -1262,7 +1366,7 @@ onMounted(async () => {
 
       <template #footer>
         <template v-if="groupInfoView === 'members'">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" :disabled="isRemovingMember">Kapat</button>
         </template>
         <template v-else>
           <button

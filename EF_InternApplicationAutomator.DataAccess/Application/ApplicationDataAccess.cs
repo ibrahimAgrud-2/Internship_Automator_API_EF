@@ -20,9 +20,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         public List<ApplicationDetailedListDTO> GetAllApplication()
         {
 
-            return _Context.Applications
+            return _Context.Applications.Include(a=>a.Person)
               .AsNoTracking()
-              .Select(a => new ApplicationDetailedListDTO(a.ApplicationID, a.Status, a.ApplicationDate, a.University, a.Department, a.ClassYear, a.Notes, a.LinkedInUrl, a.GitHubUrl,a.HasCv))
+              .Select(a => new ApplicationDetailedListDTO(a.ApplicationID,a.Person.FirstName+" "+a.Person.LastName,a.Person.Email, a.Status, a.ApplicationDate, a.University, a.Department, a.ClassYear, a.Notes, a.LinkedInUrl, a.GitHubUrl,a.HasCv))
               .ToList();
         }
 

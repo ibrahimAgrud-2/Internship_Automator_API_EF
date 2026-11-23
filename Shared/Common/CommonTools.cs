@@ -150,7 +150,7 @@ namespace Shared.Common
                 body = body
                     .Replace("{FirstName}", firstName ?? "")
                     .Replace("{LastName}", lastName ?? "")
-                    .Replace("{Email}", email)
+                    .Replace("{ApplicantEmail}", email)
                     .Replace("{Password}", tempPassword);
 
                 // 3. E-postayı oluştur

@@ -76,7 +76,7 @@ const filteredApplications = computed(() => {
       if (classFilter.value !== 'all' && String(application.classYear) !== classFilter.value) return false
 
       const searchable = normalizeSearchText(
-        `${getFullName(application)} ${application.personInfo?.email ?? ''} ${application.university ?? ''} ${application.department ?? ''}`,
+        `${getFullName(application)} ${getApplicantEmail(application)} ${application.university ?? ''} ${application.department ?? ''}`,
       )
 
       return terms.every((word) => searchable.includes(word))
@@ -106,9 +106,17 @@ function clearFilters() {
   sortOrder.value = 'newest'
 }
 
+// Yeni Application/All yanıtı başvuranın adını ve e-postasını doğrudan döndürür.
+// Eski yanıttaki personInfo için geri dönük uyumluluk korunur.
 function getFullName(application) {
+  const fullName = String(application.applicantFullName ?? '').trim()
+  if (fullName) return fullName
   const person = application.personInfo ?? {}
   return `${person.firstName ?? ''} ${person.lastName ?? ''}`.trim()
+}
+
+function getApplicantEmail(application) {
+  return String(application?.applicantEmail ?? application?.personInfo?.email ?? '').trim()
 }
 
 function getStatusInfo(status) {
@@ -126,10 +134,10 @@ const selectedLinksApplication = computed(() =>
   applications.value.find((application) => application.applicationID === openLinksApplicationID.value) ?? null,
 )
 
-function getEmailHref(application) {
-  const email = String(application?.personInfo?.email ?? '').trim()
+function getGmailComposeUrl(application) {
+  const email = getApplicantEmail(application)
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null
-  return `mailto:${email}`
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`
 }
 
 function closeLinksMenu(restoreFocus = false) {
@@ -435,7 +443,6 @@ onBeforeUnmount(() => {
           <thead>
             <tr>
               <th>Ad Soyad</th>
-              <th>E-posta</th>
               <th>Üniversite</th>
               <th>Bölüm</th>
               <th>Sınıf</th>
@@ -448,7 +455,6 @@ onBeforeUnmount(() => {
           <tbody>
             <tr v-for="application in visibleApplications" :key="application.applicationID">
               <td>{{ getFullName(application) }}</td>
-              <td>{{ application.personInfo?.email }}</td>
               <td>{{ application.university }}</td>
               <td>{{ application.department }}</td>
               <td>{{ application.classYear }}</td>
@@ -584,21 +590,35 @@ onBeforeUnmount(() => {
         <div class="app-links-menu-divider"></div>
 
         <a
-          v-if="getEmailHref(selectedLinksApplication)"
+          v-if="getGmailComposeUrl(selectedLinksApplication)"
           class="app-links-menu-item is-email"
           role="menuitem"
-          :href="getEmailHref(selectedLinksApplication)"
+          :href="getGmailComposeUrl(selectedLinksApplication)"
+          target="_blank"
+          rel="noopener noreferrer"
           @click="closeLinksMenu()"
         >
           <span class="app-links-menu-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M2.8 19.5h3.7V10l-3.7-2.8v12.3Z"/>
+              <path fill="#34A853" d="M17.5 19.5h3.7V7.2L17.5 10v9.5Z"/>
+              <path fill="#EA4335" d="m2.8 7.2 9.2 7 9.2-7V4.8l-9.2 7-9.2-7v2.4Z"/>
+              <path fill="#C5221F" d="M2.8 4.8V7.2L6.5 10V6.2L4 4.3a.75.75 0 0 0-1.2.5Z"/>
+              <path fill="#FBBC04" d="M17.5 6.2V10l3.7-2.8V4.8a.75.75 0 0 0-1.2-.5l-2.5 1.9Z"/>
+            </svg>
           </span>
-          <span class="app-links-menu-copy"><strong>E-posta gönder</strong><small>E-posta uygulamasında aç</small></span>
+          <span class="app-links-menu-copy"><strong>Gmail ile e-posta gönder</strong><small>Gmail'de yeni ileti oluştur</small></span>
           <span class="app-links-outbound" aria-hidden="true">↗</span>
         </a>
         <button v-else type="button" class="app-links-menu-item is-email" role="menuitem" disabled>
           <span class="app-links-menu-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M2.8 19.5h3.7V10l-3.7-2.8v12.3Z"/>
+              <path fill="#34A853" d="M17.5 19.5h3.7V7.2L17.5 10v9.5Z"/>
+              <path fill="#EA4335" d="m2.8 7.2 9.2 7 9.2-7V4.8l-9.2 7-9.2-7v2.4Z"/>
+              <path fill="#C5221F" d="M2.8 4.8V7.2L6.5 10V6.2L4 4.3a.75.75 0 0 0-1.2.5Z"/>
+              <path fill="#FBBC04" d="M17.5 6.2V10l3.7-2.8V4.8a.75.75 0 0 0-1.2-.5l-2.5 1.9Z"/>
+            </svg>
           </span>
           <span class="app-links-menu-copy"><strong>E-posta gönder</strong><small>E-posta bulunmuyor</small></span>
         </button>
@@ -649,7 +669,7 @@ onBeforeUnmount(() => {
 .applications-field .form-select,.applications-field .form-control{font-size:.88rem;min-height:42px}
 .applications-filter-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 20px 15px;font-size:.84rem;color:#666}
 .applications-filter-footer .btn-link{color:#822328;text-decoration:none}
-.applications-table{font-size:.86rem;min-width:1070px;margin:0}
+.applications-table{font-size:.86rem;min-width:970px;margin:0}
 .applications-table thead th{background:#faf8f8;padding:14px 12px;white-space:nowrap;border-color:#ebdfdf}
 .applications-table td{padding:14px 12px;vertical-align:middle}
 .applications-table tbody tr:last-child td{border-bottom:0}

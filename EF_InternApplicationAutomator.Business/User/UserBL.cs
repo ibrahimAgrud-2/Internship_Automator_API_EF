@@ -52,7 +52,7 @@ namespace EF_InternApplicationAutomator.Business.User
                 {
                     return -1;
                 }
-                //if (_emailService.SendEmail(personCreate.FirstName, personCreate.LastName, personCreate.Email, password))
+                //if (_emailService.SendEmail(personCreate.FirstName, personCreate.LastName, personCreate.ApplicantEmail, password))
                 //{
                 //    return insertedPersonID;
                 //}
