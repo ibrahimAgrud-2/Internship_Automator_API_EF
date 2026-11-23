@@ -1,4 +1,6 @@
-import { getSession, clearSession } from '@/auth/session'
+// API ile konuşmanın tek kapısı. API adresini sadece bu dosya bilir.
+// (Eski client'taki core/api.js'in modül hâli: aynı mantık, import/export ile.)
+
 export const API_BASE_URL = 'https://localhost:7042/api'
 
 // API'dan gelen her hata bu tipte döner; sayfa sadece mesajları gösterir
@@ -35,16 +37,18 @@ async function readErrorMessages(response) {
 }
 
 async function request(method, path, body) {
-  const headers = {}
+  const options = { method }
 
-  // Oturumda token varsa her isteğe eklenir
-  const token = getSession()?.token
-  if (token) headers.Authorization = `Bearer ${token}`
+  if (body !== undefined) {
+    if (body instanceof FormData) {
+      // Multipart boundary'yi tarayıcı kendisi ekler; Content-Type elle verilmez.
+      options.body = body
+    } else {
+      options.headers = { 'Content-Type': 'application/json' }
+      options.body = JSON.stringify(body)
+    }
+  }
 
-  if (body !== undefined) headers['Content-Type'] = 'application/json'
-
-  const options = { method, headers }
-  if (body !== undefined) options.body = JSON.stringify(body)
   let response
 
   try {
@@ -52,12 +56,7 @@ async function request(method, path, body) {
   } catch {
     throw new ApiError(0, ['Sunucuya ulaşılamadı. Lütfen tekrar deneyin.'])
   }
-  // Token geçersiz ya da süresi dolmuş: oturumu sil, giriş sayfasına dön
-  if (response.status === 401) {
-    clearSession()
-    window.location.assign(`${import.meta.env.BASE_URL}login`)
-    throw new ApiError(401, ['Oturumunuz sona erdi. Lütfen tekrar giriş yapın.'])
-  }
+
   if (!response.ok) {
     throw new ApiError(response.status, await readErrorMessages(response))
   }

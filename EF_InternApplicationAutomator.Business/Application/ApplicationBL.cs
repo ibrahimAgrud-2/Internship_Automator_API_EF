@@ -98,18 +98,23 @@ namespace EF_InternApplicationAutomator.Business.Application
              
         }
 
-        public int AddApplication(ApplicationCreateSecure newApplicationDTO)
+        public int AddApplication(ApplicationCreateSecure newApplicationDTO,string CVPath)
         {
             if (newApplicationDTO == null || newApplicationDTO.PersonInfo == null)
             {
                 return -1;
             }
-    
+            
             int personID = 0;
             PersonResponseSDTO? personCreateSDTO = _person.Find(newApplicationDTO.PersonInfo.Email);
             if (personCreateSDTO == null)
             {
-                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"Intern",CommonTools.HashPassword(personCreateSDTO.Password));
+
+               // Console.WriteLine(CommonTools.HashPassword(personCreateSDTO.Password));
+
+                PersonCreateWithRoleDTO personCreate = new PersonCreateWithRoleDTO(newApplicationDTO.PersonInfo.FirstName, newApplicationDTO.PersonInfo.LastName, newApplicationDTO.PersonInfo.Email, newApplicationDTO.PersonInfo.Phone, newApplicationDTO.PersonInfo.Address, newApplicationDTO.PersonInfo.ImagePath,"Intern",CommonTools.GenerateRandomPassword(11));
+              
+                
                 personID = _person.AddPerson(personCreate);
 
             }
@@ -120,7 +125,7 @@ namespace EF_InternApplicationAutomator.Business.Application
 
             //mapping
             //applicaiton ilk Add yapıldığında reviewed değildir. IsActive new'dır yani review edilmeyi bekli
-            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,null, null, DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear, (byte)enStatus.newApp,newApplicationDTO.Notes,newApplicationDTO.LinkedinURL,newApplicationDTO.GithubURL);
+            ApplicationCreateDTO application = new ApplicationCreateDTO(personID, newApplicationDTO.PersonInfo,null, null, DateTime.Now.Date, newApplicationDTO.University, newApplicationDTO.Department, newApplicationDTO.ClassYear, (byte)enStatus.newApp,newApplicationDTO.Notes,newApplicationDTO.LinkedinURL,newApplicationDTO.GithubURL,CVPath);
 
 
 

@@ -30,7 +30,7 @@ namespace Shared.Application
         public short ClassYear { get; set; }
 
         [Required]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
 
         [Required]

@@ -52,6 +52,12 @@ C:\Users\ibrah\Masaüstü\Internship_Automator_API_EF\EF_InternApplicationAutoma
 C:\Users\ibrah\Masaüstü\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\refint\EF_InternApplicationAutomator.Business.dll
 C:\Users\ibrah\Masaüstü\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.pdb
 C:\Users\ibrah\Masaüstü\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\ref\EF_InternApplicationAutomator.Business.dll
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.csproj.AssemblyReference.cache
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.AssemblyInfoInputs.cache
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.AssemblyInfo.cs
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.csproj.CoreCompileInputs.cache
+C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.sourcelink.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\bin\Debug\net8.0\EF_InternApplicationAutomator.Business.deps.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\bin\Debug\net8.0\EF_InternApplicationAutomator.Business.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\bin\Debug\net8.0\EF_InternApplicationAutomator.Business.pdb
@@ -59,12 +65,6 @@ C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAuto
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\bin\Debug\net8.0\Shared.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\bin\Debug\net8.0\EF_InternApplicationAutomator.DataAccess.pdb
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\bin\Debug\net8.0\Shared.pdb
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.csproj.AssemblyReference.cache
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.AssemblyInfoInputs.cache
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.AssemblyInfo.cs
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.csproj.CoreCompileInputs.cache
-C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.sourcelink.json
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_Inter.463703A5.Up2Date
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\EF_InternApplicationAutomator.Business.dll
 C:\Users\ibrah\source\repos\Internship_Automator_API_EF\EF_InternApplicationAutomator.Business\obj\Debug\net8.0\refint\EF_InternApplicationAutomator.Business.dll

@@ -34,17 +34,18 @@ namespace Shared.Application
         public byte Status { get; set; }
 
         [MaxLength(150)]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         [MaxLength(50)]
         public string LinkedinURL { get; set; }
 
         [MaxLength(50)]
         public string GithubURL { get; set; }
+        public string CVPath { get; set; }
 
         public ApplicationCreateDTO(int personID, PersonCreateSDTO PersonInfo, int? reviewedByUserID,
             DateTime? reviewDate, DateTime applicationDate, string university, string department,
-            short classYear, byte status, string notes, string linkedinURL, string githubURL)
+            short classYear, byte status, string notes, string linkedinURL, string githubURL, string cVPath)
         {
 
 
@@ -60,6 +61,7 @@ namespace Shared.Application
             this.Notes = notes;
             this.LinkedinURL = linkedinURL;
             this.GithubURL = githubURL;
+            CVPath = cVPath;
         }
     }
 }

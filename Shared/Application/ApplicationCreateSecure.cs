@@ -1,6 +1,9 @@
 ﻿
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Utilities;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 
 namespace Shared.Application
@@ -12,7 +15,7 @@ namespace Shared.Application
 
 
 
-        public PersonCreateSDTO PersonInfo { get; set; }
+        public PersonCreateSDTO PersonInfo { get; set; } = new();
 
         [Required]
         [MaxLength(100)]
@@ -26,7 +29,7 @@ namespace Shared.Application
         public short ClassYear { get; set; }
 
         [MaxLength(150)]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         [MaxLength(50)]
         public string LinkedinURL { get; set; }
@@ -34,7 +37,13 @@ namespace Shared.Application
         [MaxLength(50)]
         public string GithubURL { get; set; }
 
+        public IFormFile CV { get; set; }
 
+
+        public ApplicationCreateSecure()
+        {
+           
+        }
         public ApplicationCreateSecure(PersonCreateSDTO PersonInfo, string university, string department,
             short classYear, string notes, string linkedinURL, string githubURL)
         {

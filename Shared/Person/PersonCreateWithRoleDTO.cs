@@ -20,7 +20,10 @@ namespace Shared
             this.Role = rol;
             this.PasswordHash = passwordHash;
 
-
+        }
+        public PersonCreateWithRoleDTO()
+        {
+            
         }
     }
 }

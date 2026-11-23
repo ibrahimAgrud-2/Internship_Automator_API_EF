@@ -1,8 +1,27 @@
 import { apiGet, apiPost, apiPut, ApiError } from './http'
 
 // ---- Başvurular ----
-export function submitApplication(application) {
-  return apiPost('Application', application)
+// Başvuru + PDF özgeçmiş aynı multipart/form-data isteğinde gönderilir.
+export function submitApplication(application, cvFile) {
+  const data = new FormData()
+  const person = application.personInfo
+
+  data.append('PersonInfo.FirstName', person.firstName)
+  data.append('PersonInfo.LastName', person.lastName)
+  data.append('PersonInfo.Email', person.email)
+  data.append('PersonInfo.Phone', person.phone)
+
+  if (person.address) data.append('PersonInfo.Address', person.address)
+
+  data.append('University', application.university)
+  data.append('Department', application.department)
+  data.append('ClassYear', String(application.classYear))
+
+  if (application.linkedinURL) data.append('LinkedinURL', application.linkedinURL)
+  if (application.githubURL) data.append('GithubURL', application.githubURL)
+
+  data.append('CV', cvFile, cvFile.name)
+  return apiPost('Application/Apply', data)
 }
 
 export async function getAllApplications() {
@@ -20,16 +39,6 @@ export function updateApplicationStatus(applicationID, status, notes) {
   return apiPut('Application/Update/AppStatus', { applicationID, status, notes })
 }
 
-
-
-export function acceptApplication(applicationID, note = '') {
-  const query = new URLSearchParams({
-    applicationID: String(applicationID)
-  })
-
-  if (note.trim()) {
-    query.set('note', note.trim())
-  }
-
-  return apiPut(`Application/Update/AppStatus/accept?${query.toString()}`)
+export function acceptApplication(applicationID, status, notes) {
+  return apiPut('Application/Update/AppStatus/accepted', { applicationID, status, notes })
 }

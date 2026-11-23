@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EF_InternApplicationAutomator.API.Service;
 using EF_InternApplicationAutomator.Business.Application;
-using Shared.Application;
-using System.Collections.Generic;
-using System;
 using Microsoft.AspNetCore.Authorization;
-using EF_InternApplicationAutomator.API.Service;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Application;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace EF_InternApplicationAutomator.API.Controllers.Application
 {
@@ -13,33 +14,79 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
     public class ApplicationController : ControllerBase
     {
         ApplicationBL _application;
-
-        public ApplicationController(ApplicationBL application)
+        private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+        private readonly string _uploadDirectory;
+        public ApplicationController(ApplicationBL application, IWebHostEnvironment env)
         {
             _application = application;
+            _uploadDirectory = Path.Combine(env.ContentRootPath, "Uploads");
         }
 
+
         //add herkese açık
-        [HttpPost]
+        [HttpPost("Apply")]
+        [Consumes("multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<bool> AddNewApplication(ApplicationCreateSecure newApplicationDTO)
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult AddNewApplication([FromForm] ApplicationCreateSecure newApplicationDTO)
         {
             if (newApplicationDTO == null || newApplicationDTO.PersonInfo == null)
             {
                 return BadRequest("Invalid Application data.");
             }
+            var cv = newApplicationDTO.CV;
 
-            int ID = _application.AddApplication(newApplicationDTO);
-
-            if (ID < 1)
+            // 1) Dosya geldi mi?
+            if (cv == null || cv.Length == 0)
             {
-                return BadRequest("sistemden kaynaklana bir sorundan ötürü başvuru eklenemedi");
+                return BadRequest("Dosya seçilmedi");
+            }
+            // 2) Boyut (Length bayt cinsindendir)
+            if (cv.Length > MaxFileSizeBytes)
+            {
+                return BadRequest("Dosya en fazla 5 MB olabilir");
             }
 
+            // 3) Uzantı .pdf mi?
+            if (!string.Equals(Path.GetExtension(cv.FileName), ".pdf", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("Sadece PDF dosyası yüklenebilir");
+            }
+
+            // 4) İçerik gerçekten PDF mi? Gerçek PDF dosyaları "%PDF-" ile başlar
+            byte[] header = new byte[5];
+            using (var stream = cv.OpenReadStream())
+            {
+                int read = stream.Read(header, 0, header.Length);
+                if (read < header.Length || Encoding.ASCII.GetString(header) != "%PDF-")
+                {
+                    return BadRequest("Dosya geçerli bir PDF değil");
+                }
+            }
+
+            // Dosya adını sunucu üretir: rastgele ad + sabit uzantı
+            string fileName = $"{Guid.NewGuid()}.pdf";
+
+            // Klasör varsa bir şey yapmaz, yoksa oluşturur
+            Directory.CreateDirectory(_uploadDirectory);
+
+            string fullPath = Path.Combine(_uploadDirectory, fileName);
+
+            // using: iş bitince dosya kapanır, kilitli kalmaz
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                cv.CopyTo(stream);
+            }
+
+            int ID = _application.AddApplication(newApplicationDTO, fileName);
+            if (ID < 1)
+            {
+                System.IO.File.Delete(fullPath);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
             return Ok(true);
         }
-
 
 
         [Authorize(Roles ="User")]
@@ -175,21 +222,43 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         }
 
         [Authorize(Roles = "User")]
-        [HttpGet("exists/{appID}")]
-        public bool IsUserExists(int appID)
+        [HttpGet("exists/{ApplicationID}")]
+        public bool IsUserExists(int ApplicationID)
         {
-            if (appID < 1)
+            if (ApplicationID < 1)
             {
                 return false;
             }
 
 
-            if (_application.IsApplicationExists(appID))
+            if (_application.IsApplicationExists(ApplicationID))
             {
                 return true;
             }
             return false;
 
         }
+
+
+
+        //[Authorize(Roles = "User")]
+        //[HttpGet("{ApplicationID}/CV")]
+        //public bool GetCV(int ApplicationID)
+        //{
+        //    if (ApplicationID < 1)
+        //    {
+        //        return false;
+        //    }
+
+
+        //    if (!_application.IsApplicationExists(ApplicationID))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+
+        //}
+
+
     }
 }

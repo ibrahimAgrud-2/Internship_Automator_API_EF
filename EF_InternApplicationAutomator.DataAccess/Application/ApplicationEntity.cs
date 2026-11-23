@@ -40,8 +40,8 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
 
 
 
-        [Required]
-        public string Notes { get; set; }
+  
+        public string? Notes { get; set; }
 
 
         [Required]
@@ -50,8 +50,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
 
         [Required]
         public string GitHubUrl { get; set; }
+        public string CVPath { get; set; }
 
-        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate, string university, string department, short classYear, byte status, string notes, string linkedInUrl, string gitHubUrl)
+        public ApplicationEntity(int applicationID, int personID, int? reviewedByUserID, DateTime? reviewDate, DateTime applicationDate, string university, string department, short classYear, byte status, string notes, string linkedInUrl, string gitHubUrl, string cVPath )
         {
             ApplicationID = applicationID;
             PersonID = personID;
@@ -65,7 +66,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
             this.GitHubUrl = gitHubUrl;
             this.LinkedInUrl = linkedInUrl;
             this.Notes = notes;
-
+            CVPath = cVPath;
         }
     }
 }

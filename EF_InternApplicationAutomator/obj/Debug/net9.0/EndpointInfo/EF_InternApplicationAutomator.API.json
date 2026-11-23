@@ -363,26 +363,115 @@
         }
       }
     },
-    "/api/Application": {
+    "/api/Application/Apply": {
       "post": {
         "tags": [
           "Application"
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ApplicationCreateSecure"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationCreateSecure"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplicationCreateSecure"
+                "required": [
+                  "ClassYear",
+                  "Department",
+                  "PersonInfo.Address",
+                  "PersonInfo.Email",
+                  "PersonInfo.FirstName",
+                  "PersonInfo.LastName",
+                  "PersonInfo.Phone",
+                  "University"
+                ],
+                "type": "object",
+                "properties": {
+                  "PersonInfo.FirstName": {
+                    "type": "string"
+                  },
+                  "PersonInfo.LastName": {
+                    "type": "string"
+                  },
+                  "PersonInfo.Email": {
+                    "type": "string"
+                  },
+                  "PersonInfo.Phone": {
+                    "type": "string"
+                  },
+                  "PersonInfo.Address": {
+                    "type": "string"
+                  },
+                  "PersonInfo.ImagePath": {
+                    "type": "string"
+                  },
+                  "University": {
+                    "maxLength": 100,
+                    "type": "string"
+                  },
+                  "Department": {
+                    "maxLength": 30,
+                    "type": "string"
+                  },
+                  "ClassYear": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "Notes": {
+                    "maxLength": 150,
+                    "type": "string"
+                  },
+                  "LinkedinURL": {
+                    "maxLength": 50,
+                    "type": "string"
+                  },
+                  "GithubURL": {
+                    "maxLength": 50,
+                    "type": "string"
+                  },
+                  "CV": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "PersonInfo.FirstName": {
+                  "style": "form"
+                },
+                "PersonInfo.LastName": {
+                  "style": "form"
+                },
+                "PersonInfo.Email": {
+                  "style": "form"
+                },
+                "PersonInfo.Phone": {
+                  "style": "form"
+                },
+                "PersonInfo.Address": {
+                  "style": "form"
+                },
+                "PersonInfo.ImagePath": {
+                  "style": "form"
+                },
+                "University": {
+                  "style": "form"
+                },
+                "Department": {
+                  "style": "form"
+                },
+                "ClassYear": {
+                  "style": "form"
+                },
+                "Notes": {
+                  "style": "form"
+                },
+                "LinkedinURL": {
+                  "style": "form"
+                },
+                "GithubURL": {
+                  "style": "form"
+                },
+                "CV": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -409,24 +498,10 @@
             }
           },
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -808,14 +883,14 @@
         }
       }
     },
-    "/api/Application/exists/{appID}": {
+    "/api/Application/exists/{ApplicationID}": {
       "get": {
         "tags": [
           "Application"
         ],
         "parameters": [
           {
-            "name": "appID",
+            "name": "ApplicationID",
             "in": "path",
             "required": true,
             "schema": {
@@ -4041,49 +4116,6 @@
           "content": {
             "minLength": 1,
             "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicationCreateSecure": {
-        "required": [
-          "classYear",
-          "department",
-          "university"
-        ],
-        "type": "object",
-        "properties": {
-          "personInfo": {
-            "$ref": "#/components/schemas/PersonCreateSDTO"
-          },
-          "university": {
-            "maxLength": 100,
-            "minLength": 1,
-            "type": "string"
-          },
-          "department": {
-            "maxLength": 30,
-            "minLength": 1,
-            "type": "string"
-          },
-          "classYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "notes": {
-            "maxLength": 150,
-            "type": "string",
-            "nullable": true
-          },
-          "linkedinURL": {
-            "maxLength": 50,
-            "type": "string",
-            "nullable": true
-          },
-          "githubURL": {
-            "maxLength": 50,
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false

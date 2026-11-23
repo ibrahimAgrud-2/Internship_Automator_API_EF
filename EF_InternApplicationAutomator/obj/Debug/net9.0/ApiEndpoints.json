@@ -191,41 +191,6 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
-    "Method": "AddNewApplication",
-    "RelativePath": "api/Application",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "newApplicationDTO",
-        "Type": "Shared.Application.ApplicationCreateSecure",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "System.Boolean",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
     "Method": "Find",
     "RelativePath": "api/Application/{ApplicationID}",
     "HttpMethod": "GET",
@@ -341,14 +306,110 @@
   },
   {
     "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
+    "Method": "AddNewApplication",
+    "RelativePath": "api/Application/Apply",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PersonInfo.FirstName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PersonInfo.LastName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PersonInfo.Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PersonInfo.Phone",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PersonInfo.Address",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PersonInfo.ImagePath",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "University",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Department",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ClassYear",
+        "Type": "System.Int16",
+        "IsRequired": false
+      },
+      {
+        "Name": "Notes",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LinkedinURL",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "GithubURL",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CV",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 500
+      }
+    ]
+  },
+  {
+    "ContainingType": "EF_InternApplicationAutomator.API.Controllers.Application.ApplicationController",
     "Method": "IsUserExists",
-    "RelativePath": "api/Application/exists/{appID}",
+    "RelativePath": "api/Application/exists/{ApplicationID}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "appID",
+        "Name": "ApplicationID",
         "Type": "System.Int32",
         "IsRequired": true
       }

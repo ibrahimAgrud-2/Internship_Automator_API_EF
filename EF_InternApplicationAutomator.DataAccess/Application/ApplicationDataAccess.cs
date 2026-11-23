@@ -43,7 +43,7 @@ namespace EF_InternApplicationAutomator.DataAccess.Application
         {
 
             ApplicationEntity appEntity = new ApplicationEntity(
-                0,app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status,app.Notes,app.LinkedinURL,app.GithubURL
+                0,app.PersonID, app.ReviewedByUserID, app.ReviewDate, app.ApplicationDate, app.University, app.Department, app.ClassYear, app.Status,app.Notes,app.LinkedinURL,app.GithubURL,app.CVPath
             );
 
             EntityEntry<ApplicationEntity> pw = _Context.Applications.Add(appEntity);
