@@ -21,6 +21,31 @@ const sortedTasks = computed(() => [
   ...tasks.value.filter((task) => task.completed),
 ])
 
+// ---------- Özet şeridi: sayılar aynı zamanda filtre görevi görür ----------
+const filter = ref('all') // all | active | overdue | done
+
+const isOverdue = (task) => !task.completed && getDaysLeft(task.dueDate) < 0
+const stats = computed(() => ({
+  all: tasks.value.length,
+  active: tasks.value.filter((t) => !t.completed && !isOverdue(t)).length,
+  overdue: tasks.value.filter(isOverdue).length,
+  done: tasks.value.filter((t) => t.completed).length,
+}))
+const STAT_TILES = [
+  { key: 'all', label: 'Tümü' },
+  { key: 'active', label: 'Devam eden' },
+  { key: 'overdue', label: 'Geciken' },
+  { key: 'done', label: 'Tamamlanan' },
+]
+const visibleTasks = computed(() =>
+  sortedTasks.value.filter((task) => {
+    if (filter.value === 'active') return !task.completed && !isOverdue(task)
+    if (filter.value === 'overdue') return isOverdue(task)
+    if (filter.value === 'done') return task.completed
+    return true
+  }),
+)
+
 async function loadTasks() {
   isLoading.value = true
   loadErrors.value = []
@@ -79,8 +104,26 @@ onMounted(loadTasks)
     <AlertMessages v-else-if="loadErrors.length" :messages="loadErrors" />
     <AlertMessages v-else-if="!hasTasks" type="secondary" messages="Henüz size verilmiş bir görev yok." />
 
-    <div v-else class="d-flex flex-column gap-3 reveal-list">
-      <div v-for="task in sortedTasks" :key="task.taskID" class="card task-card" :class="{ 'task-card-done': task.completed, 'task-card-overdue': !task.completed && getDaysBox(task).label === 'gün gecikti' }">
+    <template v-else>
+    <div class="task-stats" role="group" aria-label="Görevleri filtrele">
+      <button
+        v-for="tile in STAT_TILES"
+        :key="tile.key"
+        type="button"
+        class="task-stat"
+        :class="[`task-stat-${tile.key}`, { active: filter === tile.key }]"
+        :aria-pressed="filter === tile.key"
+        @click="filter = tile.key"
+      >
+        <strong>{{ stats[tile.key] }}</strong>
+        <span>{{ tile.label }}</span>
+      </button>
+    </div>
+
+    <AlertMessages v-if="!visibleTasks.length" type="secondary" messages="Bu filtreye uyan görev yok." />
+
+    <TransitionGroup v-else name="task-list" tag="div" class="d-flex flex-column gap-3 task-list">
+      <div v-for="task in visibleTasks" :key="task.taskID" class="card task-card" :class="{ 'task-card-done': task.completed, 'task-card-overdue': !task.completed && getDaysBox(task).label === 'gün gecikti' }">
         <div class="d-flex">
           <!-- Sol: kalan gün kutusu -->
           <div class="task-days" :class="`task-days-${getDaysBox(task).tone}`">
@@ -100,6 +143,7 @@ onMounted(loadTasks)
           </div>
         </div>
       </div>
-    </div>
+    </TransitionGroup>
+    </template>
   </div>
 </template>

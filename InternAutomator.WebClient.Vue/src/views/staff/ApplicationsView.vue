@@ -11,7 +11,7 @@ import {
   APPLICATION_STATUS,
   APPLICATION_NOTES_LIMIT,
 } from '@/constants'
-import { formatDate, normalizeSearchText } from '@/utils/format'
+import { formatDate, normalizeSearchText, getInitials } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
@@ -123,6 +123,49 @@ function getStatusInfo(status) {
   return APPLICATION_STATUS[status] ?? { text: 'Bilinmiyor', badge: 'bg-warning text-dark' }
 }
 
+// ---------- Durum sekmeleri: sayılar sekmenin üzerinde görünür ----------
+const STATUS_TABS = [
+  { value: '0', label: 'Yeni', key: APPLICATION_NEW },
+  { value: '3', label: 'Onaylandı', key: APPLICATION_APPROVED },
+  { value: '2', label: 'Reddedildi', key: APPLICATION_REJECTED },
+  { value: '1', label: 'İptal', key: 1 },
+  { value: 'all', label: 'Tümü', key: 'all' },
+]
+const statusCounts = computed(() => {
+  const counts = { all: applications.value.length }
+  for (const application of applications.value) counts[application.status] = (counts[application.status] ?? 0) + 1
+  return counts
+})
+
+// ---------- Detay paneli: satıra tıklayınca sağdan açılır ----------
+const detailOpen = ref(false)
+const detailID = ref(null)
+const detailSnapshot = ref(null) // liste yenilenirken (boşaldığı an) panel kapanmasın diye son hâli tutulur
+const detailApplication = computed(
+  () => applications.value.find((a) => a.applicationID === detailID.value) ?? detailSnapshot.value,
+)
+watch(
+  () => applications.value.find((a) => a.applicationID === detailID.value),
+  (found) => { if (found) detailSnapshot.value = found },
+)
+
+function openDetail(application) {
+  closeLinksMenu()
+  detailID.value = application.applicationID
+  detailSnapshot.value = application
+  detailOpen.value = true
+}
+function closeDetail() { detailOpen.value = false }
+
+function getDetailInitials(application) {
+  const parts = getFullName(application).split(' ').filter(Boolean)
+  return getInitials(parts[0], parts.length > 1 ? parts[parts.length - 1] : '')
+}
+const getPhone = (a) => String(a?.phone ?? a?.applicantPhone ?? a?.personInfo?.phone ?? '').trim()
+const getNotes = (a) => String(a?.notes ?? a?.note ?? '').trim()
+const getLinkedIn = (a) => getLinkHref(a?.linkedinURL ?? a?.linkedInURL)
+const getGitHub = (a) => getLinkHref(a?.gitHubURL ?? a?.githubURL)
+
 // Başvuru iletişim menüsü her satır için ayrı bir API çağrısı yapmaz.
 // Teleport ile body içine taşındığı için yatay kaydırmalı tabloda kesilmez.
 const openLinksApplicationID = ref(null)
@@ -188,6 +231,11 @@ function handleLinksOutsidePointer(event) {
 }
 
 function handleLinksKeyDown(event) {
+  // Detay paneli açıkken Esc paneli kapatır (karar penceresi açıksa o önce kapanır)
+  if (event.key === 'Escape' && detailOpen.value && !isDecisionOpen.value && openLinksApplicationID.value === null) {
+    closeDetail()
+    return
+  }
   if (event.key === 'Escape' && openLinksApplicationID.value !== null) {
     event.preventDefault()
     closeLinksMenu(true)
@@ -400,20 +448,26 @@ onBeforeUnmount(() => {
     <AlertMessages v-else-if="applications.length === 0" type="secondary" messages="Henüz başvuru yok." />
 
     <section v-else class="applications-card">
+      <div class="status-tabs" role="tablist" aria-label="Başvuru durumu">
+        <button
+          v-for="tab in STATUS_TABS"
+          :key="tab.value"
+          type="button"
+          role="tab"
+          class="status-tab"
+          :class="{ active: statusFilter === tab.value }"
+          :aria-selected="statusFilter === tab.value"
+          @click="statusFilter = tab.value"
+        >
+          {{ tab.label }}
+          <span class="status-tab-count">{{ statusCounts[tab.key] ?? 0 }}</span>
+        </button>
+      </div>
+
       <div class="applications-filters">
         <label class="applications-field applications-search">
           <span>Ara</span>
           <input v-model="searchText" type="search" class="form-control" placeholder="Ad, e-posta, üniversite veya bölüm" autocomplete="off" />
-        </label>
-        <label class="applications-field">
-          <span>Durum</span>
-          <select v-model="statusFilter" class="form-select">
-            <option value="all">Tüm durumlar</option>
-            <option value="0">Yeni</option>
-            <option value="1">İptal</option>
-            <option value="2">Reddedildi</option>
-            <option value="3">Onaylandı</option>
-          </select>
         </label>
         <label class="applications-field">
           <span>Sınıf</span>
@@ -453,7 +507,15 @@ onBeforeUnmount(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="application in visibleApplications" :key="application.applicationID">
+            <tr
+              v-for="application in visibleApplications"
+              :key="application.applicationID"
+              class="application-row"
+              tabindex="0"
+              :aria-label="`${getFullName(application)} başvuru detayını aç`"
+              @click="openDetail(application)"
+              @keydown.enter.self="openDetail(application)"
+            >
               <td>{{ getFullName(application) }}</td>
               <td>{{ application.university }}</td>
               <td>{{ application.department }}</td>
@@ -473,7 +535,7 @@ onBeforeUnmount(() => {
                   aria-haspopup="menu"
                   aria-controls="application-links-menu"
                   :aria-label="`${getFullName(application)} için bağlantıları aç`"
-                  @click="toggleLinksMenu($event, application)"
+                  @click.stop="toggleLinksMenu($event, application)"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/>
@@ -484,8 +546,8 @@ onBeforeUnmount(() => {
               </td>
               <td>
                 <template v-if="application.status === APPLICATION_NEW">
-                  <button type="button" class="btn btn-sm btn-success me-1" @click="openDecision('approve', application)">Onayla</button>
-                  <button type="button" class="btn btn-sm btn-danger me-1" @click="openDecision('reject', application)">Reddet</button>
+                  <button type="button" class="btn btn-sm btn-success me-1" @click.stop="openDecision('approve', application)">Onayla</button>
+                  <button type="button" class="btn btn-sm btn-danger me-1" @click.stop="openDecision('reject', application)">Reddet</button>
                 </template>
               </td>
             </tr>
@@ -625,6 +687,71 @@ onBeforeUnmount(() => {
       </div>
     </Teleport>
 
+    <!-- Başvuru detay paneli -->
+    <Teleport to="body">
+      <Transition name="detail">
+        <div v-if="detailOpen && detailApplication" class="detail-layer" @click.self="closeDetail">
+          <aside class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+            <header class="detail-head">
+              <span class="detail-avatar" aria-hidden="true">{{ getDetailInitials(detailApplication) }}</span>
+              <div class="detail-head-text">
+                <h5 id="detailTitle" class="text-break">{{ getFullName(detailApplication) }}</h5>
+                <span class="badge application-status-pill" :class="getStatusInfo(detailApplication.status).badge">{{ getStatusInfo(detailApplication.status).text }}</span>
+              </div>
+              <button type="button" class="detail-close" aria-label="Paneli kapat" @click="closeDetail">×</button>
+            </header>
+
+            <div class="detail-body">
+              <section class="detail-section">
+                <h6>İletişim</h6>
+                <dl>
+                  <div><dt>E-posta</dt><dd class="text-break">{{ getApplicantEmail(detailApplication) || '—' }}</dd></div>
+                  <div><dt>Telefon</dt><dd>{{ getPhone(detailApplication) || '—' }}</dd></div>
+                </dl>
+              </section>
+
+              <section class="detail-section">
+                <h6>Eğitim</h6>
+                <dl>
+                  <div><dt>Üniversite</dt><dd>{{ detailApplication.university || '—' }}</dd></div>
+                  <div><dt>Bölüm</dt><dd>{{ detailApplication.department || '—' }}</dd></div>
+                  <div><dt>Sınıf</dt><dd>{{ detailApplication.classYear ? `${detailApplication.classYear}. sınıf` : '—' }}</dd></div>
+                </dl>
+              </section>
+
+              <section class="detail-section">
+                <h6>Başvuru</h6>
+                <dl>
+                  <div><dt>Tarih</dt><dd>{{ formatDate(detailApplication.applicationDate, '—') }}</dd></div>
+                </dl>
+                <p v-if="getNotes(detailApplication)" class="detail-note text-break"><strong>Not:</strong> {{ getNotes(detailApplication) }}</p>
+              </section>
+
+              <section class="detail-section">
+                <h6>Bağlantılar</h6>
+                <div class="detail-links">
+                  <button type="button" class="detail-link" :disabled="!hasCV(detailApplication) || cvLoadingApplicationID !== null" @click="viewApplicationCV(detailApplication)">
+                    {{ cvLoadingApplicationID === detailApplication.applicationID ? 'CV açılıyor...' : 'CV görüntüle' }}
+                  </button>
+                  <a v-if="getLinkedIn(detailApplication)" class="detail-link" :href="getLinkedIn(detailApplication)" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                  <span v-else class="detail-link is-disabled">LinkedIn yok</span>
+                  <a v-if="getGitHub(detailApplication)" class="detail-link" :href="getGitHub(detailApplication)" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                  <span v-else class="detail-link is-disabled">GitHub yok</span>
+                  <a v-if="getGmailComposeUrl(detailApplication)" class="detail-link" :href="getGmailComposeUrl(detailApplication)" target="_blank" rel="noopener noreferrer">E-posta gönder ↗</a>
+                </div>
+                <AlertMessages v-if="cvErrors.length" type="danger" :messages="cvErrors" class="mt-3 mb-0" />
+              </section>
+            </div>
+
+            <footer v-if="detailApplication.status === APPLICATION_NEW" class="detail-footer">
+              <button type="button" class="btn btn-danger" @click="openDecision('reject', detailApplication)">Reddet</button>
+              <button type="button" class="btn btn-success" @click="openDecision('approve', detailApplication)">Onayla</button>
+            </footer>
+          </aside>
+        </div>
+      </Transition>
+    </Teleport>
+
     <BaseModal
       v-model="isDecisionOpen"
       :title="pendingAction?.title ?? ''"
@@ -663,7 +790,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .applications-card{background:#fff;border:1px solid var(--border-soft);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)}
-.applications-filters{display:grid;grid-template-columns:minmax(200px,2fr) repeat(3,minmax(120px,1fr));gap:12px;padding:19px 20px 10px}
+.applications-filters{display:grid;grid-template-columns:minmax(200px,2fr) repeat(2,minmax(120px,1fr));gap:12px;padding:19px 20px 10px}
 .applications-field{display:flex;flex-direction:column;gap:6px;min-width:0}
 .applications-field span{font-size:.82rem;font-weight:650;color:var(--text-body)}
 .applications-field .form-select,.applications-field .form-control{font-size:.88rem;min-height:42px}
@@ -706,5 +833,50 @@ onBeforeUnmount(() => {
 .app-page-btn:hover:not(:disabled){background:var(--brand-primary);color:#fff;border-color:var(--brand-primary)}
 .app-page-btn:disabled{opacity:.55;color:var(--text-faint)}
 @media(max-width:1100px){.applications-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.applications-filters{grid-template-columns:1fr}}
 @media(max-width:600px){.applications-filters{grid-template-columns:1fr;padding:15px}.applications-filter-footer{padding:5px 15px 14px}.applications-pagination{padding:15px}}
+
+/* Durum sekmeleri */
+.status-tabs{display:flex;gap:4px;padding:10px 14px 0;border-bottom:1px solid var(--border-soft);overflow-x:auto}
+.status-tab{position:relative;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:0;background:transparent;color:var(--text-muted);font-weight:600;font-size:.88rem;white-space:nowrap;border-radius:10px 10px 0 0;transition:color .15s ease,background-color .15s ease}
+.status-tab::after{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--brand-primary);transform:scaleX(0);transition:transform .25s var(--ease-out)}
+.status-tab:hover{color:var(--text-strong);background:var(--brand-primary-softer)}
+.status-tab.active{color:var(--brand-primary)}
+.status-tab.active::after{transform:scaleX(1)}
+.status-tab-count{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--surface-muted);color:var(--text-muted);font-size:.74rem;font-weight:700;text-align:center;transition:background-color .15s ease,color .15s ease}
+.status-tab.active .status-tab-count{background:var(--brand-primary);color:#fff}
+
+/* Satır tıklanabilir */
+.application-row{cursor:pointer}
+.application-row:focus-visible{outline:2px solid var(--brand-primary);outline-offset:-2px}
+
+/* Sağdan açılan detay paneli */
+.detail-layer{position:fixed;inset:0;z-index:1040;background:rgba(43,26,24,.42);backdrop-filter:blur(2px);display:flex;justify-content:flex-end}
+.detail-panel{display:flex;flex-direction:column;width:min(440px,100%);height:100%;background:var(--surface);box-shadow:var(--shadow-lg)}
+.detail-head{display:flex;align-items:center;gap:14px;padding:20px 22px;border-bottom:1px solid var(--border-soft);background:linear-gradient(180deg,var(--brand-primary-softer),var(--surface))}
+.detail-avatar{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border-radius:16px;background:var(--brand-primary);color:#fff;font-weight:700;font-size:1.05rem;box-shadow:0 6px 16px rgba(var(--brand-primary-rgb),.28)}
+.detail-head-text{flex:1;min-width:0}
+.detail-head-text h5{margin:0 0 6px;font-weight:700}
+.detail-close{width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:var(--text-muted);font-size:1.6rem;line-height:1;transition:background-color .15s ease,color .15s ease}
+.detail-close:hover{background:var(--brand-primary-soft);color:var(--brand-primary)}
+.detail-body{flex:1;overflow-y:auto;padding:8px 22px 22px}
+.detail-section{padding:16px 0;border-bottom:1px solid var(--border-soft)}
+.detail-section:last-child{border-bottom:0}
+.detail-section h6{margin:0 0 10px;font-size:.7rem;font-weight:750;letter-spacing:.09em;text-transform:uppercase;color:var(--text-faint)}
+.detail-section dl{margin:0;display:grid;gap:10px}
+.detail-section dl>div{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;font-size:.9rem}
+.detail-section dt{color:var(--text-muted);font-weight:500}
+.detail-section dd{margin:0;color:var(--text-strong);font-weight:550}
+.detail-note{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--accent-soft);color:var(--text-body);font-size:.86rem}
+.detail-links{display:flex;flex-wrap:wrap;gap:8px}
+.detail-link{display:inline-flex;align-items:center;padding:7px 13px;border:1px solid var(--brand-primary-border);border-radius:999px;background:var(--surface);color:var(--brand-primary);font-size:.82rem;font-weight:600;text-decoration:none;transition:background-color .15s ease,color .15s ease,border-color .15s ease}
+.detail-link:hover:not(:disabled):not(.is-disabled){background:var(--brand-primary);color:#fff;border-color:var(--brand-primary)}
+.detail-link:disabled,.detail-link.is-disabled{color:var(--text-faint);border-color:var(--border-soft);background:var(--surface-muted);cursor:not-allowed}
+.detail-footer{display:flex;gap:10px;padding:16px 22px;border-top:1px solid var(--border-soft);background:var(--surface-hover)}
+.detail-footer .btn{flex:1;padding:10px}
+.detail-enter-active,.detail-leave-active{transition:opacity .25s ease}
+.detail-enter-active .detail-panel,.detail-leave-active .detail-panel{transition:translate .35s var(--ease-out)}
+.detail-enter-from,.detail-leave-to{opacity:0}
+.detail-enter-from .detail-panel,.detail-leave-to .detail-panel{translate:100% 0}
+@media(prefers-reduced-motion:reduce){.detail-enter-active .detail-panel,.detail-leave-active .detail-panel{transition:none}}
 </style>

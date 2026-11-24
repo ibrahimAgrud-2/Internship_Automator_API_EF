@@ -76,3 +76,26 @@
 }
 /* Gecikmiş ancak tamamlanmamış görevler açıkça ayrılır. */
 .task-card-overdue{border:1px solid var(--danger);border-left:4px solid var(--danger);box-shadow:0 5px 17px rgba(209,63,63,.12)}
+
+/* Özet şeridi */
+.task-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.task-stat{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px 16px;border:1px solid var(--border-soft);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-xs);text-align:left;color:var(--text-body);transition:box-shadow var(--dur) var(--ease-out),border-color var(--dur) ease,translate var(--dur) var(--ease-out),background-color var(--dur) ease}
+.task-stat strong{font-size:1.7rem;font-weight:750;line-height:1.1;letter-spacing:-.02em;color:var(--text-strong)}
+.task-stat span{font-size:.8rem;font-weight:600;color:var(--text-muted)}
+.task-stat::after{content:'';position:absolute;left:16px;right:16px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--brand-primary);transform:scaleX(0);transition:transform var(--dur) var(--ease-out)}
+.task-stat:hover{translate:0 -2px;box-shadow:var(--shadow-sm);border-color:var(--brand-primary-border)}
+.task-stat.active{background:var(--brand-primary-softer);border-color:var(--brand-primary-border)}
+.task-stat.active::after{transform:scaleX(1)}
+.task-stat.active strong{color:var(--brand-primary)}
+.task-stat-overdue strong{color:var(--danger)}
+.task-stat-done strong{color:var(--success)}
+.task-stat-all.active strong,.task-stat-active.active strong{color:var(--brand-primary)}
+.task-stat-overdue.active strong{color:var(--danger)}.task-stat-done.active strong{color:var(--success)}
+@media(max-width:640px){.task-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Filtre değişince kartlar yumuşakça girer/çıkar */
+.task-list-enter-active,.task-list-leave-active{transition:opacity var(--dur) ease,translate var(--dur) var(--ease-out)}
+.task-list-enter-from,.task-list-leave-to{opacity:0;translate:0 8px}
+.task-list-leave-active{position:absolute;width:100%}
+.task-list{position:relative}
+@media(prefers-reduced-motion:reduce){.task-stat{transition:none}}

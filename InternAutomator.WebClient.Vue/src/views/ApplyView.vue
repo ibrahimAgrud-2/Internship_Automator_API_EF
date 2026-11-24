@@ -22,6 +22,47 @@ function emptyForm() {
   }
 }
 
+// ---------- Adımlı form: 1 Kişisel, 2 Eğitim, 3 CV ----------
+const STEP_LABELS = ['Kişisel bilgiler', 'Eğitim', 'Özgeçmiş']
+const step = ref(1)
+const direction = ref('forward') // adım animasyonunun yönü
+const stepElements = [ref(null), ref(null), ref(null)]
+const cardElement = ref(null)
+
+// Yalnızca bulunulan adımdaki alanlar tarayıcının kendi doğrulamasıyla kontrol edilir
+function validateStep(number) {
+  const container = stepElements[number - 1].value
+  const fields = container ? [...container.querySelectorAll('input, select, textarea')] : []
+  for (const field of fields) {
+    if (!field.reportValidity()) return false
+  }
+  if (number === 2 && !form.university) {
+    message.value = { type: 'danger', lines: ['Lütfen üniversitenizi seçin.'] }
+    openUniversityDropdown()
+    return false
+  }
+  return true
+}
+
+async function goToStep(number, dir) {
+  direction.value = dir
+  message.value = null
+  step.value = number
+  await nextTick()
+  cardElement.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  stepElements[number - 1].value?.querySelector('input:not([type=file]), select, textarea')?.focus({ preventScroll: true })
+}
+
+function nextStep() {
+  if (step.value < 3 && validateStep(step.value)) goToStep(step.value + 1, 'forward')
+}
+function previousStep() {
+  if (step.value > 1) goToStep(step.value - 1, 'back')
+}
+function jumpToStep(number) {
+  if (number < step.value && !isSubmitting.value) goToStep(number, 'back')
+}
+
 const form = reactive(emptyForm())
 const isSubmitting = ref(false)
 const message = ref(null)
@@ -181,6 +222,11 @@ function buildApplication() {
 
 async function submit() {
   if (isSubmitting.value) return
+  // Enter tuşu son adımdan önce formu göndermesin; yalnızca sonraki adıma geçsin
+  if (step.value < 3) {
+    nextStep()
+    return
+  }
   message.value = null
   cvError.value = ''
 
@@ -216,6 +262,8 @@ async function submit() {
     cvError.value = ''
     if (cvInput.value) cvInput.value.value = ''
 
+    step.value = 1
+    direction.value = 'back'
     showSuccessDialog.value = true
     await nextTick()
     successDialogRef.value?.focus({ preventScroll: true })
@@ -231,14 +279,27 @@ async function submit() {
   <main class="container py-5 application-page" style="max-width: 780px">
     <header class="application-header">
       <div class="application-heading">
-        <img src="/company-logo.jpg" alt="AE Yazılım Teknoloji" class="application-logo" />
+        <RouterLink to="/login" class="application-logo-link" aria-label="AE Yazılım Teknoloji - Giriş sayfasına git" title="Giriş sayfasına git">
+          <img src="/company-logo.png" alt="AE Yazılım Teknoloji" class="application-logo" />
+        </RouterLink>
         <h3>Staj Başvuru Formu</h3>
       </div>
       <RouterLink to="/login" class="login-link">Giriş Yap</RouterLink>
     </header>
 
-    <section class="application-card">
-      <form @submit.prevent="submit">
+    <section ref="cardElement" class="application-card">
+      <ol class="wizard-steps" aria-label="Başvuru adımları">
+        <li v-for="(label, index) in STEP_LABELS" :key="label" class="wizard-step-item" :class="{ active: step === index + 1, done: step > index + 1 }">
+          <button type="button" class="wizard-step-dot" :disabled="step <= index + 1 || isSubmitting" :aria-current="step === index + 1 ? 'step' : null" :aria-label="`${index + 1}. adım: ${label}`" @click="jumpToStep(index + 1)">
+            <svg v-if="step > index + 1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+            <span v-else>{{ index + 1 }}</span>
+          </button>
+          <span class="wizard-step-label">{{ label }}</span>
+        </li>
+      </ol>
+
+      <form :class="`wizard-${direction}`" @submit.prevent="submit">
+        <fieldset :ref="(el) => (stepElements[0].value = el)" v-show="step === 1" class="wizard-step">
         <h5 class="mb-3">Kişisel Bilgiler</h5>
 
         <div class="row">
@@ -267,6 +328,9 @@ async function submit() {
           <textarea id="address" v-model="form.address" class="form-control" rows="2" maxlength="250" autocomplete="street-address"></textarea>
         </div>
 
+        </fieldset>
+
+        <fieldset :ref="(el) => (stepElements[1].value = el)" v-show="step === 2" class="wizard-step">
         <h5 class="mb-3">Eğitim Bilgileri</h5>
 
         <div class="mb-3">
@@ -366,6 +430,9 @@ async function submit() {
           <input id="githubUrl" v-model="form.githubUrl" type="url" class="form-control" maxlength="50" />
         </div>
 
+        </fieldset>
+
+        <fieldset :ref="(el) => (stepElements[2].value = el)" v-show="step === 3" class="wizard-step">
         <div class="mb-4">
           <h5 class="mb-2">Özgeçmiş (CV) <span class="required-indicator">*</span></h5>
           <p class="cv-hint mb-3">Başvurunuz için güncel CV'nizi PDF olarak yükleyin. En fazla 5 MB.</p>
@@ -421,9 +488,16 @@ async function submit() {
           <p v-if="cvError" id="cv-error" class="cv-error" role="alert">{{ cvError }}</p>
         </div>
 
-        <button type="submit" class="btn btn-primary submit-button" :disabled="isSubmitting">
-          {{ isSubmitting ? 'Başvuru gönderiliyor...' : 'Başvur' }}
-        </button>
+        </fieldset>
+
+        <div class="wizard-actions">
+          <button v-if="step > 1" type="button" class="btn wizard-back" :disabled="isSubmitting" @click="previousStep">← Geri</button>
+          <span v-else></span>
+          <button v-if="step < 3" type="button" class="btn btn-primary submit-button" @click="nextStep">Devam →</button>
+          <button v-else type="submit" class="btn btn-primary submit-button" :disabled="isSubmitting">
+            {{ isSubmitting ? 'Başvuru gönderiliyor...' : 'Başvur' }}
+          </button>
+        </div>
 
         <AlertMessages v-if="message" :type="message.type" :messages="message.lines" class="mt-3" />
       </form>
@@ -664,7 +738,10 @@ async function submit() {
 }
 .application-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 25px; }
 .application-heading { display: flex; align-items: center; gap: 18px; min-width: 0; }
-.application-logo { width: 88px; height: 88px; flex-shrink: 0; object-fit: contain; background: #fff; }
+.application-logo-link { display: block; flex-shrink: 0; overflow: hidden; border: 1px solid var(--border-soft); box-shadow: var(--shadow-xs); border-radius: 18px; transition: transform .25s var(--ease-out), filter .25s ease; }
+.application-logo-link:hover { transform: scale(1.06); filter: drop-shadow(0 6px 12px rgba(var(--brand-primary-rgb), .22)); }
+.application-logo-link:active { transform: scale(.97); }
+.application-logo { display: block; width: 96px; height: 96px; object-fit: contain; background: #fff; }
 .application-header h3 { margin: 0; font-size: 27px; line-height: 1.3; }
 .login-link {
   display: inline-flex;
@@ -690,7 +767,7 @@ async function submit() {
   .application-card { padding: 25px 20px 30px; border-radius: 12px; }
   .application-header { flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
   .application-heading { gap: 10px; }
-  .application-logo { width: 58px; height: 58px; }
+  .application-logo { width: 64px; height: 64px; }
   .application-header h3 { font-size: 20px; }
   .login-link { min-height: 35px; padding: 7px 15px; font-size: 12px; margin-left: auto; }
   .university-options { max-height: 235px; }
@@ -836,4 +913,31 @@ async function submit() {
   .application-success-leave-active .application-success-panel,
   .application-success-button { transition: none; }
 }
+
+/* Adım göstergesi */
+.wizard-steps{display:flex;margin:0 0 28px;padding:0;list-style:none}
+.wizard-step-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+.wizard-step-item:not(:first-child)::before{content:'';position:absolute;top:17px;right:50%;width:100%;height:3px;border-radius:3px;background:linear-gradient(var(--brand-primary),var(--brand-primary)) no-repeat left / 0% 100%,var(--border-soft);transition:background-size .5s var(--ease-out)}
+.wizard-step-item.active:not(:first-child)::before,.wizard-step-item.done:not(:first-child)::before{background-size:100% 100%}
+.wizard-step-dot{position:relative;z-index:1;display:grid;place-items:center;width:36px;height:36px;border:2px solid var(--border-strong);border-radius:50%;background:var(--surface);color:var(--text-muted);font-weight:700;font-size:.9rem;transition:background-color .25s ease,border-color .25s ease,color .25s ease,box-shadow .3s var(--ease-out),transform .25s var(--ease-out)}
+.wizard-step-item.active .wizard-step-dot{border-color:var(--brand-primary);color:var(--brand-primary);box-shadow:0 0 0 5px var(--brand-primary-ring);transform:scale(1.06)}
+.wizard-step-item.done .wizard-step-dot{border-color:var(--brand-primary);background:var(--brand-primary);color:#fff}
+.wizard-step-item.done .wizard-step-dot:not(:disabled){cursor:pointer}
+.wizard-step-item.done .wizard-step-dot:hover{background:var(--brand-primary-hover)}
+.wizard-step-dot:disabled{cursor:default}
+.wizard-step-label{font-size:.8rem;font-weight:600;color:var(--text-muted);text-align:center;transition:color .25s ease}
+.wizard-step-item.active .wizard-step-label,.wizard-step-item.done .wizard-step-label{color:var(--text-strong)}
+
+/* Adımlar: görününce yönüne göre yandan süzülür */
+.wizard-step{min-width:0;margin:0;padding:0;border:0}
+.wizard-forward .wizard-step{animation:wizard-in-right .45s var(--ease-out)}
+.wizard-back .wizard-step{animation:wizard-in-left .45s var(--ease-out)}
+@keyframes wizard-in-right{from{opacity:0;translate:28px 0}to{opacity:1;translate:0 0}}
+@keyframes wizard-in-left{from{opacity:0;translate:-28px 0}to{opacity:1;translate:0 0}}
+
+.wizard-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding-top:20px;border-top:1px solid var(--border-soft)}
+.wizard-back{min-height:43px;padding:9px 20px;border:1px solid var(--border-strong);border-radius:25px;background:var(--surface);color:var(--text-body);font-weight:600}
+.wizard-back:hover{background:var(--surface-muted);border-color:#C9BBB2}
+@media(max-width:480px){.wizard-step-label{font-size:.7rem}.wizard-actions .submit-button{min-width:0;flex:1}}
+@media(prefers-reduced-motion:reduce){.wizard-step-item::before{transition:none}}
 </style>

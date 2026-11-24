@@ -98,7 +98,7 @@ async function submit() {
     <div class="card shadow-sm">
       <div class="card-body p-4">
 
-        <div class="password-heading"><img src="/company-logo.jpg" alt="AE Yazılım Teknoloji"/><h4 class="mb-0">Şifremi Güncelle</h4></div>
+        <div class="password-heading"><img src="/company-logo.png" alt="AE Yazılım Teknoloji"/><h4 class="mb-0">Şifremi Güncelle</h4></div>
 
         <div v-if="isRequired" class="alert alert-info">
           Hesabınızı kullanmaya devam etmek için
@@ -185,6 +185,6 @@ async function submit() {
 
 <style scoped>
 .change-password-page .card{border:1px solid var(--border-soft);border-radius:18px;box-shadow:var(--shadow-md)!important;animation:rise-in .6s var(--ease-out) backwards}
-.password-heading{display:flex;align-items:center;gap:16px;margin-bottom:24px}.password-heading img{height:58px;width:63px;object-fit:contain}.password-heading h4{font-size:1.4rem;font-weight:750;color:var(--text-strong)}
+.password-heading{display:flex;align-items:center;gap:16px;margin-bottom:24px}.password-heading img{height:76px;width:76px;object-fit:contain;margin:-8px 0}.password-heading h4{font-size:1.4rem;font-weight:750;color:var(--text-strong)}
 .change-password-page .btn-link{color:var(--brand-primary)}
 </style>

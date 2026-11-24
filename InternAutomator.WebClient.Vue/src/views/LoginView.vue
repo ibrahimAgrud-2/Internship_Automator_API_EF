@@ -64,7 +64,7 @@ async function submit() {
     <div class="login-card">
       <section class="login-form-panel">
         <div class="login-form-content">
-          <img class="company-logo" src="/company-logo.jpg" alt="AE Yazılım Teknoloji" />
+          <img class="company-logo" src="/company-logo.png" alt="AE Yazılım Teknoloji" />
           <p class="login-subtitle">Hesabınıza giriş yapın</p>
 
           <form class="login-form" @submit.prevent="submit">
@@ -154,7 +154,7 @@ async function submit() {
 .login-form-content,.welcome-content { width:100%; max-width:380px; }
 .login-form-content { display:flex; flex-direction:column; align-items:center; text-align:center; }
 .login-form { width:100%; display:flex; flex-direction:column; }
-.company-logo { display:block; width:84px; height:72px; object-fit:contain; margin:0 auto 24px; }
+.company-logo { display:block; width:116px; height:116px; object-fit:contain; margin:-14px auto 4px; }
 .login-subtitle { margin:0 0 30px; color:var(--text-body); font-size:16px; font-weight:600; }
 .input-group-custom { margin-bottom:22px; text-align:left; }
 .input-group-custom label { display:block; font-size:13px; font-weight:650; margin-bottom:8px; }
@@ -195,7 +195,7 @@ async function submit() {
 @media (max-width:480px) {
   .login-page { padding:15px; }
   .login-form-panel { padding:35px 24px; }
-  .company-logo { width:75px; height:64px; }
+  .company-logo { width:96px; height:96px; }
   .login-footer { line-height:1.6; }
 }
 </style>
