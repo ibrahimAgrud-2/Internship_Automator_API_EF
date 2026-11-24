@@ -14,8 +14,7 @@ namespace Shared.Tasks
         public string Title { get; set; }
 
         [MaxLength(200)]
-        [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
 
 

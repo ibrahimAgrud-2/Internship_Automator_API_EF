@@ -86,7 +86,7 @@ namespace EF_InternApplicationAutomator.DataAccess
 
             return -1;
         }
-       
+
         public bool DeletePerson(int personID)
         {
             return _Context.People

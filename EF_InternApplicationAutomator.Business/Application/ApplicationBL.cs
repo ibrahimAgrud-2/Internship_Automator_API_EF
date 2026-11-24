@@ -49,6 +49,7 @@ namespace EF_InternApplicationAutomator.Business.Application
         {
 
             return _ApplicationDataAccess.UpdateStatus(applicationID,(byte)status, reviewedByUserID,note);
+   
         }
         public bool ApplicationAccepted(int  ID,int reviewedByUserID,string note)
         {
@@ -64,6 +65,7 @@ namespace EF_InternApplicationAutomator.Business.Application
                 {
                     return false;
                 }
+                
                 string password = Shared.Common.CommonTools.GenerateRandomPassword(11);
                 if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now,true)) != -1)
                 {

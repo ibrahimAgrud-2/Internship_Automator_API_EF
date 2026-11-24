@@ -1,4 +1,4 @@
-import { getSession } from '@/auth/session'
+import { getSession, clearSession } from '@/auth/session'
 
 // API ile konuşmanın tek kapısı. API adresini sadece bu dosya bilir.
 // (Eski client'taki core/api.js'in modül hâli: aynı mantık, import/export ile.)
@@ -74,6 +74,16 @@ async function request(method, path, body, responseType = 'json') {
   }
 
   if (!response.ok) {
+    // Oturum açıkken korumalı bir endpoint 401 döndürürse token artık geçerli değildir.
+    // Giriş / başvuru gibi herkese açık sayfalardaki hataları eskisi gibi göster.
+    if (response.status === 401 && !isPublicEndpoint && getSession()?.role) {
+      clearSession()
+      // Tam sayfa yönlendirmesi eski ekranı ve bekleyen işlemleri de sıfırlar.
+      // replace sayesinde Geri tuşu kullanıcıyı korumalı ekrana döndürmez.
+      window.location.replace(`${import.meta.env.BASE_URL}login`)
+      throw new ApiError(401, ['Oturumunuzun süresi doldu. Lütfen yeniden giriş yapın.'])
+    }
+
     throw new ApiError(response.status, await readErrorMessages(response))
   }
 

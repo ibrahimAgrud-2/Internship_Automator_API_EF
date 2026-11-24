@@ -18,8 +18,7 @@ namespace Shared.Tasks
         public int LastUpdatedByUserID { set; get; }
 
         [MaxLength(200)]
-        [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public DateTime DueDate { get; set; }

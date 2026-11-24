@@ -24,9 +24,9 @@ namespace EF_InternApplicationAutomator.DataAccess.Tasks
         [MaxLength(100)]
         public string Title { get; set; }
 
-        [Required]
+
         [MaxLength(225)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public DateTime AssignedDate { get; set; }

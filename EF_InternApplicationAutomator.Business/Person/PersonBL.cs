@@ -77,5 +77,14 @@ namespace EF_InternApplicationAutomator.Business
         {
             return _PersonDataAccess.ChangePassword(personID, CommonTools.HashPassword(newPassword), mustChangePassword);
         }
+   
+        
+        public bool DeletePerson(int personID)
+        {
+
+
+            return (_PersonDataAccess.IsPersonExist(personID)) ? false : _PersonDataAccess.DeletePerson(personID);
+        }
+
     }
 }

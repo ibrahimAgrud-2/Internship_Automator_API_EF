@@ -5017,7 +5017,6 @@
       },
       "TaskCreateDTO": {
         "required": [
-          "description",
           "dueDate",
           "ongoingProjectID",
           "title"
@@ -5035,8 +5034,8 @@
           },
           "description": {
             "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "dueDate": {
             "type": "string",
@@ -5095,7 +5094,6 @@
       },
       "TaskUpdateDTO": {
         "required": [
-          "description",
           "dueDate",
           "lastUpdatedByUserID",
           "title"
@@ -5113,8 +5111,8 @@
           },
           "description": {
             "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "dueDate": {
             "type": "string",

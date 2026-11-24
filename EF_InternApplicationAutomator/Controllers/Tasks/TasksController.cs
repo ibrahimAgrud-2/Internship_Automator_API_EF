@@ -86,9 +86,14 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return BadRequest("Girilen Task verileri geçersiz");
             }
-            if (!_OngoingProjects.IsOngoingProjectExists(newTask.OngoingProjectID))
+            OngoingProjectResponseDTO? project = _OngoingProjects.Find(newTask.OngoingProjectID);
+            if (project==null)
             {
-                return BadRequest("Bu devam projeye görev atanamaz.");
+                return BadRequest("görev atamak istediğimiz proje bulunamadi.");
+            }
+            if(newTask.DueDate.Date>project.DueDate.Date)
+            {
+                return BadRequest($"Atanan görevin son tarihi ({newTask.DueDate}), projeni bitime tarihini ({project.DueDate}) geçemez");
             }
             int? createdByUserID = User.GetUserID();
             if (createdByUserID == null)
@@ -99,7 +104,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Tasks
             {
                 return BadRequest("Kullanici Hesabınız bulunamadığı için görev eklenemedi");
             }
-         
+            
             int taskID = _Tasks.AddTask(newTask,createdByUserID.Value);
             if (taskID < 1)
             {
