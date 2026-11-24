@@ -1,10 +1,6 @@
 ﻿using EF_InternApplicationAutomator.DataAccess.Data;
-using EF_InternApplicationAutomator.DataAccess.Intern;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Shared;
-using Shared.Conversation;
-using Shared.Intern;
 using Shared.User;
 
 
@@ -95,10 +91,11 @@ namespace EF_InternApplicationAutomator.DataAccess.User
 
         public bool IsUserActive(int userID)
         {
-            return _Context.Users.Any(u => u.UserID == userID&&u.IsActive);
+            return _Context.Users.Any(u => u.UserID == userID && u.IsActive);
         }
-      
-        
+
+
+     
         public int UpdateUser( UserCreateDTO userDTO,int userID)
         {
             var user = _Context.Users.Find(userID);

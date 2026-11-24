@@ -103,6 +103,7 @@ namespace EF_InternApplicationAutomator.Business.User
         {
             return _userDataAccess.IsUserActive(userID);
         }
+ 
         public bool IsUserExists(string userName)
         {
             return _userDataAccess.IsUserExists(userName);
