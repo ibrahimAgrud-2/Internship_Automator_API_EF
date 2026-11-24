@@ -78,7 +78,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             {
                 cv.CopyTo(stream);
             }
-
+            Console.WriteLine($"***************{newApplicationDTO.HasCv}");
             int ID = _application.AddApplication(newApplicationDTO, fileName);
             if (ID < 1)
             {

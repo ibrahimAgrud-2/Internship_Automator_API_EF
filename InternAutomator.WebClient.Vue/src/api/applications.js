@@ -20,6 +20,7 @@ export function submitApplication(application, cvFile) {
   if (application.linkedinURL) data.append('LinkedinURL', application.linkedinURL)
   if (application.githubURL) data.append('GithubURL', application.githubURL)
 
+  data.append('HasCV', 'true')
   data.append('CV', cvFile, cvFile.name)
   return apiPost('Application/Apply', data)
 }
