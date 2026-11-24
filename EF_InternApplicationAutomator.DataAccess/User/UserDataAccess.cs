@@ -1,6 +1,7 @@
 ﻿using EF_InternApplicationAutomator.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Shared;
 using Shared.User;
 
 
@@ -95,22 +96,22 @@ namespace EF_InternApplicationAutomator.DataAccess.User
         }
 
 
-     
-        public int UpdateUser( UserCreateDTO userDTO,int userID)
+        public int UpdateUser(UserCreateDTO userDTO, int userID)
         {
             var user = _Context.Users.Find(userID);
-            if (user == null && userDTO == null)
+
+            if (user == null || userDTO == null)
             {
                 return -1;
             }
+
             user.UserName = userDTO.UserName;
             user.IsActive = userDTO.IsActive;
-            if (_Context.SaveChanges() > 0)
-            {
-                return user.UserID;
-            }
 
-            return -1;
+            //
+            _Context.SaveChanges();
+
+            return user.UserID;
         }
 
     }

@@ -71,22 +71,27 @@ namespace EF_InternApplicationAutomator.Business.User
             return _userDataAccess.DeleteUser(userID);
         }
 
-        public int UpdateUser(int userID, int personID,UserCreateDTO userCreateDTO)
+        public int UpdateUser(int userID, int personID, UserCreateDTO userCreateDTO)
         {
-           
-            if(!P.IsPersonExist(personID))
+            try
+            {
+                if (!P.IsPersonExist(personID))
+                {
+                    return -1;
+                }
+
+                if (P.UpdatePerson(personID, userCreateDTO.PersonInfo) < 1)
+                {
+                    return -1;
+                }
+
+                return _userDataAccess.UpdateUser(userCreateDTO, userID);
+            }
+            catch (DbUpdateException)
             {
                 return -1;
             }
-
-            if (P.UpdatePerson(personID, userCreateDTO.PersonInfo)<1)
-            {
-                return -1;
-            }
-
-            return _userDataAccess.UpdateUser(userCreateDTO,userID);
         }
-
 
 
         public bool IsUserExists(int userID)
