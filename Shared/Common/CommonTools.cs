@@ -148,10 +148,10 @@ namespace Shared.Common
 
                 // 2. Şablondaki alanları doldur
                 body = body
-                    .Replace("{FirstName}", firstName ?? "")
-                    .Replace("{LastName}", lastName ?? "")
-                    .Replace("{ApplicantEmail}", email)
-                    .Replace("{Password}", tempPassword);
+                        .Replace("{FirstName}", firstName ?? "")
+                        .Replace("{LastName}", lastName ?? "")
+                        .Replace("{Email}", email)
+                        .Replace("{Password}", tempPassword);
 
                 // 3. E-postayı oluştur
                 var message = new MimeMessage();

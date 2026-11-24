@@ -89,7 +89,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         }
 
 
-        [Authorize(Roles ="User")]
+        [Authorize(Roles = "User")]
         [HttpGet("All")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -150,7 +150,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
             {
                 return Unauthorized();
             }
-            if (_application.UpdateStatus(updatedApplication.ApplicationID, reviewedByUserID.Value,(ApplicationBL.enStatus)updatedApplication.status,updatedApplication.Notes) )
+            if (_application.UpdateStatus(updatedApplication.ApplicationID, reviewedByUserID.Value, (ApplicationBL.enStatus)updatedApplication.status, updatedApplication.Notes))
             {
                 return Ok(updatedApplication);
             }
@@ -167,7 +167,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<string> Accepted(int applicationID,string? note)
+        public ActionResult<string> Accepted(int applicationID, string? note)
         {
             ApplicationResponseDTO application = _application.Find(applicationID);
             if (application == null)
@@ -180,11 +180,11 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
             }
             int? reviewedByUserID = User.GetUserID();
-            if(reviewedByUserID==null)
+            if (reviewedByUserID == null)
             {
                 return Unauthorized();
             }
-            if (_application.ApplicationAccepted(applicationID, reviewedByUserID.Value,note))
+            if (_application.ApplicationAccepted(applicationID, reviewedByUserID.Value, note))
             {
                 return Ok();
             }
@@ -241,8 +241,8 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
 
 
 
-        
-       [Authorize(Roles = "User")]
+
+        [Authorize(Roles = "User")]
         [HttpGet("{ApplicationID}/CV")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetCV(int ApplicationID)
@@ -256,7 +256,7 @@ namespace EF_InternApplicationAutomator.API.Controllers.Application
                 return NotFound("Başvuru bulunamadi");
             }
             string? fileName = _application.GetCvPath(ApplicationID);
-            if(fileName==null)
+            if (fileName == null)
             {
                 return NotFound("CV bulunamadi");
             }

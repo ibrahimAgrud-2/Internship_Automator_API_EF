@@ -376,7 +376,7 @@ const pendingAction = computed(() => ACTIONS[pending.actionKey] ?? null)
 const pendingApplication = computed(() => applications.value.find((a) => a.applicationID === pending.applicationID))
 const summaryText = computed(() =>
   pendingAction.value && pendingApplication.value
-    ? `${getFullName(pendingApplication.value)} adlı adayın başvurusu ${pendingAction.value.result}. ${pending.actionKey === 'reject' ? 'Lütfen bir not girin.' : 'İsterseniz bir not ekleyebilirsiniz.'}`
+    ? `${getFullName(pendingApplication.value)} adlı adayın başvurusu ${pendingAction.value.result}. Lütfen bir not girin.`
     : '',
 )
 
@@ -393,8 +393,8 @@ async function submitDecision() {
   if (isSaving.value || !pendingAction.value) return
 
   const text = notes.value.trim()
-  if (pending.actionKey === 'reject' && !text) {
-    decisionErrors.value = ['Ret işlemi için not alanı zorunludur.']
+  if (!text) {
+    decisionErrors.value = [pending.actionKey === 'reject' ? 'Ret işlemi için not alanı zorunludur.' : 'Onay işlemi için not alanı zorunludur.']
     return
   }
 
@@ -774,7 +774,7 @@ onBeforeUnmount(() => {
         :disabled="isSaving"
       ></textarea>
       <div class="form-text">
-        {{ pending.actionKey === 'reject' ? 'Zorunlu' : 'İsteğe bağlı' }}, en fazla {{ APPLICATION_NOTES_LIMIT }} karakter.
+        Zorunlu, en fazla {{ APPLICATION_NOTES_LIMIT }} karakter.
       </div>
       <AlertMessages v-if="decisionErrors.length" :messages="decisionErrors" class="mt-3" />
 

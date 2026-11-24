@@ -57,7 +57,7 @@ namespace EF_InternApplicationAutomator.Business.Intern
                 //after adding intern, we should include inter to the interns group chat and a private chat with staf
 
                 //1)Add to general group chat
-                _ConversationInternDA.AddInternToConversation(9, insertedInternID);
+                _ConversationInternDA.AddInternToConversation(1027, insertedInternID);
 
                 //2)intern için personlle bir sohbet oluşturup oraya eklicem
                 ConversationCreateDTO conversation = new ConversationCreateDTO(insertedIntern.FirstName,false);

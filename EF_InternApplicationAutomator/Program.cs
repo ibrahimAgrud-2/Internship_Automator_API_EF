@@ -93,9 +93,7 @@ builder.Services.AddScoped<EF_InternApplicationAutomator.DataAccess.Message.Mess
 builder.Services.AddScoped<EF_InternApplicationAutomator.DataAccess.ConversationIntern.ConversationInternDataAccess>();
 builder.Services.AddScoped<EF_InternApplicationAutomator.Business.ConversationIntern.ConversationInternBL>();
 
-var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>()!;
-builder.Services.AddSingleton(emailSettings);
-builder.Services.AddScoped<EmailService>();
+
 
 builder.Services.AddScoped<TokenService>();
 
@@ -135,11 +133,11 @@ builder.Services.AddTransient<EmailService>(sp =>
     var configuration = sp.GetRequiredService<IConfiguration>();
 
     var settings = configuration
-        .GetSection("ApplicantEmail")
+        .GetSection("Email")
         .Get<EmailSettings>() ?? new EmailSettings();
 
     settings.Password =
-        configuration["ApplicantEmail:AppPassword"] ?? "";
+       configuration["Email:AppPassword"] ?? "";
 
     return new EmailService(settings, configuration);
 });

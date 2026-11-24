@@ -34,7 +34,7 @@ namespace EF_InternApplicationAutomator.DataAccess
         public string Address { get; set; }
 
         [MaxLength(250)]
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
 
 
         [Required]

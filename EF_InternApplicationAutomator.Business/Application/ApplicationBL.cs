@@ -68,15 +68,15 @@ namespace EF_InternApplicationAutomator.Business.Application
                 if (_Intern.AddIntern(new Shared.Intern.InternCreateDTO(person.PersonID, password, DateTime.Now.Date, null, DateTime.Now,true)) != -1)
                 {
 
-                    //if (_person.ChangePassword(person.PersonID, password,true))
-                    //    if (SendEmail(person, password))
-                    //    {
-                    //        return true;
-                    //    }
-                    //    else
-                    //    {
-                    //        Console.WriteLine($"Yeni eklenen stajyere (başvuru ID {application.ApplicationID}) email gönderilemedi");
-                    //    }
+                    if (_person.ChangePassword(person.PersonID, password, true))
+                        if (SendEmail(person, password))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Yeni eklenen stajyere (başvuru ID {application.ApplicationID}) email gönderilemedi");
+                        }
                     return true;
 
                 }
