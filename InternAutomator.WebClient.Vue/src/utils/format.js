@@ -82,3 +82,15 @@ export function formatDateParts(isoDate) {
 
 // Son 7 gün içinde yayınlanan duyuru "Yeni" sayılır
 export const isRecent = (isoDate, days = 7) => !!isoDate && Date.now() - new Date(isoDate).getTime() < days * 864e5
+
+// "2026-11-26" -> "26-11-2026" (tarih seçicilerde gösterilen tek biçim: gün-ay-yıl)
+export function formatDayText(dayText, fallback = '') {
+  return /^\d{4}-\d{2}-\d{2}$/.test(dayText ?? '') ? dayText.split('-').reverse().join('-') : fallback
+}
+
+// Geçerli bir e-posta adresi için Gmail'de yeni ileti penceresi adresi; geçersizse null
+export function getGmailComposeUrl(email) {
+  const address = String(email ?? '').trim()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) return null
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(address)}`
+}

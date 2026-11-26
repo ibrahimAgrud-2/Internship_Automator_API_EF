@@ -31,7 +31,7 @@ onMounted(loadProjects)
   <div>
    
 
-    <h5 class="mb-3">Projelerim</h5>
+    <h4 class="mb-3">Projelerim</h4>
 
     <!-- Yükleniyor / hata / boş liste: aynı anda yalnızca biri çizilir -->
     <AlertMessages v-if="isLoading" type="info" messages="Projeler yükleniyor..." />

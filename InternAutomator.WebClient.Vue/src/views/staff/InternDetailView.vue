@@ -223,9 +223,9 @@ function onRevoked() {
     <!-- Geçersiz adres vb. sayfa düzeyindeki mesajlar -->
     <AlertMessages v-if="pageError" :messages="pageError" />
 
-    <div v-else class="row g-4">
+    <div v-else class="row g-3">
       <!-- Sol: Projeler -->
-      <section class="col-lg-6">
+      <section class="col-lg-5 col-xxl-4">
         <div class="card h-100 detail-panel">
           <div class="card-header d-flex align-items-center gap-2">
             <h5 class="mb-0 me-auto">
@@ -246,22 +246,19 @@ function onRevoked() {
             <AlertMessages v-else-if="projectsError.length" :messages="projectsError" />
             <AlertMessages v-else-if="internProjects.length === 0" type="secondary" messages="Bu stajyere henüz proje atanmamış." />
 
-            <div v-else class="d-flex flex-column gap-3" :class="{ 'color-coded': groupTasksByProject }">
+            <div v-else class="d-flex flex-column gap-2" :class="{ 'color-coded': groupTasksByProject }">
               <div
                 v-for="(project, index) in internProjects"
                 :key="project.ongoingProjectID"
-                class="border rounded p-3 project-item"
+                class="project-item"
                 :class="getProjectColorClass(index)"
               >
-                <div class="fw-semibold mb-2">{{ project.projectTitle }}</div>
-                <TechnologyBadges :technologies="project.technologies" class="mb-2" />
-                <div class="small text-muted">Başlangıç: {{ formatDate(project.startDate, '-') }} · Teslim: {{ formatDate(project.dueDate, '-') }}</div>
-
-                <!-- Geri al butonu. Ayrılan stajyerde pasiftir (asıl engel API'dadır). -->
-                <div class="mt-2 d-flex justify-content-end">
+                <div class="d-flex align-items-start justify-content-between gap-2">
+                  <div class="fw-semibold text-break project-item-title">{{ project.projectTitle }}</div>
+                  <!-- Geri al butonu. Ayrılan stajyerde pasiftir (asıl engel API'dadır). -->
                   <button
                     type="button"
-                    class="btn btn-sm btn-outline-danger"
+                    class="btn btn-sm btn-outline-danger project-item-revoke"
                     :disabled="!canChange"
                     :title="canChange ? '' : 'Ayrılan stajyerden proje geri alınamaz'"
                     @click="openRevoke(project)"
@@ -269,14 +266,16 @@ function onRevoked() {
                     Geri Al
                   </button>
                 </div>
+                <TechnologyBadges :technologies="project.technologies" class="my-1" />
+                <div class="project-item-meta">Başlangıç <strong>{{ formatDate(project.startDate, '-') }}</strong> · Teslim <strong>{{ formatDate(project.dueDate, '-') }}</strong></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Sağ: Görevler -->
-      <section class="col-lg-6">
+      <!-- Sağ: Görevler (daha çok içerik taşıdığı için geniş sütun) -->
+      <section class="col-lg-7 col-xxl-8">
         <div class="card h-100 detail-panel">
           <div class="card-header d-flex align-items-center gap-2">
             <h5 class="mb-0 me-auto">
@@ -308,7 +307,7 @@ function onRevoked() {
             <AlertMessages v-else-if="internTasks.length === 0" type="secondary" messages="Bu stajyere henüz görev verilmemiş." />
 
             <!-- Düz liste -->
-            <div v-else-if="!groupTasksByProject" class="d-flex flex-column gap-3">
+            <div v-else-if="!groupTasksByProject" class="detail-task-list">
               <TaskItem
                 v-for="task in internTasks"
                 :key="task.taskID"
@@ -329,7 +328,7 @@ function onRevoked() {
                   <span class="fw-semibold text-break">{{ group.title }}</span>
                   <span class="badge text-bg-secondary">{{ group.tasks.length }}</span>
                 </div>
-                <div class="d-flex flex-column gap-3">
+                <div class="detail-task-list">
                   <TaskItem
                     v-for="task in group.tasks"
                     :key="task.taskID"

@@ -11,7 +11,7 @@ import {
   APPLICATION_STATUS,
   APPLICATION_NOTES_LIMIT,
 } from '@/constants'
-import { formatDate, normalizeSearchText, getInitials } from '@/utils/format'
+import { formatDate, normalizeSearchText, getInitials, getGmailComposeUrl as gmailComposeUrl } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
@@ -178,9 +178,7 @@ const selectedLinksApplication = computed(() =>
 )
 
 function getGmailComposeUrl(application) {
-  const email = getApplicantEmail(application)
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null
-  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`
+  return gmailComposeUrl(getApplicantEmail(application))
 }
 
 function closeLinksMenu(restoreFocus = false) {
@@ -438,7 +436,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <h4 class="mb-4">Staj Başvuruları</h4>
+    <h4 class="mb-3">Staj Başvuruları</h4>
 
     <AlertMessages v-if="notice" :type="notice.type" :messages="notice.text" role="status" />
     <AlertMessages v-if="cvErrors.length" type="danger" :messages="cvErrors" />

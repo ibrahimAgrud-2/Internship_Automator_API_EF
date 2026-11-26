@@ -1,101 +1,35 @@
-/* Stajyer görev kartı: solda kalan günü gösteren renkli kutu, sağda görev bilgisi */
-.task-card {
-    overflow: hidden;
-    transition: box-shadow var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
-}
+/* Stajyer görevleri: kompakt satır kartları. Solda kalan gün kutusu, sağda görev bilgisi.
+   Geniş ekranlarda iki sütuna geçer, böylece boş alan kalmaz. */
+.task-list{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+@media(min-width:1280px){.task-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.task-card:hover {
-    box-shadow: var(--shadow-md);
-}
+.task-card{display:flex;flex-direction:row;overflow:hidden;border-radius:var(--radius);transition:box-shadow var(--dur) var(--ease-out),border-color var(--dur) ease,translate var(--dur) var(--ease-out)}
+.task-card:hover{box-shadow:var(--shadow-sm);border-color:var(--brand-primary-border);translate:0 -1px}
 
-.task-days {
-    flex: 0 0 5.5rem;
-    width: 5.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    text-align: center;
-    line-height: 1.1;
-}
+.task-days{flex:0 0 74px;width:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 6px;text-align:center;line-height:1.05}
+.task-days-number{font-size:1.35rem;font-weight:750;letter-spacing:-.02em}
+.task-days-number-word{font-size:.98rem}
+.task-days-label{font-size:.66rem;font-weight:600;opacity:.9}
 
-.task-days-number {
-    font-size: 1.6rem;
-    font-weight: 700;
-}
+/* Aciliyet renkleri: 10 günden fazla kalan görevde renk yok (nötr). Tonlar paletle uyumlu, yumuşak. */
+.task-days-none{background:var(--surface-muted);color:var(--text-muted)}
+.task-days-yellow{background:var(--accent-soft);color:#7A5416}
+.task-days-orange{background:#F6E1CF;color:#8A3F12}
+.task-days-red{background:var(--brand-primary);color:#fff}
+.task-days-done{background:var(--success-soft);color:var(--success)}
 
-/* "Bugün" gibi kelimeler sayıdan küçük yazılır, kutu genişliği hep aynı kalsın */
-.task-days-number-word {
-    font-size: 1.15rem;
-}
+.task-body{flex:1;min-width:0;padding:10px 14px}
+.task-title{margin:0 0 3px;font-size:.98rem;font-weight:650;color:var(--text-strong)}
+.task-description{margin:0 0 6px;font-size:.86rem;line-height:1.5;color:var(--text-body);white-space:pre-wrap}
+.task-meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:var(--text-muted)}
+.task-meta strong{font-weight:600;color:var(--text-body)}
+.task-card-done .task-body{opacity:.68}
+.task-card-overdue{border-color:rgba(var(--brand-primary-rgb),.35)}
 
-.task-days-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-/* Aciliyet renkleri: 10 günden fazla kalan görevde renk yok (gri) */
-.task-days-none {
-    background-color: var(--bs-secondary-bg);
-    color: var(--bs-secondary-color);
-}
-
-.task-days-yellow {
-    background-color: #F0C25A;
-    color: #3B2A08;
-}
-
-.task-days-orange {
-    background-color: #D2692B;
-    color: #fff;
-}
-
-.task-days-red {
-    background-color: var(--danger);
-    color: #fff;
-}
-
-.task-days-done {
-    background-color: var(--bs-success-bg-subtle);
-    color: var(--bs-success-text-emphasis);
-}
-
-/* Tamamlanan görev soluk görünür */
-.task-card-done .task-body {
-    opacity: 0.7;
-}
-
-.task-description {
-    white-space: pre-wrap;
-}
-
-/* Uzun başlık / açıklama kutuyu taşırmasın */
-.task-body {
-    min-width: 0;
-}
-/* Gecikmiş ancak tamamlanmamış görevler açıkça ayrılır. */
-.task-card-overdue{border:1px solid var(--danger);border-left:4px solid var(--danger);box-shadow:0 5px 17px rgba(209,63,63,.12)}
-
-/* Özet şeridi */
-.task-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
-.task-stat{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px 16px;border:1px solid var(--border-soft);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-xs);text-align:left;color:var(--text-body);transition:box-shadow var(--dur) var(--ease-out),border-color var(--dur) ease,translate var(--dur) var(--ease-out),background-color var(--dur) ease}
-.task-stat strong{font-size:1.7rem;font-weight:750;line-height:1.1;letter-spacing:-.02em;color:var(--text-strong)}
-.task-stat span{font-size:.8rem;font-weight:600;color:var(--text-muted)}
-.task-stat::after{content:'';position:absolute;left:16px;right:16px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--brand-primary);transform:scaleX(0);transition:transform var(--dur) var(--ease-out)}
-.task-stat:hover{translate:0 -2px;box-shadow:var(--shadow-sm);border-color:var(--brand-primary-border)}
-.task-stat.active{background:var(--brand-primary-softer);border-color:var(--brand-primary-border)}
-.task-stat.active::after{transform:scaleX(1)}
-.task-stat.active strong{color:var(--brand-primary)}
-.task-stat-overdue strong{color:var(--danger)}
-.task-stat-done strong{color:var(--success)}
-.task-stat-all.active strong,.task-stat-active.active strong{color:var(--brand-primary)}
-.task-stat-overdue.active strong{color:var(--danger)}.task-stat-done.active strong{color:var(--success)}
-@media(max-width:640px){.task-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
-/* Filtre değişince kartlar yumuşakça girer/çıkar */
+/* Liste geçişi: filtre değişince kartlar yumuşakça girer/çıkar */
 .task-list-enter-active,.task-list-leave-active{transition:opacity var(--dur) ease,translate var(--dur) var(--ease-out)}
-.task-list-enter-from,.task-list-leave-to{opacity:0;translate:0 8px}
-.task-list-leave-active{position:absolute;width:100%}
-.task-list{position:relative}
-@media(prefers-reduced-motion:reduce){.task-stat{transition:none}}
+.task-list-enter-from,.task-list-leave-to{opacity:0;translate:0 6px}
+.task-list-leave-active{display:none}
+.task-list-move{transition:transform var(--dur) var(--ease-out)}
+@media(max-width:575.98px){.task-days{flex-basis:62px;width:62px}}
+@media(prefers-reduced-motion:reduce){.task-card{transition:none}.task-card:hover{translate:0 0}}

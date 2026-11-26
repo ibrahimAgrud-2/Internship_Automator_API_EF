@@ -256,12 +256,24 @@ const filteredUsers = computed(() => {
     if (statusFilter.value === 'active' && user.isActive !== true) return false
     if (statusFilter.value === 'inactive' && user.isActive === true) return false
 
-    const searchable = normalizeSearchText(`${getFullName(user)} ${user.userName ?? ''}`)
+    const searchable = normalizeSearchText(`${getFullName(user)} ${user.userName ?? ''} ${user.email ?? ''}`)
     return words.every((word) => searchable.includes(word))
   })
 })
 
 const hasFilter = computed(() => searchText.value.trim() !== '' || statusFilter.value !== 'all')
+
+// Durum filtresi bölümlü butonlarla gösterilir; sayılar sadece ekrandaki listeden okunur
+const STATUS_TABS = [
+  { key: 'all', label: 'Tümü' },
+  { key: 'active', label: 'Aktif' },
+  { key: 'inactive', label: 'Pasif' },
+]
+const statusCounts = computed(() => ({
+  all: users.value.length,
+  active: users.value.filter((user) => user.isActive === true).length,
+  inactive: users.value.filter((user) => user.isActive !== true).length,
+}))
 
 function clearFilters() {
   searchText.value = ''
@@ -294,88 +306,84 @@ onMounted(loadUsers)
 
 <template>
   <section class="users-page">
-    <div class="d-flex justify-content-end flex-wrap gap-2 mb-3">
-      <button
-        type="button"
-        class="btn btn-primary d-inline-flex align-items-center gap-2"
-        @click="openCreate"
-      >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-        Kullanıcı Ekle
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-primary d-inline-flex align-items-center gap-2"
-        :disabled="isLoading"
-        @click="loadUsers"
-      >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M20 11a8 8 0 1 0-2.1 5.7" />
-          <path d="M20 4v7h-7" />
-        </svg>
-        {{ isLoading ? 'Yükleniyor...' : 'Yenile' }}
-      </button>
+    <!-- Başlık, arama, durum filtresi ve butonlar tek satırda: liste için daha çok yer kalır -->
+    <div class="page-head">
+      <div class="d-flex align-items-baseline gap-2">
+        <h4 class="mb-0">Kullanıcılar</h4>
+        <span v-if="!isLoading && !loadErrors.length" class="page-head-count" aria-live="polite">
+          {{ hasFilter ? `${filteredUsers.length} / ${users.length}` : users.length }} kullanıcı
+        </span>
+      </div>
+
+      <div class="page-head-tools">
+        <div class="input-group users-search">
+          <span class="input-group-text" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-4-4" />
+            </svg>
+          </span>
+          <input
+            id="userSearch"
+            v-model="searchText"
+            type="search"
+            class="form-control"
+            placeholder="Kullanıcı ara..."
+            title="Ad, kullanıcı adı veya e-posta ile arayın"
+            aria-label="Kullanıcı ara"
+            autocomplete="off"
+            :disabled="isLoading || loadErrors.length > 0"
+            @keydown.esc="searchText = ''"
+          />
+        </div>
+
+        <div class="seg-filter" role="group" aria-label="Hesap durumu">
+          <button
+            v-for="tab in STATUS_TABS"
+            :key="tab.key"
+            type="button"
+            class="seg-filter-btn"
+            :class="{ active: statusFilter === tab.key }"
+            :aria-pressed="statusFilter === tab.key"
+            :disabled="isLoading || loadErrors.length > 0"
+            @click="statusFilter = tab.key"
+          >
+            {{ tab.label }}<span class="seg-filter-count">{{ statusCounts[tab.key] }}</span>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary users-icon-btn"
+          :disabled="isLoading"
+          :title="isLoading ? 'Yükleniyor...' : 'Listeyi yenile'"
+          aria-label="Listeyi yenile"
+          @click="loadUsers"
+        >
+          <svg :class="{ 'users-spin': isLoading }" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 11a8 8 0 1 0-2.1 5.7" />
+            <path d="M20 4v7h-7" />
+          </svg>
+        </button>
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" @click="openCreate">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Kullanıcı Ekle
+        </button>
+      </div>
     </div>
 
     <AlertMessages v-if="notice" :type="notice.type" :messages="notice.text" />
 
     <div class="card users-list-card">
-      <div class="card-body p-3 p-md-4">
-        <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
-          <div class="users-search-field flex-grow-1">
-            <label for="userSearch" class="form-label fw-semibold small">Kullanıcı ara</label>
-            <div class="input-group">
-              <span class="input-group-text bg-white text-secondary" aria-hidden="true">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="m20 20-4-4" />
-                </svg>
-              </span>
-              <input
-                id="userSearch"
-                v-model="searchText"
-                type="search"
-                class="form-control"
-                placeholder="Ad soyad veya kullanıcı adı..."
-                autocomplete="off"
-                :disabled="isLoading || loadErrors.length > 0"
-              />
-            </div>
-          </div>
-          <div class="users-filter-field">
-            <label for="userStatusFilter" class="form-label fw-semibold small">Hesap durumu</label>
-            <select
-              id="userStatusFilter"
-              v-model="statusFilter"
-              class="form-select"
-              :disabled="isLoading || loadErrors.length > 0"
-            >
-              <option value="all">Tüm kullanıcılar</option>
-              <option value="active">Aktif kullanıcılar</option>
-              <option value="inactive">Pasif kullanıcılar</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-          <div class="small text-secondary" aria-live="polite">
-            <template v-if="!isLoading && !loadErrors.length">
-              {{ filteredUsers.length }} / {{ users.length }} kullanıcı gösteriliyor
-            </template>
-          </div>
-          <button v-if="hasFilter" type="button" class="btn btn-link btn-sm text-decoration-none p-0" @click="clearFilters">
-            Filtreleri temizle
-          </button>
-        </div>
-
-        <AlertMessages v-if="loadErrors.length" :messages="loadErrors" />
-        <AlertMessages v-else-if="isLoading" type="info" messages="Kullanıcılar yükleniyor..." role="status" />
-        <div v-else-if="!users.length" class="users-empty text-center py-5">
+      <div class="card-body p-0">
+        <AlertMessages v-if="loadErrors.length" :messages="loadErrors" class="m-3" />
+        <AlertMessages v-else-if="isLoading" type="info" messages="Kullanıcılar yükleniyor..." role="status" class="m-3" />
+        <div v-else-if="!users.length" class="users-empty text-center py-5 m-3">
           <div class="fw-semibold mb-1">Henüz kullanıcı bulunmuyor</div>
         </div>
-        <div v-else-if="!filteredUsers.length" class="users-empty text-center py-5">
+        <div v-else-if="!filteredUsers.length" class="users-empty text-center py-5 m-3">
           <div class="fw-semibold mb-1">Eşleşen kullanıcı bulunamadı</div>
           <p class="text-secondary small mb-2">Arama veya durum filtresini değiştirebilirsiniz.</p>
           <button type="button" class="btn btn-outline-secondary btn-sm" @click="clearFilters">Filtreleri temizle</button>
@@ -386,6 +394,8 @@ onMounted(loadUsers)
               <tr>
                 <th scope="col">Ad Soyad</th>
                 <th scope="col">Kullanıcı Adı</th>
+                <th scope="col" class="d-none d-lg-table-cell">E-posta</th>
+                <th scope="col" class="d-none d-xl-table-cell">Telefon</th>
                 <th scope="col">Durum</th>
                 <th scope="col" class="text-end">İşlemler</th>
               </tr>
@@ -399,6 +409,8 @@ onMounted(loadUsers)
                   </div>
                 </td>
                 <td class="text-break">{{ user.userName || '—' }}</td>
+                <td class="d-none d-lg-table-cell text-break users-muted">{{ user.email || '—' }}</td>
+                <td class="d-none d-xl-table-cell text-nowrap users-muted">{{ user.phone || '—' }}</td>
                 <td>
                   <span class="badge rounded-pill" :class="user.isActive === true ? 'text-bg-success' : 'text-bg-secondary'">
                     <span class="users-status-dot" aria-hidden="true"></span>
@@ -595,23 +607,39 @@ onMounted(loadUsers)
 </template>
 
 <style scoped>
-.users-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
+/* Sayfa tüm genişliği kullanır (eski 1200px sınırı kaldırıldı) */
 .users-list-card {
   border: 1px solid var(--border-soft);
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
-.users-search-field {
-  min-width: min(100%, 240px);
+.users-search {
+  width: 280px;
+  max-width: 100%;
 }
 
-.users-filter-field {
-  min-width: 190px;
+.users-search .input-group-text {
+  background: var(--surface);
+  color: var(--text-muted);
+  border-color: var(--border-strong);
+}
+
+.users-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+}
+
+.users-spin {
+  animation: users-spin .9s linear infinite;
+}
+
+@keyframes users-spin {
+  to { rotate: 360deg; }
 }
 
 .users-table {
@@ -619,24 +647,37 @@ onMounted(loadUsers)
 }
 
 .users-table thead th {
+  background: var(--surface-muted);
   color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.74rem;
+  font-weight: 650;
+  letter-spacing: .03em;
+  text-transform: uppercase;
   border-bottom-color: var(--border-soft);
   white-space: nowrap;
-  padding: 0.9rem 0.8rem;
+  padding: 0.65rem 0.9rem;
 }
 
 .users-table tbody td {
-  padding: 0.85rem 0.8rem;
+  padding: 0.55rem 0.9rem;
   border-color: var(--border-soft);
+  font-size: .9rem;
+}
+
+.users-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.users-muted {
+  color: var(--text-muted);
+  font-size: .85rem;
 }
 
 .users-avatar {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
-  flex: 0 0 38px;
+  flex: 0 0 32px;
   align-items: center;
   justify-content: center;
   background: var(--brand-primary-soft);
@@ -649,8 +690,8 @@ onMounted(loadUsers)
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   padding: 0;
 }
 
@@ -675,7 +716,7 @@ onMounted(loadUsers)
 }
 
 @media (max-width: 575.98px) {
-  .users-filter-field { flex: 1 1 100%; }
-  .users-table { min-width: 620px; }
+  .users-search { width: 100%; }
+  .users-table { min-width: 560px; }
 }
 </style>

@@ -30,7 +30,7 @@ onMounted(loadAnnouncements)
 
 <template>
   <div>
-    <h4 class="mb-4">Duyurular</h4>
+    <h4 class="mb-3">Duyurular</h4>
 
     <AlertMessages v-if="isLoading" type="info" messages="Duyurular yükleniyor..." />
     <AlertMessages v-else-if="loadErrors.length" :messages="loadErrors" />
@@ -48,9 +48,8 @@ onMounted(loadAnnouncements)
           <div class="card-body">
             <div class="announcement-meta">
               <span class="announcement-date-inline">{{ formatDate(item.createdDate, '-') }}</span>
-              <span v-if="isRecent(item.createdDate)" class="announcement-new">Yeni</span>
             </div>
-            <h5 class="card-title text-break mb-2">{{ item.title }}</h5>
+            <h5 class="card-title text-break mb-2">{{ item.title }}<span v-if="isRecent(item.createdDate)" class="announcement-new">Yeni</span></h5>
             <p class="card-text text-break announcement-content mb-0">{{ item.content }}</p>
           </div>
         </div>

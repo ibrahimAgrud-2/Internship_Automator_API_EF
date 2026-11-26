@@ -3,9 +3,10 @@ import { ref, reactive, watch, computed } from 'vue'
 import { addTask, updateTask } from '@/api/tasks'
 import { ApiError, getErrorMessages } from '@/api/http'
 import { TASK_LIMITS } from '@/constants'
-import { getTodayText } from '@/utils/format'
+import { getTodayText, formatDayText } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
+import DatePicker from '@/components/DatePicker.vue'
 
 // Stajyer detay sayfası: "Görevler > Ekle" ve görevdeki "Düzenle" ile açılan görev penceresi.
 // task null ise "yeni görev", dolu ise o görevin düzenlenmesidir (aynı form iki iş için).
@@ -38,37 +39,9 @@ const projectStartDay = computed(() => projectDay(selectedProject.value?.startDa
 const projectDueDay = computed(() => projectDay(selectedProject.value?.dueDate))
 const earliestDay = computed(() => [minDate.value, projectStartDay.value].sort().pop())
 const outsideProject = (day) => Boolean((projectStartDay.value && day < projectStartDay.value) || (projectDueDay.value && day > projectDueDay.value))
-const displayDay = (day) => day.split('-').reverse().join('.')
-const calendarOpen = ref(false)
-const calendarMonth = ref(new Date())
-const monthLabel = computed(() => calendarMonth.value.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }))
-const calendarDays = computed(() => {
-  const year = calendarMonth.value.getFullYear()
-  const month = calendarMonth.value.getMonth()
-  const offset = (new Date(year, month, 1).getDay() + 6) % 7
-  return Array.from({ length: 42 }, (_, i) => {
-    const date = new Date(year, month, i - offset + 1)
-    const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-    return { day, number: date.getDate(), outside: date.getMonth() !== month,
-      disabled: day < earliestDay.value || outsideProject(day) }
-  })
-})
-function toggleCalendar() {
-  if (calendarOpen.value) { calendarOpen.value = false; return }
-  const day = form.dayText || earliestDay.value || getTodayText()
-  const [year, month] = day.split('-').map(Number)
-  calendarMonth.value = new Date(year, month - 1, 1)
-  calendarOpen.value = true
-}
-function moveMonth(delta) {
-  calendarMonth.value = new Date(calendarMonth.value.getFullYear(), calendarMonth.value.getMonth() + delta, 1)
-}
-function chooseDay(day) {
-  form.dayText = day
-  calendarOpen.value = false
-  dueDateInput.value?.focus()
-}
-watch(() => form.ongoingProjectID, () => { calendarOpen.value = false })
+const displayDay = (day) => formatDayText(day)
+// Yeni görevde seçilebilecek son gün projenin teslim günüdür (düzenlemede API karar verir)
+const latestDay = computed(() => (props.task ? '' : projectDueDay.value))
 
 // Görevler gün bazlıdır; saat sorulmaz. Seçilen günün sonu (23:59:59) gönderilir, böylece
 // API'nin "teslim zamanı şu andan sonra olmalı" kuralı bugün seçildiğinde de sağlanır.
@@ -79,7 +52,6 @@ const toTaskDueDate = (dayText) => `${dayText}T23:59:59`
 watch(
   () => props.modelValue,
   (isOpen) => {
-    calendarOpen.value = false
     if (!isOpen) return
 
     errors.value = []
@@ -255,31 +227,20 @@ async function submit() {
 
     <div>
       <label for="taskDueDate" class="form-label">Teslim tarihi <span class="text-danger">*</span></label>
-      <input v-if="task" id="taskDueDate" ref="dueDateInput" v-model="form.dayText" type="date" class="form-control" :min="minDate" :disabled="isSaving" />
-      <div v-else class="task-calendar-wrap" @keydown.esc.stop.prevent="calendarOpen = false; dueDateInput?.focus()" @focusout="!$event.currentTarget.contains($event.relatedTarget) && (calendarOpen = false)">
-        <button id="taskDueDate" ref="dueDateInput" type="button" class="form-control task-calendar-trigger" :disabled="isSaving" :aria-expanded="calendarOpen" @click="toggleCalendar">
-          <span :class="{ 'text-muted': !form.dayText }">{{ form.dayText ? displayDay(form.dayText) : 'gg.aa.yyyy' }}</span>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-        </button>
-        <div v-if="calendarOpen" class="task-calendar" role="group" aria-label="Teslim tarihi seçin">
-          <div class="task-calendar-header">
-            <button type="button" class="task-calendar-nav" aria-label="Önceki ay" @click="moveMonth(-1)">‹</button>
-            <strong>{{ monthLabel }}</strong>
-            <button type="button" class="task-calendar-nav" aria-label="Sonraki ay" @click="moveMonth(1)">›</button>
-          </div>
-          <div class="task-calendar-grid">
-            <span v-for="weekday in ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pa']" :key="weekday" class="task-calendar-weekday">{{ weekday }}</span>
-            <button v-for="day in calendarDays" :key="day.day" type="button" class="task-calendar-day" :class="{ outside: day.outside, selected: day.day === form.dayText }" :disabled="day.disabled || isSaving" :aria-label="displayDay(day.day)" :aria-pressed="day.day === form.dayText" @click="chooseDay(day.day)">{{ day.number }}</button>
-          </div>
-          <div class="task-calendar-footer">
-            <div class="task-calendar-hint">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16v1"/></svg>
-              <span>Görev tarihleri projenin tarihleri arasında olmalı.<template v-if="projectStartDay && projectDueDay"><br>{{ displayDay(projectStartDay) }} – {{ displayDay(projectDueDay) }}</template><template v-else-if="projectDueDay"><br>Son tarih: {{ displayDay(projectDueDay) }}</template><template v-else-if="projectStartDay"><br>Başlangıç: {{ displayDay(projectStartDay) }}</template></span>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary" @click="chooseDay('')">Clear</button>
-          </div>
-        </div>
-      </div>
+      <DatePicker
+        id="taskDueDate"
+        ref="dueDateInput"
+        v-model="form.dayText"
+        :min="task ? minDate : earliestDay"
+        :max="latestDay"
+        :disabled="isSaving"
+        aria-label="Teslim tarihi seçin"
+      >
+        <template v-if="!task && (projectStartDay || projectDueDay)" #hint>
+          Görev tarihleri projenin tarihleri arasında olmalı:
+          <strong>{{ projectStartDay ? displayDay(projectStartDay) : '…' }} – {{ projectDueDay ? displayDay(projectDueDay) : '…' }}</strong>
+        </template>
+      </DatePicker>
     </div>
 
     <template #footer>
@@ -288,20 +249,3 @@ async function submit() {
     </template>
   </BaseModal>
 </template>
-
-<style scoped>
-.task-calendar-wrap { position: relative; }
-.task-calendar-trigger { display: flex; align-items: center; justify-content: space-between; text-align: left; }
-.task-calendar { position: absolute; bottom: calc(100% + .4rem); left: 0; z-index: 10; width: 340px; max-width: 100%; max-height: min(360px, 65vh); overflow-y: auto; padding: .8rem; border: 1px solid var(--bs-border-color, #ddd); border-radius: .8rem; background: var(--bs-body-bg, #fff); box-shadow: 0 4px 14px #00000014; }
-.task-calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; text-transform: capitalize; }
-.task-calendar-nav { border: 0; background: transparent; color: inherit; font-size: 1.5rem; padding: 0 .5rem; }
-.task-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .2rem; text-align: center; }
-.task-calendar-weekday { font-size: .75rem; color: var(--bs-secondary-color, #777); padding: .25rem 0; }
-.task-calendar-day { border: 1px solid transparent; border-radius: .3rem; background: transparent; color: inherit; min-height: 30px; font-size: .85rem; }
-.task-calendar-day.outside { opacity: .5; }
-.task-calendar-day:disabled { background: var(--bs-secondary-bg, #eee); color: var(--bs-secondary-color, #777); opacity: .55; cursor: not-allowed; }
-.task-calendar-day:not(:disabled):hover, .task-calendar-day.selected { border-color: var(--bs-primary, #0d6efd); background: var(--bs-tertiary-bg, #f4f4f4); }
-.task-calendar-footer { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--bs-border-color, #ddd); }
-.task-calendar-hint { display: flex; align-items: flex-start; gap: .3rem; font-size: .72rem; line-height: 1.35; color: var(--bs-secondary-color, #777); }
-.task-calendar-hint svg { flex-shrink: 0; }
-</style>

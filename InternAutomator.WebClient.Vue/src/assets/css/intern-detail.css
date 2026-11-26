@@ -5,8 +5,69 @@
 
 /* Liste uzarsa panel sınırsız büyümez, kendi içinde kayar */
 .detail-panel-body {
-    max-height: 65vh;
+    max-height: calc(100vh - 215px);
+    min-height: 260px;
     overflow-y: auto;
+    padding: 12px;
+}
+
+.detail-panel .card-header {
+    padding: 10px 12px 10px 16px;
+    background: var(--surface);
+}
+
+.detail-panel .card-header h5 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Kompakt proje kartı */
+.project-item {
+    padding: 10px 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 11px;
+    background: var(--surface);
+    transition: box-shadow var(--dur) var(--ease-out), border-color var(--dur) ease;
+}
+
+.project-item:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--brand-primary-border);
+}
+
+.project-item-title {
+    font-size: .92rem;
+    line-height: 1.35;
+}
+
+.project-item-revoke {
+    flex-shrink: 0;
+    --bs-btn-padding-y: .15rem;
+    --bs-btn-padding-x: .5rem;
+    --bs-btn-font-size: .74rem;
+}
+
+.project-item-meta {
+    font-size: .74rem;
+    color: var(--text-muted);
+}
+
+.project-item-meta strong {
+    font-weight: 600;
+    color: var(--text-body);
+}
+
+/* Görev listesi: geniş ekranda iki sütun */
+.detail-task-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+}
+
+@media (min-width: 1600px) {
+    .detail-task-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 /* Proje ata penceresi: ince uzun satırlar, liste uzarsa kendi içinde kayar */
 .assign-list {
@@ -61,12 +122,12 @@
 
 /* Gruplama açıkken soldaki proje kartları da aynı renkle işaretlenir */
 .color-coded .project-item {
-    border-left: 5px solid var(--pc) !important;
+    border-left: 4px solid var(--pc);
 }
 
 .task-group {
-    border-left: 5px solid var(--pc);
-    padding-left: 0.75rem;
+    border-left: 4px solid var(--pc);
+    padding-left: 0.65rem;
 }
 
 .task-group-dot {

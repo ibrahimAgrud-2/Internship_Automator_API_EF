@@ -190,7 +190,7 @@ onMounted(loadProjects)
 
 <template>
   <div>
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="page-head">
       <h4 class="mb-0">Projeler</h4>
 
       <div class="d-flex flex-wrap align-items-center gap-3">

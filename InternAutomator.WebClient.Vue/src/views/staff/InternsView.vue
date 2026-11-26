@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { getAllInterns, separateIntern } from '@/api/interns'
 import { ApiError, getErrorMessages } from '@/api/http'
 import { INTERN_ACTIVE } from '@/constants'
-import { formatDate, getInitials, normalizeSearchText } from '@/utils/format'
+import { formatDate, getInitials, normalizeSearchText, getGmailComposeUrl } from '@/utils/format'
 import { useNotice } from '@/composables/useNotice'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
@@ -106,7 +106,7 @@ onMounted(loadInterns)
 
 <template>
   <div>
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="page-head">
       <h4 class="mb-0">Stajyerler</h4>
 
       <!-- Ad-soyad arama: yazdıkça listeyi süzer -->
@@ -155,7 +155,27 @@ onMounted(loadInterns)
             <InternStatusBadge :is-active="intern.isActive" />
           </div>
           <h5 class="intern-card-name" :title="getFullName(intern)">{{ getFullName(intern) }}</h5>
-          <div class="intern-card-email" :title="intern.email">{{ intern.email || 'E-posta yok' }}</div>
+          <div class="intern-card-email">
+            <span class="intern-card-email-text" :title="intern.email">{{ intern.email || 'E-posta yok' }}</span>
+            <!-- Başvurular sayfasındaki gibi: Gmail'de bu adrese yeni ileti açar -->
+            <a
+              v-if="getGmailComposeUrl(intern.email)"
+              class="intern-mail-button"
+              :href="getGmailComposeUrl(intern.email)"
+              target="_blank"
+              rel="noopener noreferrer"
+              :title="`${intern.email} adresine Gmail ile e-posta gönder`"
+              :aria-label="`${getFullName(intern)} adlı stajyere Gmail ile e-posta gönder`"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M2.8 19.5h3.7V10l-3.7-2.8v12.3Z"/>
+                <path fill="#34A853" d="M17.5 19.5h3.7V7.2L17.5 10v9.5Z"/>
+                <path fill="#EA4335" d="m2.8 7.2 9.2 7 9.2-7V4.8l-9.2 7-9.2-7v2.4Z"/>
+                <path fill="#C5221F" d="M2.8 4.8V7.2L6.5 10V6.2L4 4.3a.75.75 0 0 0-1.2.5Z"/>
+                <path fill="#FBBC04" d="M17.5 6.2V10l3.7-2.8V4.8a.75.75 0 0 0-1.2-.5l-2.5 1.9Z"/>
+              </svg>
+            </a>
+          </div>
           <div class="intern-card-meta">
             <div class="intern-card-date"><span>Başlangıç</span><strong>{{ formatDate(intern.startDate, 'Belirlenmedi') }}</strong></div>
             <div class="intern-card-date"><span>Bitiş</span><strong>{{ formatDate(intern.endDate, 'Belirlenmedi') }}</strong></div>

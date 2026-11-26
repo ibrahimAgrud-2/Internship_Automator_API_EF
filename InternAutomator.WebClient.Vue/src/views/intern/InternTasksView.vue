@@ -97,7 +97,23 @@ onMounted(loadTasks)
 
 <template>
   <div>
-    <h4 class="mb-4">Görevlerim</h4>
+    <!-- Başlık ve filtre aynı satırda: sayfa üstünde fazla yer kaplamaz -->
+    <div class="page-head">
+      <h4 class="mb-0">Görevlerim</h4>
+      <div v-if="!isLoading && !loadErrors.length && hasTasks" class="seg-filter" role="group" aria-label="Görevleri filtrele">
+        <button
+          v-for="tile in STAT_TILES"
+          :key="tile.key"
+          type="button"
+          class="seg-filter-btn"
+          :class="[`is-${tile.key}`, { active: filter === tile.key }]"
+          :aria-pressed="filter === tile.key"
+          @click="filter = tile.key"
+        >
+          {{ tile.label }}<span class="seg-filter-count">{{ stats[tile.key] }}</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Yükleniyor / hata / boş liste: aynı anda yalnızca biri çizilir -->
     <AlertMessages v-if="isLoading" type="info" messages="Görevler yükleniyor..." />
@@ -105,41 +121,24 @@ onMounted(loadTasks)
     <AlertMessages v-else-if="!hasTasks" type="secondary" messages="Henüz size verilmiş bir görev yok." />
 
     <template v-else>
-    <div class="task-stats" role="group" aria-label="Görevleri filtrele">
-      <button
-        v-for="tile in STAT_TILES"
-        :key="tile.key"
-        type="button"
-        class="task-stat"
-        :class="[`task-stat-${tile.key}`, { active: filter === tile.key }]"
-        :aria-pressed="filter === tile.key"
-        @click="filter = tile.key"
-      >
-        <strong>{{ stats[tile.key] }}</strong>
-        <span>{{ tile.label }}</span>
-      </button>
-    </div>
-
     <AlertMessages v-if="!visibleTasks.length" type="secondary" messages="Bu filtreye uyan görev yok." />
 
-    <TransitionGroup v-else name="task-list" tag="div" class="d-flex flex-column gap-3 task-list">
+    <TransitionGroup v-else name="task-list" tag="div" class="task-list">
       <div v-for="task in visibleTasks" :key="task.taskID" class="card task-card" :class="{ 'task-card-done': task.completed, 'task-card-overdue': !task.completed && getDaysBox(task).label === 'gün gecikti' }">
-        <div class="d-flex">
-          <!-- Sol: kalan gün kutusu -->
-          <div class="task-days" :class="`task-days-${getDaysBox(task).tone}`">
-            <span class="task-days-number" :class="{ 'task-days-number-word': getDaysBox(task).isWord }">{{ getDaysBox(task).top }}</span>
-            <span class="task-days-label">{{ getDaysBox(task).label }}</span>
-          </div>
+        <!-- Sol: kalan gün kutusu -->
+        <div class="task-days" :class="`task-days-${getDaysBox(task).tone}`">
+          <span class="task-days-number" :class="{ 'task-days-number-word': getDaysBox(task).isWord }">{{ getDaysBox(task).top }}</span>
+          <span class="task-days-label">{{ getDaysBox(task).label }}</span>
+        </div>
 
-          <!-- Sağ: görev bilgisi -->
-          <div class="card-body task-body">
-            <h5 class="card-title text-break">{{ task.title }}</h5>
-            <p v-if="task.description" class="card-text text-break task-description">{{ task.description }}</p>
-
-            <div class="small text-muted">
-              Verilme: {{ formatDate(task.assignedDate, '-') }} · Son tarih: {{ formatDate(task.dueDate, '-') }}
-              <template v-if="task.completed"> · Tamamlanma: {{ formatDateTime(task.completedDate, '-') }}</template>
-            </div>
+        <!-- Sağ: görev bilgisi -->
+        <div class="task-body">
+          <h5 class="task-title text-break">{{ task.title }}</h5>
+          <p v-if="task.description" class="task-description text-break">{{ task.description }}</p>
+          <div class="task-meta">
+            <span>Verilme <strong>{{ formatDate(task.assignedDate, '-') }}</strong></span>
+            <span>Son tarih <strong>{{ formatDate(task.dueDate, '-') }}</strong></span>
+            <span v-if="task.completed">Tamamlanma <strong>{{ formatDateTime(task.completedDate, '-') }}</strong></span>
           </div>
         </div>
       </div>

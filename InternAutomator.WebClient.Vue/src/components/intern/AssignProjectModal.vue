@@ -7,6 +7,7 @@ import { PROJECT_LIMITS } from '@/constants'
 import { getTodayText } from '@/utils/format'
 import AlertMessages from '@/components/AlertMessages.vue'
 import BaseModal from '@/components/BaseModal.vue'
+import DatePicker from '@/components/DatePicker.vue'
 import TechnologyBadges from '@/components/TechnologyBadges.vue'
 
 // Stajyer detay sayfası: "Projeler > Ekle" ile açılan proje atama penceresi.
@@ -222,7 +223,7 @@ async function submitNewProject() {
       <!-- Liste görünümü -->
       <div v-if="view === 'list'" class="w-100 d-flex align-items-center gap-2">
         <label for="assignDueDate" class="small text-muted mb-0">Teslim tarihi <span class="text-danger">*</span></label>
-        <input id="assignDueDate" v-model="dueDate" type="date" class="form-control form-control-sm w-auto" :min="minDate" :disabled="isBusy" />
+        <DatePicker id="assignDueDate" v-model="dueDate" size="sm" :min="minDate" :disabled="isBusy" aria-label="Teslim tarihi seçin" />
         <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal" :disabled="isBusy">Vazgeç</button>
         <button type="button" class="btn btn-primary" :disabled="isBusy || selectedProjectID === null" @click="confirmAssign">Projeyi Ata</button>
       </div>

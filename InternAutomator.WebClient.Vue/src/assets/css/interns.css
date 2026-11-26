@@ -10,7 +10,11 @@
 .intern-avatar{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--brand-primary-soft);color:var(--brand-primary);font-weight:700;font-size:12px;box-shadow:inset 0 0 0 1px var(--brand-primary-border);transition:background-color var(--dur) ease,color var(--dur) ease}
 .intern-card:hover .intern-avatar{background:var(--brand-primary);color:#fff}
 .intern-card-name{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 7px;color:var(--text-strong)}
-.intern-card-email{font-size:.79rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:13px}
+.intern-card-email{display:flex;align-items:center;gap:6px;min-width:0;margin-bottom:12px;font-size:.79rem;color:var(--text-muted)}
+.intern-card-email-text{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intern-mail-button{flex:0 0 30px;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;border:1px solid var(--border-soft);background:var(--surface);box-shadow:var(--shadow-xs);transition:background-color var(--dur-fast) ease,border-color var(--dur-fast) ease,box-shadow var(--dur) var(--ease-out),translate var(--dur-fast) var(--ease-out)}
+.intern-mail-button:hover{background:#FFF4F2;border-color:#F3C7C1;box-shadow:0 4px 10px rgba(217,48,37,.14);translate:0 -1px}
+.intern-mail-button:active{translate:0 0}
 .intern-card-meta{display:grid;gap:8px;margin-top:auto}
 .intern-card-date{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:10px;background:var(--surface-muted);border:1px solid var(--border-soft)}
 .intern-card-date span{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}

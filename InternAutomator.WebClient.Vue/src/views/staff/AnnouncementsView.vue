@@ -131,7 +131,7 @@ onMounted(loadAnnouncements)
 
 <template>
   <div>
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="page-head">
       <h4 class="mb-0">Duyurular</h4>
       <div class="d-flex flex-wrap align-items-center gap-3">
         <span v-if="hasAnnouncements" class="small text-muted">{{ announcements.length }} duyuru</span>
@@ -156,9 +156,8 @@ onMounted(loadAnnouncements)
           <div class="card-body">
             <div class="announcement-meta">
               <span class="announcement-date-inline">{{ formatDate(item.createdDate, '-') }}</span>
-              <span v-if="isRecent(item.createdDate)" class="announcement-new">Yeni</span>
             </div>
-            <h5 class="card-title text-break mb-2">{{ item.title }}</h5>
+            <h5 class="card-title text-break mb-2">{{ item.title }}<span v-if="isRecent(item.createdDate)" class="announcement-new">Yeni</span></h5>
             <p class="card-text text-break announcement-content mb-0">{{ item.content }}</p>
             <div v-if="item.announcementID" class="announcement-actions">
               <button type="button" class="btn btn-sm btn-outline-primary" @click="openEdit(item)">Düzenle</button>
